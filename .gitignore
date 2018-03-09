@@ -1,7 +1,7 @@
 # Compiled source #
 ###################
-*/target/**
-*/node_modules/**
+target
+node_modules
 *.com
 *.class
 *.dll
@@ -10,10 +10,10 @@
 *.so
 
 # Project Metadata Files #
-*/.settings/**
-*/.classpath/
-*/.project/
-*/.idea
+.settings
+.classpath
+.project
+.idea
 
 # Packages #
 ############
