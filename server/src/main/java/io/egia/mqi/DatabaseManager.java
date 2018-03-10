@@ -64,17 +64,22 @@ public class DatabaseManager {
 		log.info(String.format("Applying update: %s", v.getVersionId()));
 
 		for (int i = 0; i < dbObjects.length; i++) {
-			objectsDirecotry = versionsDbDirectory + File.separator + v.getVersionId() + File.separator + dbObjects[i];
-
-			if (!dbObjects[i].equals("meas")) {
-				applySqlScripts(objectsDirecotry);
+			if (isMeasure(dbObjects[i])) {
+				importMeasures(getDbObjectsDirectory(v, i));
 			} else {
-				importMeasures(objectsDirecotry);
+				applySqlScripts(getDbObjectsDirectory(v, i));
 			}
 		}
 
 		versionRepository.updateVersion(v.getVersionId());
+	}
 
+	private boolean isMeasure(String dbObject) {
+		return dbObject.equals("meas");
+	}
+
+	private String getDbObjectsDirectory(Version v, int i) {
+		return versionsDbDirectory + File.separator + v.getVersionId() + File.separator + dbObjects[i];
 	}
 
 	public void importMeasures(String measuresDirecotry) {
@@ -82,19 +87,19 @@ public class DatabaseManager {
 		
 		for (final File f : measuresDirectory.listFiles()) {
 			if (!f.isDirectory()) {
-				String measureFileName = f.getName();
-				String measureFileBytes = getFileContentAsString(measuresDirecotry + File.separator + f.getName()).toString();
-
 				Measure m = new Measure();
-				m.setFileName(measureFileName);
-				m.setFileBytes(measureFileBytes.getBytes());
-				
+				m.setFileName(f.getName());
+				m.setFileBytes(getMeasureFileBytes(measuresDirecotry, f).getBytes());
 				measureRepository.saveAndFlush(m);
 			}
 		}
 	}
 
-	public void applySqlScripts(String objectsDirecotry) {
+    private String getMeasureFileBytes(String measuresDirecotry, File f) {
+        return getFileContentAsString(measuresDirecotry + File.separator + f.getName()).toString();
+    }
+
+    public void applySqlScripts(String objectsDirecotry) {
 
 		File sqlObjectsFile = new File(objectsDirecotry + File.separator + "file_list.txt");
 
