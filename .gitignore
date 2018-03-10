@@ -14,6 +14,7 @@ node_modules
 .classpath
 .project
 .idea
+mqi_server.iml
 
 # Packages #
 ############
