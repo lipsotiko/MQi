@@ -1,33 +1,18 @@
 import * as React from 'react';
+import MqiRouter from './MqiRouter';
 import './App.css';
-import Jobs from './components/Jobs';
-import Measures from './components/Measures';
-import { BrowserRouter as Router, Switch, Route, Link } from 'react-router-dom';
 
-const logo = require('./logo.svg');
+const logo = require('./images/logo.svg');
 
 class App extends React.Component {
     render() {
         return (
-            <div className="App">
-                <header className="App-header">
-                    <img src={logo} className="App-logo" alt="logo"/>
-                    <h1 className="App-title">Medical Quality Informatics</h1>
+            <div className="mqi">
+                <header className="mqi-header">
+                    <img src={logo} className="mqi-logo" alt="logo"/>
+                    <h1 className="mqi-title">Medical Quality Informatics</h1>
                 </header>
-                <Router>
-                    <div>
-                        <ul>
-                            <li><Link to={'/jobs'}>Jobs</Link></li>
-                            <li><Link to={'/measures'}>Measures</Link></li>
-                        </ul>
-                        <hr/>
-                        <Switch>
-                            <Route path="/jobs" component={Jobs}/>
-                            <Route path="/measures" component={Measures}/>
-                        </Switch>
-                    </div>
-                </Router>
-
+                <MqiRouter />
             </div>
         );
     }
