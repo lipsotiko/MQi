@@ -1,4 +1,4 @@
-insert into t_patient (patient_id, date_of_birth, first_name, last_name, middle_name, gender) 
+insert into patient (patient_id, date_of_birth, first_name, last_name, middle_name, gender)
 values (1,'1988/04/28','Evangelos','Poneres','Elias','M')
 , (2,'1990/06/28','Christos','Poneres','Elias','M')
 , (3,'1993/08/02','Karoutso',null,null,'F')

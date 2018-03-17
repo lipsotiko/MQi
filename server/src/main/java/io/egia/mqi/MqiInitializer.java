@@ -1,6 +1,7 @@
 package io.egia.mqi;
 
 import java.io.File;
+import java.io.IOException;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.nio.file.DirectoryStream;
@@ -10,10 +11,12 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.hibernate.engine.jdbc.spi.SqlExceptionHelper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationListener;
 import org.springframework.context.event.ContextRefreshedEvent;
+import org.springframework.dao.InvalidDataAccessApiUsageException;
 import org.springframework.stereotype.Component;
 
 import io.egia.mqi.domain.Server;
@@ -23,6 +26,8 @@ import io.egia.mqi.domain.VersionRepository;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import static java.nio.file.LinkOption.NOFOLLOW_LINKS;
 
 /**
  * 
@@ -95,7 +100,18 @@ public class MqiInitializer implements ApplicationListener<ContextRefreshedEvent
 
 	private String retrieveCurrentDatabaseVersion() throws MqiExceptions {
 
-		List<Version> version = versionRepository.findAll();
+		List<Version> version = null;
+
+		//TODO: Remove this method when releasing initial version of software
+        dbManager.dropVersionTable();
+
+		try {
+            version = versionRepository.findAll();
+        } catch(Exception e) {
+            log.info("Version table does not exist");
+            dbManager.createVersionTable();
+            version = versionRepository.findAll();
+        }
 
 		if (version.size() == 1) {
 			return version.get(0).getVersionId();
@@ -148,7 +164,7 @@ public class MqiInitializer implements ApplicationListener<ContextRefreshedEvent
 			throw new MqiExceptions("This MQi server is not the latest version, please upgrade MQi.");
 		}
 
-		// Update the t_server table with this servers information;
+		// Update the server table with this servers information;
 		// The installer will prevent two primary servers from being added to
 		// the same environment. But the application verifies that's the case.
 		try {
@@ -166,24 +182,24 @@ public class MqiInitializer implements ApplicationListener<ContextRefreshedEvent
 
 			if (serverType.equals("primary") && primaryServer.size() <= 1) {
 				if (thisServer.size() == 1) {
-					log.info("This server already exists in the t_server table, updating entry.");
+					log.info("This server already exists in the server table, updating entry.");
 					serverRepository.updateServer(thisServer.get(0).getServerId(), serverType, serverVersion);
 				} else if (thisServer.size() < 1 && primaryServer.size() != 1) {
-					log.info("Primary server does not exist in the t_server table, adding entry.");
+					log.info("Primary server does not exist in the server table, adding entry.");
 					serverRepository.saveAndFlush(s);
 				}
 			} else if (serverType.equals("secondary")) {
 				if (thisServer.size() == 1) {
-					log.info("This server already exists in the t_server table, updating entry.");
+					log.info("This server already exists in the server table, updating entry.");
 					serverRepository.updateServer(thisServer.get(0).getServerId(), serverType, serverVersion);
 				} else if (thisServer.size() < 1) {
-					log.info("Secondary server does not exist in the t_server table, adding entry.");
+					log.info("Secondary server does not exist in the server table, adding entry.");
 					serverRepository.saveAndFlush(s);
 				} else {
-					throw new MqiExceptions("There is more than one entry for this server in the t_server table. Please remove one of the entries.");
+					throw new MqiExceptions("There is more than one entry for this server in the server table. Please remove one of the entries.");
 				}
 			} else if (primaryServer.size() <= 2){
-				throw new MqiExceptions("There is more than one primary server entry in the t_server table. Please remove one of the entries");
+				throw new MqiExceptions("There is more than one primary server entry in the server table. Please remove one of the entries");
 			}
 		} catch (UnknownHostException e) {
 			e.printStackTrace();
@@ -195,7 +211,13 @@ public class MqiInitializer implements ApplicationListener<ContextRefreshedEvent
 
 		Path updatesPath = FileSystems.getDefault().getPath(homeDirectory + File.separator + "versions");
 
-		try (DirectoryStream<Path> stream = Files.newDirectoryStream(updatesPath)) {
+		DirectoryStream.Filter<Path> dir_filter = new DirectoryStream.Filter<Path>() {
+			public boolean accept(Path path) throws IOException {
+				return (Files.isDirectory(path, NOFOLLOW_LINKS));
+			}
+		};
+
+		try (DirectoryStream<Path> stream = Files.newDirectoryStream(updatesPath, dir_filter)) {
 			for (Path file : stream) {
 				Version v = new Version();
 				v.setVersionId(file.getFileName().toString());

@@ -1,5 +1,5 @@
-drop table if exists t_patient;
-create table if not exists t_patient (
+drop table if exists patient;
+create table if not exists patient (
     patient_id bigserial primary key,
     date_of_birth timestamp,
     first_name varchar(255),
@@ -10,6 +10,6 @@ create table if not exists t_patient (
 );
 
 create trigger tr_update_patient_last_updated
-before update on t_patient 
+before update on patient
 for each row
 execute procedure fn_update_timestamp();

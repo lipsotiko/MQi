@@ -6,20 +6,19 @@ import java.util.Date;
 import javax.persistence.*;
 
 @Entity
-@Table(name = "t_patient")
 public class Patient implements Serializable {
 
 	private static final long serialVersionUID = 1L;
 	
 	@Id
 	@GeneratedValue(strategy=GenerationType.IDENTITY)
-	@Column(name="patient_id") private Long patientId;
-	@Column(name="first_name") private String firstName;
-	@Column(name="middle_name") private String middleName;
-	@Column(name="last_name") private String lastName;
-	@Column(name="date_of_birth") private Date dateOfBirth;
-	@Column(name="gender") private char gender;
-	@Column(name="last_updated",updatable=false,insertable=false) private Date lastUpdated;
+	private Long patientId;
+	private String firstName;
+	private String middleName;
+	private String lastName;
+	private Date dateOfBirth;
+	private char gender;
+	@Column(updatable=false,insertable=false) private Date lastUpdated;
 	
 	@MapsId
 	@OneToOne(optional = false, fetch = FetchType.LAZY)

@@ -3,13 +3,12 @@ package io.egia.mqi.domain;
 import javax.persistence.*;
 
 @Entity
-@Table(name = "t_job_measure")
 public class JobMeasure {
 	@Id
 	@GeneratedValue(strategy=GenerationType.IDENTITY)
-	@Column(name="job_measure_id") private Long jobMeasureId;
-	@Column(name="job_id") private Long jobId;
-	@Column(name="measure_id") private Long measureId;
+	private Long jobMeasureId;
+	private Long jobId;
+	private Long measureId;
 	
 	public Long getJobMeasureId() {
 		return jobMeasureId;

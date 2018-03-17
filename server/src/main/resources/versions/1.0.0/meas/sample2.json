@@ -1,5 +1,5 @@
 {
-	"title": "Sample Measure for MQI System",
+	"name": "Sample Measure for MQI System",
 	"description" : "Patients that are between the ages of 2 and 5 on the first day of the reporting year with an occurrence of a broken leg at some time during the reporting year",
 	"minimum_system_version" : "1.0.0",
 	"trace_rules" : true,

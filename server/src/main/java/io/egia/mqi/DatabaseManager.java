@@ -29,7 +29,7 @@ import io.egia.mqi.domain.VersionRepository;
  *         The purpose of this class is to traverse the versions directory and
  *         apply all the necessary updates to bring the database up to the most
  *         recent version of the software. We assume that the installer will
- *         create the t_version table and also insert a record with the value of
+ *         create the version table and also insert a record with the value of
  *         '0.0.0'. Only one record should ever exist in this table and it will
  *         reflect the current version of the database.
  * 
@@ -73,6 +73,18 @@ public class DatabaseManager {
 
 		versionRepository.updateVersion(v.getVersionId());
 	}
+
+	public void createVersionTable() {
+		log.info("Creating version table");
+		sqlExec.execute("drop table if exists version; " +
+				"create table version (version_id varchar(10)); " +
+				"insert into version (version_id) values ('0.0.0');");
+	}
+
+    public void dropVersionTable() {
+        log.info("Drop the version table");
+        sqlExec.execute("drop table if exists version;");
+    }
 
 	private boolean isMeasure(String dbObject) {
 		return dbObject.equals("meas");

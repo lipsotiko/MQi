@@ -37,8 +37,8 @@ public class SqlExecutor {
 					log.debug(sql);
 					stmt = conn.createStatement();
 					stmt.executeUpdate(sql);
+					stmt.close();
 				}
-				stmt.close();
 		        conn.commit();
 		        conn.close();
 			} catch (SQLException e) {

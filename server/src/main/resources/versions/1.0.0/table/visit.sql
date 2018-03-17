@@ -1,5 +1,5 @@
-drop table if exists t_visit;
-create table if not exists t_visit (
+drop table if exists visit;
+create table if not exists visit (
     visit_id bigserial primary key,
     patient_id bigint not null,
     admit_dt timestamp,

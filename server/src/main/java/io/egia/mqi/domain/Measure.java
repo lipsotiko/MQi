@@ -12,19 +12,16 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonRawValue;
 
 @Entity
-@Table(name = "t_measure")
 public class Measure implements Serializable {
 
 	private static final long serialVersionUID = 1L;
 	
 	@Id
 	@GeneratedValue(strategy=GenerationType.IDENTITY)
-	@Column(name="measure_id") private Long measureId;
-	@Column(name="file_name") private String fileName;
-	@Column(name="file_bytes", columnDefinition="Blob") private byte[] fileBytes;
-	@Column(name="last_updated",updatable=false,insertable=false)
-	
-	private Date lastUpdated;
+	private Long measureId;
+	private String fileName;
+	@Column(columnDefinition="Blob") private byte[] fileBytes;
+	@Column(updatable=false,insertable=false) private Date lastUpdated;
 	
 	public Long getMeasureId() {
 		return this.measureId;

@@ -5,19 +5,18 @@ import java.util.Date;
 import javax.persistence.*;
 
 @Entity
-@Table(name = "t_job")
 public class Job {
 
 	@Id
 	@GeneratedValue(strategy=GenerationType.IDENTITY)
-	@Column(name="job_id") private Long jobId;
-	@Column(name="job_name") private String jobName;
-	@Column(name="process_type", nullable=false) private String processType;
-	@Column(name="order_id") private Integer orderId;
-	@Column(name="status") private String status;
-	@Column(name="start_time") private Date startTime;
-	@Column(name="end_time") private Date endTime;
-	@Column(name="last_updated",updatable=false,insertable=false) private Date lastUpdated;
+	private Long jobId;
+	private String jobName;
+	@Column(nullable=false) private String processType;
+	private Integer orderId;
+	private String status;
+	private Date startTime;
+	private Date endTime;
+	@Column(updatable=false,insertable=false) private Date lastUpdated;
 	
 	public Long getJobId() {
 		return jobId;

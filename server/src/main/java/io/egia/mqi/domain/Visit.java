@@ -6,55 +6,54 @@ import java.util.Date;
 import javax.persistence.*;
 
 @Entity
-@Table(name = "t_visit")
 public class Visit implements Serializable {
 
 	private static final long serialVersionUID = 1L;
 
 	@Id
 	@GeneratedValue(strategy=GenerationType.IDENTITY)
-	@Column(name="visit_id") private Long visitId;
+	private Long visitId;
 	@Column(name="patient_id") private Long patientId;
-	@Column(name="date_of_service") private Date dateOfService;
-	@Column(name="admit_dt") private Date admitDt;
-	@Column(name="discharge_dt") private Date dischargeDt;
-	@Column(name="covered_days") private Integer coveredDays;
-	@Column(name="cpt") private String cpt;
-	@Column(name="cpt2") private String cpt2;
-	@Column(name="cpt_mod1") private String cptMod1;
-	@Column(name="cpt_mod2") private String cptMod2;
-	@Column(name="hcpcs") private String hcpcs;
-	@Column(name="diag1") private String diag1;
-	@Column(name="diag2") private String diag2;
-	@Column(name="diag3") private String diag3;
-	@Column(name="diag4") private String diag4;
-	@Column(name="diag5") private String diag5;
-	@Column(name="diag6") private String diag6;
-	@Column(name="diag7") private String diag7;
-	@Column(name="diag8") private String diag8;
-	@Column(name="diag9") private String diag9;
-	@Column(name="diag10") private String diag10;
-	@Column(name="proc1") private String proc1;
-	@Column(name="proc2") private String proc2;
-	@Column(name="proc3") private String proc3;
-	@Column(name="proc4") private String proc4;
-	@Column(name="proc5") private String proc5;
-	@Column(name="proc6") private String proc6;
-	@Column(name="proc7") private String proc7;
-	@Column(name="proc8") private String proc8;
-	@Column(name="proc9") private String proc9;
-	@Column(name="proc10") private String proc10;
-	@Column(name="icd_version") private Integer icdVersion;
-	@Column(name="drg") private String drg;
-	@Column(name="drg_version") private Integer drgVersion;
-	@Column(name="discharge_status") private Integer dischargeStatus;
-	@Column(name="ubrev") private String ubRev;
-	@Column(name="type_of_bill") private String typeOfBill;
-	@Column(name="units") private String units;
-	@Column(name="place_of_service") private String placeOfService;
-	@Column(name="denied") private Boolean denied;
-	@Column(name="provider_id") private String providerId;
-	@Column(name="supplemental") private Boolean supplemental;
+	private Date dateOfService;
+	private Date admitDt;
+	private Date dischargeDt;
+	private Integer coveredDays;
+	private String cpt;
+	private String cpt2;
+	private String cptMod1;
+	private String cptMod2;
+	private String hcpcs;
+	private String diag2;
+	private String diag1;
+	private String diag3;
+	private String diag4;
+	private String diag5;
+	private String diag6;
+	private String diag7;
+	private String diag8;
+	private String diag9;
+	private String diag10;
+	private String proc1;
+	private String proc2;
+	private String proc3;
+	private String proc4;
+	private String proc5;
+	private String proc6;
+	private String proc7;
+	private String proc8;
+	private String proc9;
+	private String proc10;
+	private Integer icdVersion;
+	private String drg;
+	private Integer drgVersion;
+	private Integer dischargeStatus;
+	private String ubRev;
+	private String typeOfBill;
+	private String units;
+	private String placeOfService;
+	private Boolean denied;
+	private String providerId;
+	private Boolean supplemental;
 	
 	@OneToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name="patient_id",updatable=false,insertable=false)

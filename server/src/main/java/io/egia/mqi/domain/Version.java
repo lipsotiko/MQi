@@ -5,13 +5,11 @@ import java.io.Serializable;
 import javax.persistence.*;
 
 @Entity
-@Table(name = "t_version")
 public class Version implements Serializable {
 
 	private static final long serialVersionUID = 1L;
 	
-	@Id 
-	@Column(name="version_id") private String versionId;
+	@Id private String versionId;
 	@Transient private int majorVersion;	
 	@Transient private int minorVersion;	
 	@Transient private int patchVersion;

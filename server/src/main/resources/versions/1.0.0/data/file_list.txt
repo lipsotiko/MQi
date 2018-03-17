@@ -1,2 +1,2 @@
-t_patient.sql
-t_visit.sql
+patient.sql
+visit.sql
