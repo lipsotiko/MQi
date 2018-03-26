@@ -1,5 +1,6 @@
 # Compiled source #
 ###################
+build
 target
 node_modules
 *.com
@@ -14,6 +15,7 @@ node_modules
 .classpath
 .project
 .idea
+.vscode
 
 # Packages #
 ############

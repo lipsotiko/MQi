@@ -1,38 +1,31 @@
 import * as React from 'react';
 import { Component } from 'react';
+import { MeasureEntity } from '../domain/Measure';
 
-interface State {
-    measures: JSON;
-}
+export default class Measures extends Component {
 
-interface Props {
-}
+    private measuresEntities: MeasureEntity[] = [];
 
-export default class Measures extends Component<Props, State> {
-
-    public state: State;
-
-    constructor(props: {}) {
-        super(props);
-        this.state = {
-            measures: JSON
-        };
-    }
-
-    componentDidMount() {
-        return fetch('http://localhost:8080/measure')
+    async componentDidMount() {
+        return await fetch('/measure')
             .then(response => response.json())
-            .then(measures => this.setState({measures}));
+            .then(measuresJsonArray => measuresJsonArray.map((measureJson: JSON) => {
+                this.measuresEntities.push(MeasureEntity.fromJSON(measureJson));
+            }));
     }
 
     render() {
+
+        const measureNames = this.measuresEntities.map((measureEntity, i) => {
+            return(<li key={i}>{measureEntity.measure.name}</li>);
+        });
+
         return (
             <div>
                 <h2>Measures</h2>
-                <p>{JSON.stringify(this.state.measures)}</p>
-                {/*{this.state.measures.map((m, i) =>*/}
-                    {/*<p key={i}>{i}. {m}</p>*/}
-                {/*)}*/}
+                <ul>
+                    {measureNames}
+                </ul>
             </div>
         );
     }
