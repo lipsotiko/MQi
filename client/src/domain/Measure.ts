@@ -1,9 +1,9 @@
 export class MeasureEntity {
-    measureId: number;
+    measureId: Number;
     fileName: String;
     measure: Measure;
-    lastUpdatedFormated: String;
-
+    lastUpdatedFormated: Date;
+    
     static fromJSON(json: JSON): MeasureEntity {
         let measure = Object.create(MeasureEntity.prototype);
         return Object.assign(measure, json);
