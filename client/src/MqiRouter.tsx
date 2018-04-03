@@ -2,20 +2,23 @@ import * as React from 'react';
 import Jobs from './containers/Jobs';
 import Measures from './containers/Measures';
 import { BrowserRouter as Router, Switch, Route, Link } from 'react-router-dom';
+import './MqiRouter.scss';
 
 class MqiRouter extends React.Component {
     render() {
         return (
             <Router>
                 <div>
-                    <ul>
-                        <li><Link to={'/jobs'}>Jobs</Link></li>
-                        <li><Link to={'/measures'}>Measures</Link></li>
-                    </ul>
-                    <hr/>
+                    <div className="navigation">
+                        <ul>
+                            <li><Link to={'/jobs'}>Jobs</Link></li>
+                            <li><Link to={'/measures'}>Measures</Link></li>
+                        </ul>
+                    </div>
+                    <hr />
                     <Switch>
-                        <Route path="/jobs" component={Jobs}/>
-                        <Route path="/measures" component={Measures}/>
+                        <Route path="/jobs" component={Jobs} />
+                        <Route path="/measures" component={Measures} />
                     </Switch>
                 </div>
             </Router>
