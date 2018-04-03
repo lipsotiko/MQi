@@ -1,6 +1,6 @@
 export class MeasureEntity {
-    measureId: Number;
-    fileName: String;
+    measureId: number;
+    fileName: string;
     measure: Measure;
     lastUpdatedFormated: Date;
     
