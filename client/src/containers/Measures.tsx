@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { Component } from 'react';
 import { MeasureEntity } from '../domain/Measure';
+import MeasureList from './MeasureList';
 
 interface Props {
 
@@ -11,7 +12,6 @@ interface State {
 }
 
 export default class Measures extends Component<Props, State> {
-
     constructor(props: Props) {
         super(props);
         this.state = { measuresEntities: [] };
@@ -22,20 +22,19 @@ export default class Measures extends Component<Props, State> {
         await fetch('/measure')
             .then(response => response.json())
             .then(measuresJsonArray => {
-                let mE: MeasureEntity[] = [];
+                let me: MeasureEntity[] = [];
 
                 measuresJsonArray.map((measureJson: JSON) => {
-                    mE.push(MeasureEntity.fromJSON(measureJson));
+                    me.push(MeasureEntity.fromJSON(measureJson));
                 });
 
                 this.setState({
-                    measuresEntities: mE
+                    measuresEntities: me
                 });
             });
     }
 
     render() {
-
         const measureNames = this.state.measuresEntities.map(measureEntity => {
             return(<li key={measureEntity.measureId}>{measureEntity.measure.name}</li>);
         });
@@ -46,6 +45,8 @@ export default class Measures extends Component<Props, State> {
                 <ul>
                     {measureNames}
                 </ul>
+                <hr />
+                <MeasureList />
             </div>
         );
     }

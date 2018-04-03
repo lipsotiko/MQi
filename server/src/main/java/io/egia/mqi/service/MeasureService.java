@@ -107,4 +107,8 @@ public class MeasureService {
     public Integer getPatientCount() {
         return measureWorkspace.getPatientCount();
     }
+
+    public List<MeasureListItem> getMeasureList() {
+        return measureRepository.findAllMeasureListItems();
+    }
 }

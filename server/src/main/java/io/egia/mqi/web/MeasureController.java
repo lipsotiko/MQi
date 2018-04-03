@@ -1,5 +1,6 @@
 package io.egia.mqi.web;
 
+import io.egia.mqi.domain.MeasureListItem;
 import org.springframework.web.bind.annotation.RestController;
 
 import io.egia.mqi.domain.Measure;
@@ -24,6 +25,11 @@ public class MeasureController {
         } else {
             return measureService.getMeasure(Long.parseLong(measureId));
         }
+    }
+
+    @RequestMapping("/measure_list")
+    public List<MeasureListItem> measureList() {
+        return measureService.getMeasureList();
     }
 
     @RequestMapping("/process")
