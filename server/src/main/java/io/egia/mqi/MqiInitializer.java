@@ -11,18 +11,16 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.hibernate.engine.jdbc.spi.SqlExceptionHelper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationListener;
 import org.springframework.context.event.ContextRefreshedEvent;
-import org.springframework.dao.InvalidDataAccessApiUsageException;
 import org.springframework.stereotype.Component;
 
-import io.egia.mqi.domain.Server;
-import io.egia.mqi.domain.ServerRepository;
-import io.egia.mqi.domain.Version;
-import io.egia.mqi.domain.VersionRepository;
+import io.egia.mqi.server.Server;
+import io.egia.mqi.server.ServerRepository;
+import io.egia.mqi.version.Version;
+import io.egia.mqi.version.VersionRepository;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -90,7 +88,7 @@ public class MqiInitializer implements ApplicationListener<ContextRefreshedEvent
 			log.info("Egia Software Solutions, Inc");
 			log.info("Medical Quality Informatics ");
 			log.info(String.format("v%s", this.serverVersion));
-			log.info(String.format("Server Type: %s", this.serverType));
+			log.info(String.format("server Type: %s", this.serverType));
 			log.info(String.format("Home Direcotry: %s", this.homeDirectory));
 			log.info("--------------------------------------------------");
 		} catch (MqiExceptions e) {
@@ -108,7 +106,7 @@ public class MqiInitializer implements ApplicationListener<ContextRefreshedEvent
 		try {
             version = versionRepository.findAll();
         } catch(Exception e) {
-            log.info("Version table does not exist");
+            log.info("version table does not exist");
             dbManager.createVersionTable();
             version = versionRepository.findAll();
         }
@@ -117,7 +115,7 @@ public class MqiInitializer implements ApplicationListener<ContextRefreshedEvent
 			return version.get(0).getVersionId();
 		} else if (version.size() > 1) {
 			// This error should never occur, we expect only one record in the
-			// Version Repository.
+			// version Repository.
 			throw new MqiExceptions("There is more than one software version listed in the database.");
 		} else {
 			// If there is no version in the database, we will insert version

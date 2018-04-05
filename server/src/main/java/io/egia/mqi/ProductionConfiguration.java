@@ -8,8 +8,8 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
  
 @Configuration
 @EnableAutoConfiguration
-@ComponentScan("io.egia.mqi.service")
-@EnableJpaRepositories(basePackages = {"io.egia.mqi.domain"})
+@ComponentScan("io.egia.mqi")
+@EnableJpaRepositories(basePackages = {"io.egia.mqi"})
 @EnableTransactionManagement
 public class ProductionConfiguration {
 }

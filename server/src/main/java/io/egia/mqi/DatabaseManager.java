@@ -17,10 +17,10 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import io.egia.mqi.domain.Measure;
-import io.egia.mqi.domain.MeasureRepository;
-import io.egia.mqi.domain.Version;
-import io.egia.mqi.domain.VersionRepository;
+import io.egia.mqi.measure.Measure;
+import io.egia.mqi.measure.MeasureRepository;
+import io.egia.mqi.version.Version;
+import io.egia.mqi.version.VersionRepository;
 
 /**
  * 

@@ -14,13 +14,11 @@ import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseType;
 import org.springframework.orm.jpa.JpaVendorAdapter;
 import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
 import org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter;
-import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 @Configuration
 @EnableAutoConfiguration
-@ComponentScan("io.egia.mqi.service") 
-@EnableJpaRepositories(basePackages = {"io.egia.mqi.domain"})
-@EnableTransactionManagement
+@ComponentScan("io.egia.mqi")
+@EnableJpaRepositories(basePackages = {"io.egia.mqi"})
 public class StandaloneConfig {
 	
 	@Bean

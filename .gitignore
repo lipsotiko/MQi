@@ -16,6 +16,7 @@ node_modules
 .project
 .idea
 .vscode
+*.iml
 
 # Packages #
 ############
