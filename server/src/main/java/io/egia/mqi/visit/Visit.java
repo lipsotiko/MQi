@@ -1,7 +1,8 @@
 package io.egia.mqi.visit;
 
 import io.egia.mqi.chunk.Chunk;
-import io.egia.mqi.patient.PatientAbstract;
+import io.egia.mqi.patient.PatientData;
+import io.egia.mqi.patient.PatientRecordInterface;
 
 import java.io.Serializable;
 import java.util.Date;
@@ -9,7 +10,7 @@ import java.util.Date;
 import javax.persistence.*;
 
 @Entity
-public class Visit extends PatientAbstract implements Serializable {
+public class Visit implements PatientRecordInterface, Serializable {
 
 	private static final long serialVersionUID = 1L;
 
@@ -313,5 +314,10 @@ public class Visit extends PatientAbstract implements Serializable {
 	}
 	public void setSupplemental(boolean supplemental) {
 		this.supplemental = supplemental;
+	}
+
+	@Override
+	public void updatePatientData(PatientData patientData) {
+		patientData.addPatientRecord(this);
 	}
 }

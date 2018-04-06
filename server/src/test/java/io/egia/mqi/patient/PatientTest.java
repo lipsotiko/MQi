@@ -9,7 +9,7 @@ import static org.junit.Assert.assertEquals;
 
 @SpringBootTest(classes={Patient.class})
 public class PatientTest {
-	
+
 	Patient p = new Patient();
 	Chunk c = new Chunk();
 

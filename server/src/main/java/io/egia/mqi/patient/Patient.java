@@ -8,7 +8,7 @@ import java.util.Date;
 import javax.persistence.*;
 
 @Entity
-public class Patient extends PatientAbstract implements Serializable {
+public class Patient implements PatientRecordInterface, Serializable {
 
 	private static final long serialVersionUID = 1L;
 	
@@ -29,7 +29,7 @@ public class Patient extends PatientAbstract implements Serializable {
 	public Long getPatientId() {
 		return patientId;
 	}
-	
+
 	public void setPatientId(Long patientId) {
 		this.patientId = patientId;
 		chunk.setPatientId(patientId);
@@ -67,5 +67,10 @@ public class Patient extends PatientAbstract implements Serializable {
 	}
 	public void setChunk(Chunk chunk) {
 		this.chunk = chunk;
+	}
+
+	@Override
+	public void updatePatientData(PatientData patientData) {
+		patientData.addPatientRecord(this);
 	}
 }

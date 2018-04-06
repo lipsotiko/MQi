@@ -3,10 +3,10 @@ package io.egia.mqi.measure;
 import java.util.Hashtable;
 import java.util.List;
 
-import io.egia.mqi.patient.Patient;
-import io.egia.mqi.patient.PatientAbstract;
-import io.egia.mqi.visit.Visit;
+import io.egia.mqi.patient.PatientRecordInterface;
 import io.egia.mqi.patient.PatientData;
+import io.egia.mqi.patient.Patient;
+import io.egia.mqi.visit.Visit;
 
 /**
  * 
@@ -22,24 +22,21 @@ public class MeasureWorkspace {
     private Hashtable<Long, PatientData> patientDataHash = new Hashtable<>();
 
     public MeasureWorkspace(List<Patient> patients, List<Visit> visits) {
-        appendPatientData(patients);
-        appendPatientData(visits);
+        appendToPatientDataHash(patients);
+        appendToPatientDataHash(visits);
     }
 
-    private <T extends PatientAbstract> void appendPatientData(List<T> patientRecords) {
+    private <T extends PatientRecordInterface> void appendToPatientDataHash(List<T> patientRecords) {
         for (T t : patientRecords) {
-            PatientData tmp = patientDataHash.get(t.getPatientId());
-            if (tmp == null) {
-                tmp = new PatientData(t.getPatientId());
-            }
-            if(Patient.class.isInstance(t)) {
-                tmp.addPatientRecord((Patient) t);
+            PatientData patientData = patientDataHash.get(t.getPatientId());
+
+            if (patientData == null) {
+                patientData = new PatientData(t.getPatientId());
             }
 
-            if(Visit.class.isInstance(t)) {
-                tmp.addPatientRecord((Visit) t);
-            }
-            patientDataHash.put(t.getPatientId(), tmp);
+            t.updatePatientData(patientData);
+
+            patientDataHash.put(t.getPatientId(), patientData);
         }
     }
 

@@ -23,6 +23,7 @@ public class MeasureWorkspaceTest {
             Patient p = new Patient();
             p.setChunk(c);
             p.setPatientId(i);
+            p.setFirstName("vango");
             patients.add(p);
         }
 
