@@ -1,5 +1,16 @@
 package io.egia.mqi;
 
+import io.egia.mqi.server.Server;
+import io.egia.mqi.server.ServerRepository;
+import io.egia.mqi.version.Version;
+import io.egia.mqi.version.VersionRepository;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.ApplicationListener;
+import org.springframework.context.event.ContextRefreshedEvent;
+import org.springframework.stereotype.Component;
+
 import java.io.File;
 import java.io.IOException;
 import java.net.InetAddress;
@@ -10,20 +21,6 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.ApplicationListener;
-import org.springframework.context.event.ContextRefreshedEvent;
-import org.springframework.stereotype.Component;
-
-import io.egia.mqi.server.Server;
-import io.egia.mqi.server.ServerRepository;
-import io.egia.mqi.version.Version;
-import io.egia.mqi.version.VersionRepository;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import static java.nio.file.LinkOption.NOFOLLOW_LINKS;
 
@@ -42,16 +39,9 @@ import static java.nio.file.LinkOption.NOFOLLOW_LINKS;
 
 @Component
 public class MqiInitializer implements ApplicationListener<ContextRefreshedEvent> {
-
 	private Logger log = LoggerFactory.getLogger(MqiInitializer.class);
-
-	@Autowired
 	private VersionRepository versionRepository;
-
-	@Autowired
 	private ServerRepository serverRepository;
-
-	@Autowired
 	private DatabaseManager dbManager;
 
 	@Value("${mqi.properties.home.directory}")
@@ -73,6 +63,12 @@ public class MqiInitializer implements ApplicationListener<ContextRefreshedEvent
 	InetAddress serverIp;
 
 	private List<Version> versions = new ArrayList<Version>();
+
+	public MqiInitializer(VersionRepository versionRepository, ServerRepository serverRepository, DatabaseManager dbManager) {
+		this.versionRepository = versionRepository;
+		this.serverRepository = serverRepository;
+		this.dbManager = dbManager;
+	}
 
 	@Override
 	public void onApplicationEvent(ContextRefreshedEvent event) {

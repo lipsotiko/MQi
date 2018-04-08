@@ -1,19 +1,16 @@
 package io.egia.mqi.measure;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonRawValue;
+import org.json.JSONObject;
+
+import javax.persistence.*;
 import java.io.Serializable;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-import javax.persistence.*;
-
-import org.json.JSONObject;
-
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonRawValue;
-
 @Entity
 public class Measure implements Serializable {
-
 	private static final long serialVersionUID = 1L;
 	
 	@Id

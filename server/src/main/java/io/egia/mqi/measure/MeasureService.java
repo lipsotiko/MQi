@@ -1,9 +1,5 @@
 package io.egia.mqi.measure;
 
-import java.net.InetAddress;
-import java.net.UnknownHostException;
-import java.util.List;
-
 import io.egia.mqi.chunk.ChunkRepository;
 import io.egia.mqi.job.JobRepository;
 import io.egia.mqi.patient.Patient;
@@ -14,9 +10,12 @@ import io.egia.mqi.visit.Visit;
 import io.egia.mqi.visit.VisitRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+
+import java.net.InetAddress;
+import java.net.UnknownHostException;
+import java.util.List;
 
 /*
  *
@@ -31,37 +30,31 @@ import org.springframework.stereotype.Service;
 @Service
 public class MeasureService {
     private Logger log = LoggerFactory.getLogger(MeasureService.class);
-
-    @Autowired
     private MeasureRepository measureRepository;
-
-    @Autowired
     private ChunkRepository chunkRepository;
-
-    @Autowired
     private JobRepository jobRepository;
-
-    @Autowired
     private ServerRepository serverRepository;
-
-    @Autowired
     private PatientRepository patientRepository;
-
-    @Autowired
     private VisitRepository visitRepository;
+
+    public MeasureService(MeasureRepository measureRepository
+            , ChunkRepository chunkRepository
+            , JobRepository jobRepository
+            , ServerRepository serverRepository
+            , PatientRepository patientRepository
+            , VisitRepository visitRepository) {
+        this.measureRepository = measureRepository;
+        this.chunkRepository = chunkRepository;
+        this.jobRepository = jobRepository;
+        this.serverRepository = serverRepository;
+        this.patientRepository = patientRepository;
+        this.visitRepository = visitRepository;
+    }
 
     @Value("${server.port}")
     private String serverPort;
 
     MeasureWorkspace measureWorkspace;
-
-    public List<Measure> getMeasure() {
-        return measureRepository.findAll();
-    }
-
-    public List<Measure> getMeasure(Long measureId) {
-        return measureRepository.findByMeasureId(measureId);
-    }
 
     public void measureProcess() throws InterruptedException {
         Long jobId;
@@ -69,7 +62,7 @@ public class MeasureService {
         String serverName;
         InetAddress serverIp;
 
-        //This process needs to be refined to work across several servers
+        //TODO: This process needs to be refined to work across several servers
         try {
             serverIp = InetAddress.getLocalHost();
             serverName = serverIp.getHostName();
@@ -87,7 +80,6 @@ public class MeasureService {
 
             //This will be put into a loop until there are no more chunks available
             if (chunkId != null) {
-
                 log.info(String.format("Populating chunk id: %s into measure workspace.", chunkId));
                 List<Patient> patients = patientRepository.findByServerIdAndChunkId(serverId, chunkId);
                 List<Visit> visits = visitRepository.findByServerIdAndChunkId(serverId, chunkId);
@@ -104,13 +96,5 @@ public class MeasureService {
             // TODO Auto-generated catch block
             e.printStackTrace();
         }
-    }
-
-    public Integer getPatientCount() {
-        return measureWorkspace.getPatientCount();
-    }
-
-    public List<MeasureListItem> getMeasureList() {
-        return measureRepository.findAllMeasureListItems();
     }
 }

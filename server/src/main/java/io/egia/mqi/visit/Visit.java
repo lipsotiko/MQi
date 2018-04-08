@@ -4,14 +4,12 @@ import io.egia.mqi.chunk.Chunk;
 import io.egia.mqi.patient.PatientData;
 import io.egia.mqi.patient.PatientRecordInterface;
 
+import javax.persistence.*;
 import java.io.Serializable;
 import java.util.Date;
 
-import javax.persistence.*;
-
 @Entity
 public class Visit implements PatientRecordInterface, Serializable {
-
 	private static final long serialVersionUID = 1L;
 
 	@Id

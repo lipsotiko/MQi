@@ -156,7 +156,8 @@ public class MeasureServiceTest {
 	@After
 	public void validateAndTearDown() {
 		//validate results
-		assertEquals(1, measureService.getPatientCount().intValue());
+		int patientCount = measureService.measureWorkspace.getPatientDataHash().size();
+		assertEquals(1, patientCount);
 	}
 	
 }

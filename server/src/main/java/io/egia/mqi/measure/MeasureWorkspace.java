@@ -1,12 +1,12 @@
 package io.egia.mqi.measure;
 
+import io.egia.mqi.patient.Patient;
+import io.egia.mqi.patient.PatientData;
+import io.egia.mqi.patient.PatientRecordInterface;
+import io.egia.mqi.visit.Visit;
+
 import java.util.Hashtable;
 import java.util.List;
-
-import io.egia.mqi.patient.PatientRecordInterface;
-import io.egia.mqi.patient.PatientData;
-import io.egia.mqi.patient.Patient;
-import io.egia.mqi.visit.Visit;
 
 /**
  * 
@@ -18,7 +18,6 @@ import io.egia.mqi.visit.Visit;
  */
 
 public class MeasureWorkspace {
-
     private Hashtable<Long, PatientData> patientDataHash = new Hashtable<>();
 
     public MeasureWorkspace(List<Patient> patients, List<Visit> visits) {
@@ -42,10 +41,6 @@ public class MeasureWorkspace {
 
     public Hashtable<Long, PatientData> getPatientDataHash() {
         return this.patientDataHash;
-    }
-
-    public Integer getPatientCount() {
-        return patientDataHash.size();
     }
 
     public void clear() {

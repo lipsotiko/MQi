@@ -52,12 +52,14 @@ public class MeasureWorkspaceTest {
 
     @Test
     public void getPatientCount() {
-        assertThat(measureWorkspace.getPatientCount()).isEqualTo(5);
+        int patientCount = measureWorkspace.getPatientDataHash().size();
+        assertThat(patientCount).isEqualTo(5);
     }
 
     @Test
     public void clearMeasureWorkspace() {
         measureWorkspace.clear();
-        assertThat(measureWorkspace.getPatientCount()).isEqualTo(0);
+        int patientCount = measureWorkspace.getPatientDataHash().size();
+        assertThat(patientCount).isEqualTo(0);
     }
 }

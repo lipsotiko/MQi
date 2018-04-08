@@ -1,9 +1,9 @@
 package io.egia.mqi.patient;
 
+import io.egia.mqi.visit.Visit;
+
 import java.util.ArrayList;
 import java.util.List;
-
-import io.egia.mqi.visit.Visit;
 
 /**
  * @author vango
@@ -14,7 +14,6 @@ import io.egia.mqi.visit.Visit;
  */
 
 public class PatientData {
-
     private Long patientId;
 
     private List<Patient> patients = new ArrayList<>();

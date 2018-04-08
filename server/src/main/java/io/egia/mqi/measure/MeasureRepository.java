@@ -8,11 +8,8 @@ import java.util.List;
 
 @Repository
 public interface MeasureRepository extends JpaRepository<Measure, String> {
-
 	List<Measure> findByMeasureId(Long measureId);
-
 
 	@Query(value="select new io.egia.mqi.measure.MeasureListItem(m.measureId, m.fileName) from Measure m")
 	List<MeasureListItem> findAllMeasureListItems();
-	
 }

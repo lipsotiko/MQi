@@ -1,13 +1,11 @@
 package io.egia.mqi.server;
 
+import javax.persistence.*;
 import java.io.Serializable;
 import java.util.Date;
 
-import javax.persistence.*;
-
 @Entity
 public class Server implements Serializable {
-
 	private static final long serialVersionUID = 1L;
 	
 	@Id 

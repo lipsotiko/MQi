@@ -1,8 +1,7 @@
 package io.egia.mqi.job;
 
-import java.util.Date;
-
 import javax.persistence.*;
+import java.util.Date;
 
 @Entity
 public class Job {
