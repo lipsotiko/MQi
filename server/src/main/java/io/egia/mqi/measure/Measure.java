@@ -2,7 +2,6 @@ package io.egia.mqi.measure;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonRawValue;
-import org.json.JSONObject;
 
 import javax.persistence.*;
 import java.io.Serializable;
@@ -16,42 +15,45 @@ public class Measure implements Serializable {
 	@Id
 	@GeneratedValue(strategy=GenerationType.IDENTITY)
 	private Long measureId;
-	private String fileName;
-	@Column(columnDefinition="Blob") private byte[] fileBytes;
+	private String measureName;
+	private String measureLogic;
+
 	@Column(updatable=false,insertable=false) private Date lastUpdated;
 	
 	public Long getMeasureId() {
 		return this.measureId;
 	}
-	
-	public String getFileName() {
-		return fileName;
+
+	public Long setMeasureId() {
+		return this.measureId;
 	}
 
-	public void setFileName(String fileName) {
-		this.fileName = fileName;
+	public String getMeasureName() {
+		return measureName;
 	}
 
-	@JsonIgnore
-	public byte[] getFileBytes() {
-		return fileBytes;
+	public void setMeasureName(String measureName) {
+		this.measureName = measureName;
 	}
 
-	public void setFileBytes(byte[] fileBytes) {
-		this.fileBytes = fileBytes;
-	}
-	
 	@JsonRawValue
-	public String getMeasure() {
-		JSONObject jsonObject = new JSONObject(new String(fileBytes));
-		return jsonObject.toString();
+	public String getMeasureLogic() {
+		return measureLogic;
+	}
+
+	public void setMeasureLogic(String measureLogic) {
+		this.measureLogic = measureLogic;
 	}
 	
 	@JsonIgnore
 	public Date getLastUpdated() {
 		return lastUpdated;
 	}
-	
+
+	public void setLastUpdated(Date lastUpdated) {
+		this.lastUpdated = lastUpdated;
+	}
+
 	public String getLastUpdatedFormated() {
 		SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd:HH:mm:SS");
 		return DATE_FORMAT.format(lastUpdated).toString();

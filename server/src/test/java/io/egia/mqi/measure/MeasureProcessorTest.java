@@ -44,7 +44,7 @@ public class MeasureProcessorTest {
 
         for (Integer i = 1; i <= 3; i++) {
             Measure measure = new Measure();
-            measure.setFileName("Measure " + i.toString() + ".json");
+            measure.setMeasureName("Measure " + i.toString() + ".json");
             measures.add(measure);
         }
 
@@ -56,23 +56,20 @@ public class MeasureProcessorTest {
         Hashtable<Long, PatientData> patientDataHash = measureProcessor.getPatientDataHash();
         Set<Long> keys = patientDataHash.keySet();
         Iterator<Long> itr = keys.iterator();
-        Long lng;
+        Long patientId;
+
+        int patientCount = measureProcessor.getPatientDataHash().size();
+        assertThat(patientCount).isEqualTo(5);
 
         while (itr.hasNext()) {
-            lng = itr.next();
-            assertThat(patientDataHash.get(lng).getVisitCount()).isEqualTo(20);
+            patientId = itr.next();
+            assertThat(patientDataHash.get(patientId).getVisitCount()).isEqualTo(20);
         }
     }
 
     @Test
     public void callProcess(){
         measureProcessor.process();
-    }
-
-    @Test
-    public void getPatientCount() {
-        int patientCount = measureProcessor.getPatientDataHash().size();
-        assertThat(patientCount).isEqualTo(5);
     }
 
     @Test

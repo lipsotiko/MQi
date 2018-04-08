@@ -19,7 +19,7 @@ export default class Measures extends Component<Props, State> {
     }
 
     async componentDidMount() {
-        await fetch('/measure')
+        await fetch('/measures') // TODO: replace with specified measure "/measure?measure_id=2"
             .then(response => response.json())
             .then(measuresJsonArray => {
                 let me: MeasureEntity[] = [];
@@ -36,7 +36,7 @@ export default class Measures extends Component<Props, State> {
 
     render() {
         const measureNames = this.state.measuresEntities.map(measureEntity => {
-            return(<li key={measureEntity.measureId}>{measureEntity.measure.name}</li>);
+            return(<li key={measureEntity.measureId}>{measureEntity.measureLogic.description}</li>);
         });
 
         return (

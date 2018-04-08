@@ -11,9 +11,8 @@ import java.util.Hashtable;
 import java.util.List;
 
 /**
- * 
  * @author vango
- *
+ * <p>
  * The purpose of this class is to make all patient data within
  * a chunk available to rules for the purposes of applying measure
  * logic and storing measure results.
@@ -33,18 +32,21 @@ public class MeasureProcessor {
     }
 
     public void process() {
-        measures.forEach((m)-> log.info(String.format("Processing measure: %s, with chunk id: %s", m.getFileName(), chunkId)));
+        this.patientDataHash.forEach((pid, patient) ->
+                this.measures.forEach((m) ->
+                        log.info(String.format("Processing chunkId: %s, patient id: %s, measure: %s"
+                                , this.chunkId, pid, m.getMeasureName()))));
     }
 
     private <T extends PatientRecordInterface> void appendToPatientDataHash(List<T> patientRecords) {
         for (T t : patientRecords) {
-            PatientData patientData = patientDataHash.get(t.getPatientId());
+            PatientData patientData = this.patientDataHash.get(t.getPatientId());
             if (patientData == null) {
                 patientData = new PatientData(t.getPatientId());
             }
 
             t.updatePatientData(patientData);
-            patientDataHash.put(t.getPatientId(), patientData);
+            this.patientDataHash.put(t.getPatientId(), patientData);
         }
     }
 
@@ -53,8 +55,8 @@ public class MeasureProcessor {
     }
 
     public void clear() {
-        chunkId = null;
-        measures.clear();
-        patientDataHash.clear();
+        this.chunkId = null;
+        this.measures.clear();
+        this.patientDataHash.clear();
     }
 }

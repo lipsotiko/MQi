@@ -1,6 +1,6 @@
 export class MeasureListItem {
     measureId: number;
-    fileName: string;
+    measureName: string;
 
     static fromJSON(json: JSON): MeasureListItem {
         let measure = Object.create(MeasureListItem.prototype);

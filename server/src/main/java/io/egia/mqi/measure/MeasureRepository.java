@@ -11,7 +11,7 @@ import java.util.List;
 public interface MeasureRepository extends JpaRepository<Measure, String> {
 	Measure findOneByMeasureId(Long measureId);
 
-	@Query(value="select new io.egia.mqi.measure.MeasureListItem(m.measureId, m.fileName) from Measure m")
+	@Query(value="select new io.egia.mqi.measure.MeasureListItem(m.measureId, m.measureName) from Measure m")
 	List<MeasureListItem> findAllMeasureListItems();
 
 	@Query(value = "select m from Measure m join JobMeasure jm on m.measureId = jm.measureId where jm.jobId = :id")

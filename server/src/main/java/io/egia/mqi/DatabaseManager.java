@@ -14,6 +14,7 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * @author vango
@@ -31,7 +32,6 @@ public class DatabaseManager {
     private Logger log = LoggerFactory.getLogger(DatabaseManager.class);
     private String versionsDbDirectory;
     private String[] dbObjects = {"func", "table", "view", "proc", "data", "meas"};
-    private String objectsDirecotry;
     private SqlExecutor sqlExec;
     private MeasureRepository measureRepository;
     private VersionRepository versionRepository;
@@ -68,7 +68,7 @@ public class DatabaseManager {
     }
 
     public void dropVersionTable() {
-        log.info("Drop the version table");
+        log.info("Drop the version table if it exists");
         sqlExec.execute("drop table if exists version;");
     }
 
@@ -83,18 +83,18 @@ public class DatabaseManager {
     public void importMeasures(String measuresDirecotry) {
         File measuresDirectory = new File(measuresDirecotry);
 
-        for (final File f : measuresDirectory.listFiles()) {
+        for (final File f : Objects.requireNonNull(measuresDirectory.listFiles())) {
             if (!f.isDirectory()) {
                 Measure m = new Measure();
-                m.setFileName(f.getName());
-                m.setFileBytes(getMeasureFileBytes(measuresDirecotry, f).getBytes());
+                m.setMeasureName(f.getName());
+                m.setMeasureLogic(getMeasureFileAsString(measuresDirecotry, f));
                 measureRepository.saveAndFlush(m);
             }
         }
     }
 
-    private String getMeasureFileBytes(String measuresDirecotry, File f) {
-        return getFileContentAsString(measuresDirecotry + File.separator + f.getName()).toString();
+    private String getMeasureFileAsString(String measuresDirecotry, File f) {
+        return getFileContentAsString(measuresDirecotry + File.separator + f.getName());
     }
 
     public void applySqlScripts(String objectsDirecotry) {

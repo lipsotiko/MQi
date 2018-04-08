@@ -35,7 +35,7 @@ export default class MeasureList extends Component<Props, State> {
 
     render() {
         const measureList = this.state.measureListItems.map(mli => {
-            return(<li key={mli.measureId}>{mli.fileName.replace('.json', '')}</li>);
+            return(<li key={mli.measureId}>{mli.measureName.replace('.json', '')}</li>);
         });
 
         return (

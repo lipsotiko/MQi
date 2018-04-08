@@ -2,11 +2,11 @@ package io.egia.mqi.measure;
 
 public class MeasureListItem {
     private Long measureId;
-    private String fileName;
+    private String measureName;
 
-    public MeasureListItem(Long measureId, String fileName) {
+    public MeasureListItem(Long measureId, String measureName) {
         this.measureId = measureId;
-        this.fileName = fileName;
+        this.measureName = measureName;
     }
 
     public Long getMeasureId() {
@@ -17,11 +17,11 @@ public class MeasureListItem {
         this.measureId = measureId;
     }
 
-    public String getFileName() {
-        return fileName;
+    public String getMeasureName() {
+        return measureName;
     }
 
-    public void setFileName(String fileName) {
-        this.fileName = fileName;
+    public void setMeasureName(String measureName) {
+        this.measureName = measureName;
     }
 }

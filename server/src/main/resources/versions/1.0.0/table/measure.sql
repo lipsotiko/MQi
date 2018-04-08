@@ -1,8 +1,8 @@
 drop table if exists measure;
 create table if not exists measure (
 	measure_id serial primary key,
-	file_name varchar(100),
-	file_bytes bytea,
+	measure_name varchar(100),
+	measure_logic text,
 	last_updated timestamp default current_timestamp
 );
 
