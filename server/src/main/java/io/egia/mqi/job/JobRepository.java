@@ -13,7 +13,7 @@ public interface JobRepository extends JpaRepository<Job, Long> {
 	Job findByJobName(String jobName);
 	
 	List<Job> findByStatusOrderByOrderIdAsc(String status);
-	
+
 	@Modifying
 	@Transactional
 	@Query(value="update Job j set j.status = ?2 where j.jobId = ?1")

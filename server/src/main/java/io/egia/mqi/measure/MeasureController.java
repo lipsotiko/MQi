@@ -16,13 +16,14 @@ public class MeasureController {
         this.measureRepository = measureRepository;
     }
 
+    @RequestMapping("/measures")
+    public List<Measure> measures() {
+        return measureRepository.findAll();
+    }
+
     @RequestMapping("/measure")
-    public List<Measure> measure(@RequestParam(value = "measure_id", defaultValue = "all") String measureId) {
-        if (measureId.equals("all")) {
-            return measureRepository.findAll();
-        } else {
-            return measureRepository.findByMeasureId(Long.parseLong(measureId));
-        }
+    public Measure measure(@RequestParam(value = "measure_id") String measureId) {
+        return measureRepository.findOneByMeasureId(Long.parseLong(measureId));
     }
 
     @RequestMapping("/measure_list")
@@ -32,14 +33,7 @@ public class MeasureController {
 
     @RequestMapping("/process")
     public String process() {
-
-        try {
-            measureService.measureProcess();
-        } catch (InterruptedException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }
-
+        measureService.measureProcess();
         return "measure Process";
     }
 }

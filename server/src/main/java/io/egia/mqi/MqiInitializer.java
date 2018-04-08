@@ -1,7 +1,7 @@
 package io.egia.mqi;
 
 import io.egia.mqi.server.Server;
-import io.egia.mqi.server.ServerRepository;
+import io.egia.mqi.server.ServerService;
 import io.egia.mqi.version.Version;
 import io.egia.mqi.version.VersionRepository;
 import org.slf4j.Logger;
@@ -12,8 +12,6 @@ import org.springframework.context.event.ContextRefreshedEvent;
 import org.springframework.stereotype.Component;
 
 import java.io.File;
-import java.io.IOException;
-import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.nio.file.DirectoryStream;
 import java.nio.file.FileSystems;
@@ -41,8 +39,8 @@ import static java.nio.file.LinkOption.NOFOLLOW_LINKS;
 public class MqiInitializer implements ApplicationListener<ContextRefreshedEvent> {
 	private Logger log = LoggerFactory.getLogger(MqiInitializer.class);
 	private VersionRepository versionRepository;
-	private ServerRepository serverRepository;
 	private DatabaseManager dbManager;
+	private ServerService serverService;
 
 	@Value("${mqi.properties.home.directory}")
 	private String homeDirectory;
@@ -58,16 +56,12 @@ public class MqiInitializer implements ApplicationListener<ContextRefreshedEvent
 
 	private String currentDatabaseVersion;
 
-	private String serverName;
-
-	InetAddress serverIp;
-
 	private List<Version> versions = new ArrayList<Version>();
 
-	public MqiInitializer(VersionRepository versionRepository, ServerRepository serverRepository, DatabaseManager dbManager) {
+	public MqiInitializer(VersionRepository versionRepository, DatabaseManager dbManager, ServerService serverService) {
 		this.versionRepository = versionRepository;
-		this.serverRepository = serverRepository;
 		this.dbManager = dbManager;
+		this.serverService = serverService;
 	}
 
 	@Override
@@ -162,54 +156,47 @@ public class MqiInitializer implements ApplicationListener<ContextRefreshedEvent
 		// The installer will prevent two primary servers from being added to
 		// the same environment. But the application verifies that's the case.
 		try {
-			serverIp = InetAddress.getLocalHost();
-			serverName = serverIp.getHostName();
-			
-			List<Server> thisServer = serverRepository.findByServerNameAndServerPort(serverName, serverPort);
-			List<Server> primaryServer = serverRepository.findByServerType("primary");
-			
-			Server s = new Server();
-			s.setServerName(serverName);
-			s.setServerPort(serverPort);
-			s.setServerType(serverType);
-			s.setServerVersion(serverVersion);
+			Server thisServer = serverService.getServerFromHostNameAndPort(serverPort);
+			Server primaryServer = serverService.getPrimaryServer();
 
-			if (serverType.equals("primary") && primaryServer.size() <= 1) {
-				if (thisServer.size() == 1) {
+			if (serverType.equals("primary")) {
+				if (thisServer != null && primaryServer != null) {
 					log.info("This server already exists in the server table, updating entry.");
-					serverRepository.updateServer(thisServer.get(0).getServerId(), serverType, serverVersion);
-				} else if (thisServer.size() < 1 && primaryServer.size() != 1) {
+					serverService.updateServerTypeAndVersion(thisServer, serverType, serverVersion);
+				} else if (thisServer == null && primaryServer == null) {
 					log.info("Primary server does not exist in the server table, adding entry.");
-					serverRepository.saveAndFlush(s);
+					serverService.saveServer(buildNewServer(serverService.thisServersHostName()));
 				}
 			} else if (serverType.equals("secondary")) {
-				if (thisServer.size() == 1) {
+				if (thisServer != null) {
 					log.info("This server already exists in the server table, updating entry.");
-					serverRepository.updateServer(thisServer.get(0).getServerId(), serverType, serverVersion);
-				} else if (thisServer.size() < 1) {
+                    serverService.updateServerTypeAndVersion(thisServer, serverType, serverVersion);
+				} else if (thisServer == null) {
 					log.info("Secondary server does not exist in the server table, adding entry.");
-					serverRepository.saveAndFlush(s);
+                    serverService.saveServer(buildNewServer(serverService.thisServersHostName()));
 				} else {
-					throw new MqiExceptions("There is more than one entry for this server in the server table. Please remove one of the entries.");
+					throw new MqiExceptions("There is more than one entry for this server in the server table. " +
+                            "Please remove one of the entries.");
 				}
-			} else if (primaryServer.size() <= 2){
-				throw new MqiExceptions("There is more than one primary server entry in the server table. Please remove one of the entries");
 			}
 		} catch (UnknownHostException e) {
 			e.printStackTrace();
 		}
 	}
 
-	private List<Version> retrieveVersions() {
+	private Server buildNewServer(String hostName) {
+        Server server = new Server();
+        server.setServerName(hostName);
+        server.setServerPort(serverPort);
+        server.setServerType(serverType);
+        server.setServerVersion(serverVersion);
+        return server;
+    }
+
+    private List<Version> retrieveVersions() {
 		log.info("Retrieving versions from home/updates directory");
-
 		Path updatesPath = FileSystems.getDefault().getPath(homeDirectory + File.separator + "versions");
-
-		DirectoryStream.Filter<Path> dir_filter = new DirectoryStream.Filter<Path>() {
-			public boolean accept(Path path) throws IOException {
-				return (Files.isDirectory(path, NOFOLLOW_LINKS));
-			}
-		};
+		DirectoryStream.Filter<Path> dir_filter = path -> (Files.isDirectory(path, NOFOLLOW_LINKS));
 
 		try (DirectoryStream<Path> stream = Files.newDirectoryStream(updatesPath, dir_filter)) {
 			for (Path file : stream) {
@@ -223,7 +210,6 @@ public class MqiInitializer implements ApplicationListener<ContextRefreshedEvent
 		}
 
 		versions.sort((vA, vB) -> vA.compareTo(vB));
-
 		return versions;
 	}
 }

@@ -6,21 +6,28 @@ import io.egia.mqi.patient.PatientData;
 import io.egia.mqi.visit.Visit;
 import org.junit.Before;
 import org.junit.Test;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.*;
 
 import static org.assertj.core.api.Java6Assertions.assertThat;
 
-public class MeasureWorkspaceTest {
+public class MeasureProcessorTest {
     List<Patient> patients = new ArrayList<>();
     List<Visit> visits = new ArrayList<>();
-    Chunk c = new Chunk();
-    MeasureWorkspace measureWorkspace;
+
+    Long chunkId = 1L;
+
+    @Autowired
+    MeasureRepository measureRepository;
+    MeasureProcessor measureProcessor;
+    List<Measure> measures = new ArrayList<>();
 
     @Before
     public void setUp() {
         for (Long i = 1L; i <= 5; i++) {
             Patient p = new Patient();
+            Chunk c = new Chunk();
             p.setChunk(c);
             p.setPatientId(i);
             p.setFirstName("vango");
@@ -34,12 +41,19 @@ public class MeasureWorkspaceTest {
                 visits.add(v);
             }
         }
-        measureWorkspace = new MeasureWorkspace(patients, visits);
+
+        for (Integer i = 1; i <= 3; i++) {
+            Measure measure = new Measure();
+            measure.setFileName("Measure " + i.toString() + ".json");
+            measures.add(measure);
+        }
+
+        measureProcessor = new MeasureProcessor(chunkId, measures, patients, visits);
     }
 
     @Test
     public void validatePatientDataHash() {
-        Hashtable<Long, PatientData> patientDataHash = measureWorkspace.getPatientDataHash();
+        Hashtable<Long, PatientData> patientDataHash = measureProcessor.getPatientDataHash();
         Set<Long> keys = patientDataHash.keySet();
         Iterator<Long> itr = keys.iterator();
         Long lng;
@@ -51,15 +65,20 @@ public class MeasureWorkspaceTest {
     }
 
     @Test
+    public void callProcess(){
+        measureProcessor.process();
+    }
+
+    @Test
     public void getPatientCount() {
-        int patientCount = measureWorkspace.getPatientDataHash().size();
+        int patientCount = measureProcessor.getPatientDataHash().size();
         assertThat(patientCount).isEqualTo(5);
     }
 
     @Test
     public void clearMeasureWorkspace() {
-        measureWorkspace.clear();
-        int patientCount = measureWorkspace.getPatientDataHash().size();
+        measureProcessor.clear();
+        int patientCount = measureProcessor.getPatientDataHash().size();
         assertThat(patientCount).isEqualTo(0);
     }
 }

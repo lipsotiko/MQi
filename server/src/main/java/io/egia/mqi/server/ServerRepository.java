@@ -6,13 +6,12 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
-
 @Repository
 public interface ServerRepository extends JpaRepository<Server, Long> {
-	List<Server> findByServerNameAndServerPort(String serverName, String serverPort);
-	List<Server> findByServerType(String serverType);
-	
+	Server findOneByServerNameAndServerPort(String serverName, String serverPort);
+
+	Server findOneByServerType(String serverType);
+
 	@Modifying
 	@Transactional
 	@Query(value="update Server s set s.serverType = ?2, s.serverVersion = ?3 where s.serverId = ?1")

@@ -28,6 +28,6 @@ public class ChunkService {
     }
 
     Long getChunkId(Long serverId) {
-        return chunkRepository.findTop1ByServerIdOrderByChunkIdAsc(serverId).get(0).getChunkId();
+        return chunkRepository.findOneByServerIdOrderByChunkIdAsc(serverId).getChunkId();
     }
 }

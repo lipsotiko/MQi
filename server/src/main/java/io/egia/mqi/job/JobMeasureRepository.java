@@ -9,7 +9,4 @@ import java.util.List;
 @Repository
 public interface JobMeasureRepository extends JpaRepository<JobMeasure, Long> {
 	List<JobMeasure> findByJobId(Long jobId);
-
-	@Transactional
-	void deleteByJobMeasureId(Long jobMeasureId);
 }
