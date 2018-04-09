@@ -16,8 +16,7 @@ public class Measure implements Serializable {
 	@GeneratedValue(strategy=GenerationType.IDENTITY)
 	private Long measureId;
 	private String measureName;
-	private String measureLogic;
-
+	@Column(columnDefinition="longvarchar") private String measureLogic;
 	@Column(updatable=false,insertable=false) private Date lastUpdated;
 	
 	public Long getMeasureId() {

@@ -36,17 +36,17 @@ export default class Measures extends Component<Props, State> {
 
     render() {
         const measureNames = this.state.measuresEntities.map(measureEntity => {
-            return(<li key={measureEntity.measureId}>{measureEntity.measureLogic.description}</li>);
+            return (<li key={measureEntity.measureId}>{measureEntity.measureLogic.description}</li>);
         });
 
         return (
             <div>
                 <h2>Measures</h2>
+                <MeasureList />
+                <hr />
                 <ul>
                     {measureNames}
                 </ul>
-                <hr />
-                <MeasureList />
             </div>
         );
     }
