@@ -10,14 +10,6 @@ import org.slf4j.LoggerFactory;
 import java.util.Hashtable;
 import java.util.List;
 
-/**
- * @author vango
- * <p>
- * The purpose of this class is to make all patient data within
- * a chunk available to rules for the purposes of applying measure
- * logic and storing measure results.
- */
-
 public class MeasureProcessor {
     private Logger log = LoggerFactory.getLogger(MeasureProcessor.class);
     private Long chunkId;

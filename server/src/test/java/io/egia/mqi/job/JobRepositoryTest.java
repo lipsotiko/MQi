@@ -38,5 +38,4 @@ public class JobRepositoryTest {
         Long jobId = jobRepository.findByJobName(jobName).getJobId();
         jobRepository.deleteByJobId(jobId);
     }
-
 }

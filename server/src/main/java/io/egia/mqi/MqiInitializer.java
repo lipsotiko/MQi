@@ -22,19 +22,6 @@ import java.util.List;
 
 import static java.nio.file.LinkOption.NOFOLLOW_LINKS;
 
-/**
- * 
- * @author vango
- *
- *         The purpose of this class is to verify that the application server
- *         version and the database version are in sync. If the database is out
- *         of date, we will call the DatabaseManager to bring it up the current
- *         version of the software. If the application server is out of date,
- *         then it will shutdown (the user will need to install the most recent
- *         version).
- * 
- */
-
 @Component
 public class MqiInitializer implements ApplicationListener<ContextRefreshedEvent> {
 	private Logger log = LoggerFactory.getLogger(MqiInitializer.class);

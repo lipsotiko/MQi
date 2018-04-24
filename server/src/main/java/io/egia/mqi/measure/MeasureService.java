@@ -1,7 +1,6 @@
 package io.egia.mqi.measure;
 
 import io.egia.mqi.chunk.ChunkRepository;
-import io.egia.mqi.job.JobMeasureRepository;
 import io.egia.mqi.job.JobRepository;
 import io.egia.mqi.patient.Patient;
 import io.egia.mqi.patient.PatientRepository;
@@ -17,23 +16,12 @@ import org.springframework.stereotype.Service;
 import java.net.UnknownHostException;
 import java.util.List;
 
-/*
- *
- * @author vango
- *
- *		The purpose of this class is to
- *			-return measures to the front-end
- *			-process a measure/patient combination
- *
- */
-
 @Service
 public class MeasureService {
     private Logger log = LoggerFactory.getLogger(MeasureService.class);
     private MeasureRepository measureRepository;
     private ChunkRepository chunkRepository;
     private JobRepository jobRepository;
-    private JobMeasureRepository jobMeasureRepository;
     private ServerService serverService;
     private PatientRepository patientRepository;
     private VisitRepository visitRepository;
@@ -41,14 +29,12 @@ public class MeasureService {
     public MeasureService(MeasureRepository measureRepository
             , ChunkRepository chunkRepository
             , JobRepository jobRepository
-            , JobMeasureRepository jobMeasureRepository
             , ServerService serverService
             , PatientRepository patientRepository
             , VisitRepository visitRepository) {
         this.measureRepository = measureRepository;
         this.chunkRepository = chunkRepository;
         this.jobRepository = jobRepository;
-        this.jobMeasureRepository = jobMeasureRepository;
         this.serverService = serverService;
         this.patientRepository = patientRepository;
         this.visitRepository = visitRepository;

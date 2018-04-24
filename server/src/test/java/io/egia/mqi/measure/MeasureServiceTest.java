@@ -1,5 +1,6 @@
 package io.egia.mqi.measure;
 
+import io.egia.mqi.StandaloneConfig;
 import io.egia.mqi.chunk.Chunk;
 import io.egia.mqi.job.Job;
 import io.egia.mqi.job.JobMeasure;
@@ -7,9 +8,7 @@ import io.egia.mqi.job.JobMeasureRepository;
 import io.egia.mqi.job.JobRepository;
 import io.egia.mqi.patient.Patient;
 import io.egia.mqi.patient.PatientRepository;
-import io.egia.mqi.server.Server;
 import io.egia.mqi.server.ServerRepository;
-import io.egia.mqi.StandaloneConfig;
 import io.egia.mqi.visit.Visit;
 import io.egia.mqi.visit.VisitRepository;
 import org.junit.After;
@@ -137,7 +136,7 @@ public class MeasureServiceTest {
     }
 
     @Test
-    public void processMeasures() {
+    public void processMeasures() throws UnknownHostException {
         measureService.measureProcess();
     }
 

@@ -5,14 +5,6 @@ import io.egia.mqi.visit.Visit;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * @author vango
- * <p>
- * The purpose of this class is to group all data related to
- * a single patient. This will make it easier to traverse
- * patients within rules.
- */
-
 public class PatientData {
     private Long patientId;
 

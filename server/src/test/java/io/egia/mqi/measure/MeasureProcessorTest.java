@@ -75,7 +75,6 @@ public class MeasureProcessorTest {
     @Test
     public void clearMeasureWorkspace() {
         measureProcessor.clear();
-        int patientCount = measureProcessor.getPatientDataHash().size();
-        assertThat(patientCount).isEqualTo(0);
+        assertThat(measureProcessor.getPatientDataHash().size()).isEqualTo(0);
     }
 }

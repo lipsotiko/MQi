@@ -16,17 +16,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-/**
- * @author vango
- * <p>
- * The purpose of this class is to traverse the versions directory and
- * apply all the necessary updates to bring the database up to the most
- * recent version of the software. We assume that the installer will
- * create the version table and also insert a record with the value of
- * '0.0.0'. Only one record should ever exist in this table and it will
- * reflect the current version of the database.
- */
-
 @Component
 public class DatabaseManager {
     private Logger log = LoggerFactory.getLogger(DatabaseManager.class);
