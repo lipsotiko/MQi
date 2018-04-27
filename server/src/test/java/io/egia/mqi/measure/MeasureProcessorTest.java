@@ -1,30 +1,27 @@
 package io.egia.mqi.measure;
 
 import io.egia.mqi.chunk.Chunk;
+import io.egia.mqi.helpers.Helpers;
 import io.egia.mqi.patient.Patient;
 import io.egia.mqi.patient.PatientData;
 import io.egia.mqi.visit.Visit;
 import org.junit.Before;
 import org.junit.Test;
-import org.springframework.beans.factory.annotation.Autowired;
 
+import java.io.IOException;
 import java.util.*;
 
 import static org.assertj.core.api.Java6Assertions.assertThat;
 
 public class MeasureProcessorTest {
-    List<Patient> patients = new ArrayList<>();
-    List<Visit> visits = new ArrayList<>();
+    private List<Patient> patients = new ArrayList<>();
+    private List<Visit> visits = new ArrayList<>();
 
-    Long chunkId = 1L;
-
-    @Autowired
-    MeasureRepository measureRepository;
-    MeasureProcessor measureProcessor;
-    List<Measure> measures = new ArrayList<>();
+    private MeasureProcessor measureProcessor = new MeasureProcessor();
+    private List<Measure> measures = new ArrayList<>();
 
     @Before
-    public void setUp() {
+    public void setUp() throws IOException {
         for (Long i = 1L; i <= 5; i++) {
             Patient p = new Patient();
             Chunk c = new Chunk();
@@ -42,13 +39,14 @@ public class MeasureProcessorTest {
             }
         }
 
-        for (Integer i = 1; i <= 3; i++) {
-            Measure measure = new Measure();
-            measure.setMeasureName("Measure " + i.toString() + ".json");
-            measures.add(measure);
-        }
+        Measure measure = Helpers.getMeasureFromResource("fixtures","sample.json");
+        measures.add(measure);
 
-        measureProcessor = new MeasureProcessor(chunkId, measures, patients, visits);
+        Long chunkId = 1L;
+
+        measureProcessor.setChunkId(chunkId);
+        measureProcessor.setMeasures(measures);
+        measureProcessor.setPatientData(patients, visits);
     }
 
     @Test
@@ -69,7 +67,7 @@ public class MeasureProcessorTest {
 
     @Test
     public void callProcess(){
-        measureProcessor.process();
+        measureProcessor.iterateOverPatientsAndMeasures();
     }
 
     @Test

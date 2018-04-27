@@ -1,149 +1,121 @@
 package io.egia.mqi.measure;
 
-import io.egia.mqi.StandaloneConfig;
 import io.egia.mqi.chunk.Chunk;
+import io.egia.mqi.chunk.ChunkRepository;
 import io.egia.mqi.job.Job;
-import io.egia.mqi.job.JobMeasure;
-import io.egia.mqi.job.JobMeasureRepository;
 import io.egia.mqi.job.JobRepository;
 import io.egia.mqi.patient.Patient;
 import io.egia.mqi.patient.PatientRepository;
-import io.egia.mqi.server.ServerRepository;
+import io.egia.mqi.server.Server;
+import io.egia.mqi.server.ServerService;
 import io.egia.mqi.visit.Visit;
 import io.egia.mqi.visit.VisitRepository;
-import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.mockito.Mock;
+import org.mockito.Mockito;
+import org.mockito.junit.MockitoJUnitRunner;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.TestPropertySource;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
-import java.net.InetAddress;
+import java.io.IOException;
 import java.net.UnknownHostException;
-import java.sql.Date;
+import java.util.ArrayList;
 import java.util.List;
 
-import static org.junit.Assert.assertEquals;
+import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 
-@RunWith(SpringJUnit4ClassRunner.class)
-@SpringBootTest(classes = {StandaloneConfig.class})
-@TestPropertySource(locations = "classpath:application-dev.properties")
+@RunWith(MockitoJUnitRunner.class)
 public class MeasureServiceTest {
 
-    @Value("${server.port}")
-    private String serverPort;
+    @Mock private JobRepository jobRepository;
 
-    @Autowired
-    private ServerRepository serverRepository;
+    @Mock private MeasureRepository measureRepository;
 
-    @Autowired
-    private JobRepository jobRepository;
+    @Mock private ChunkRepository chunkRepository;
 
-    @Autowired
-    private MeasureRepository measureRepository;
+    @Mock private PatientRepository patientRepository;
 
-    @Autowired
-    private JobMeasureRepository jobMeasureRepository;
+    @Mock private VisitRepository visitRepository;
 
-    @Autowired
-    private PatientRepository patientRepository;
+    @Mock private ServerService serverService;
 
-    @Autowired
-    private VisitRepository visitRepository;
+    @Mock private MeasureProcessor measureProcessor;
 
-    @Autowired
     private MeasureService measureService;
 
-    @Value("${mqi.properties.server.version}")
-    private String serverVersion;
+    private static final String J_UNIT_MEASURE_SERVICE_TEST = "jUnit measure Service Test";
 
-    public static final String J_UNIT_MEASURE_SERVICE_TEST = "jUnit measure Service Test";
-
-    private List<Measure> measuresList;
-
-    private Long patientId;
-
-    private Long jobId;
-
-    private Long serverId;
-
-    String serverName;
-
-    InetAddress serverIp;
+    @Value("${server.port}") private String serverPort;
 
     @Before
-    public void setUp() {
-        //Create a measure job
-        Job newJob = new Job();
-        newJob.setJobName(J_UNIT_MEASURE_SERVICE_TEST);
-        newJob.setProcessType("measure");
-        newJob.setStatus("pending");
-        jobRepository.saveAndFlush(newJob);
+    public void setUp() throws IOException {
 
-        //Retrieve the jobId that was created for the job
-        jobId = jobRepository.findByJobName(J_UNIT_MEASURE_SERVICE_TEST).getJobId();
+        measureService = new MeasureService(
+                measureRepository
+                , chunkRepository
+                , jobRepository
+                , serverService
+                , patientRepository
+                , visitRepository
+                , measureProcessor
+        );
 
-        //Get a list of measures; measures are inserted during the MQI Initialization process
-        measuresList = measureRepository.findAll();
+        Job job = new Job();
+        job.setJobId(1L);
+        job.setJobName(J_UNIT_MEASURE_SERVICE_TEST);
+        job.setProcessType("measure");
+        job.setStatus("pending");
 
-        //Add each measure to the job
-        for (Measure m : measuresList) {
-            JobMeasure jobMeasure = new JobMeasure();
-            jobMeasure.setJobId(jobId);
-            jobMeasure.setMeasureId(m.getMeasureId());
-            jobMeasureRepository.saveAndFlush(jobMeasure);
-        }
+        List<Job> jobs = new ArrayList<>();
+        jobs.add(job);
 
-        //Retrieve the primary server id
-        try {
-            serverIp = InetAddress.getLocalHost();
-            serverName = serverIp.getHostName();
-        } catch (UnknownHostException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }
+        Mockito.when(jobRepository.findByStatusOrderByOrderIdAsc(anyString())).thenReturn(jobs);
 
-        Long serverId = serverRepository.findOneByServerType("primary").getServerId();
-
-        //Create a chunk
         Chunk c = new Chunk();
-        c.setRecordCnt(2L);
-        c.setServerId(serverId);
+        c.setPatientId(1L);
         c.setChunkId(1L);
 
-        //Add patient
         Patient p = new Patient();
-        p.setFirstName("Evangelos");
-        p.setMiddleName("Elias");
-        p.setLastName("Poneres");
-        p.setGender('m');
-        p.setDateOfBirth(Date.valueOf("1988-04-28"));
         p.setChunk(c);
-        patientRepository.saveAndFlush(p);
+        p.setPatientId(1L);
 
-        //Add visits
-        patientId = patientRepository.findAll().get(0).getPatientId();
+        List<Patient> patients = new ArrayList<>();
+        patients.add(p);
+
+        Mockito.when(patientRepository.findByServerIdAndChunkId(anyLong(), anyLong())).thenReturn(patients);
+
         Visit v = new Visit();
-        v.setPatientId(patientId);
-        v.setDateOfService(Date.valueOf("2011-01-01"));
-        v.setDenied(false);
-        v.setIcdVersion(0);
-        v.setDiag1("123.45678");
-        visitRepository.saveAndFlush(v);
+        v.setPatientId(1L);
+
+        List<Visit> visits = new ArrayList<>();
+        visits.add(v);
+
+        Mockito.when(visitRepository.findByServerIdAndChunkId(anyLong(), anyLong())).thenReturn(visits);
+
+        Server server = new Server();
+        server.setServerId(1L);
+
+        Mockito.when(serverService.getServerFromHostNameAndPort(serverPort)).thenReturn(server);
+
+        List<Chunk> chunks = new ArrayList<>();
+        chunks.add(c);
+
+        Mockito.when(chunkRepository.findByServerIdOrderByChunkIdAsc(anyLong())).thenReturn(chunks);
     }
 
     @Test
-    public void processMeasures() throws UnknownHostException {
-        measureService.measureProcess();
-    }
-
-    @After
-    public void validateAndTearDown() {
-        int patientCount = measureService.measureProcessor.getPatientDataHash().size();
-        assertEquals(1, patientCount);
+    public void verifyMethodsWereCalled() throws UnknownHostException {
+        measureService.process();
+        verify(jobRepository, times(1)).findByStatusOrderByOrderIdAsc(anyString());
+        verify(patientRepository, times(1)).findByServerIdAndChunkId(anyLong(),anyLong());
+        verify(visitRepository, times(1)).findByServerIdAndChunkId(anyLong(),anyLong());
+        verify(serverService, times(1)).getServerFromHostNameAndPort(serverPort);
+        verify(chunkRepository,times(1)).findByServerIdOrderByChunkIdAsc(anyLong());
+        verify(measureProcessor,times(1)).iterateOverPatientsAndMeasures();
     }
 
 }

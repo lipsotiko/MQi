@@ -1,0 +1,28 @@
+{
+	"description" : "Patients that are between the ages of 2 and 5 on the first day of the reporting year with an occurrence of a broken leg at some time during the reporting year",
+	"minimumSystemVersion" : "1.0.0",
+	"traceRules" : true,
+	"generateSupplementalResults" : true,
+	"logic" : [
+		{
+			"stepId" : 100,
+			"rule" : "age_x_asOf_thru",
+			"parameters" : {
+				"min" : 2,
+				"max" : 5,
+				"asOf" : "$ryBegin",
+				"thru" : "$ryBegin"
+			},
+			"success" : 200,
+			"failure" : 99999
+		}, {
+			"stepId" : 200,
+			"rule" : "setDenominatorResult",
+			"parameters" : {
+				"eligible" : true
+			},
+			"success" : 99999,
+			"failure" : 99999
+		}
+	]
+}

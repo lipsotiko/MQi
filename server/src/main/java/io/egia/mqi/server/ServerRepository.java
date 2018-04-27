@@ -15,5 +15,5 @@ public interface ServerRepository extends JpaRepository<Server, Long> {
 	@Modifying
 	@Transactional
 	@Query(value="update Server s set s.serverType = ?2, s.serverVersion = ?3 where s.serverId = ?1")
-	public void updateServer(Long serverId, String serverType, String serverVersion);
+	void updateServer(Long serverId, String serverType, String serverVersion);
 }

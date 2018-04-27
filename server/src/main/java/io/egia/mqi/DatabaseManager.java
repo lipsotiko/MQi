@@ -76,7 +76,7 @@ public class DatabaseManager {
             if (!f.isDirectory()) {
                 Measure m = new Measure();
                 m.setMeasureName(f.getName());
-                m.setMeasureLogic(getMeasureFileAsString(measuresDirecotry, f));
+                m.setMeasureJson(getMeasureFileAsString(measuresDirecotry, f));
                 measureRepository.saveAndFlush(m);
             }
         }

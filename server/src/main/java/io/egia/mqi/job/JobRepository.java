@@ -19,6 +19,4 @@ public interface JobRepository extends JpaRepository<Job, Long> {
 	@Query(value="update Job j set j.status = ?2 where j.jobId = ?1")
 	void updateJobStatus(Long jobId, String status);
 
-    @Transactional
-	void deleteByJobId(Long jobId);
 }

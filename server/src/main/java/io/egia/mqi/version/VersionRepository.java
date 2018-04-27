@@ -12,5 +12,5 @@ public interface VersionRepository extends JpaRepository<Version, String> {
 	@Modifying
 	@Transactional
     @Query(value="update Version v set v.versionId = :v")
-    public void updateVersion(@Param("v") String versionId);
+    void updateVersion(@Param("v") String versionId);
 }

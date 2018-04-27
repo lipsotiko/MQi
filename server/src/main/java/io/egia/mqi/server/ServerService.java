@@ -13,12 +13,16 @@ public class ServerService {
     }
 
     public static String thisServersHostName() throws UnknownHostException {
-        return InetAddress.getLocalHost().getHostName();
+        return getHostName();
     }
 
     public Server getServerFromHostNameAndPort(String serverPort) throws UnknownHostException {
-        String thisServersName = InetAddress.getLocalHost().getHostName();
+        String thisServersName = getHostName();
         return this.serverRepository.findOneByServerNameAndServerPort(thisServersName, serverPort);
+    }
+
+    private static String getHostName() throws UnknownHostException {
+        return InetAddress.getLocalHost().getHostName();
     }
 
     public Server getPrimaryServer(){

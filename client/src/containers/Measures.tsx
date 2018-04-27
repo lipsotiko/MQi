@@ -15,7 +15,6 @@ export default class Measures extends Component<Props, State> {
     constructor(props: Props) {
         super(props);
         this.state = { measuresEntities: [] };
-
     }
 
     async componentDidMount() {
@@ -36,7 +35,7 @@ export default class Measures extends Component<Props, State> {
 
     render() {
         const measureNames = this.state.measuresEntities.map(measureEntity => {
-            return (<li key={measureEntity.measureId}>{measureEntity.measureLogic.description}</li>);
+            return (<li key={measureEntity.measureId}>{measureEntity.measureJson.description}</li>);
         });
 
         return (

@@ -2,12 +2,16 @@ package io.egia.mqi.measure;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonRawValue;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import lombok.Data;
 
 import javax.persistence.*;
+import java.io.IOException;
 import java.io.Serializable;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
+@Data
 @Entity
 public class Measure implements Serializable {
 	private static final long serialVersionUID = 1L;
@@ -16,41 +20,23 @@ public class Measure implements Serializable {
 	@GeneratedValue(strategy=GenerationType.IDENTITY)
 	private Long measureId;
 	private String measureName;
-	@Column(columnDefinition="longvarchar") private String measureLogic;
+	@Column(columnDefinition="longvarchar") private String measureJson;
 	@Column(updatable=false,insertable=false) private Date lastUpdated;
-	
-	public Long getMeasureId() {
-		return this.measureId;
-	}
-
-	public Long setMeasureId() {
-		return this.measureId;
-	}
-
-	public String getMeasureName() {
-		return measureName;
-	}
-
-	public void setMeasureName(String measureName) {
-		this.measureName = measureName;
-	}
 
 	@JsonRawValue
-	public String getMeasureLogic() {
-		return measureLogic;
+	public String getMeasureJson() {
+		return measureJson;
 	}
 
-	public void setMeasureLogic(String measureLogic) {
-		this.measureLogic = measureLogic;
+	@JsonIgnore
+	public MeasureLogic getLogic() throws IOException {
+		ObjectMapper mapper = new ObjectMapper();
+		return mapper.readValue(measureJson, MeasureLogic.class);
 	}
 	
 	@JsonIgnore
 	public Date getLastUpdated() {
 		return lastUpdated;
-	}
-
-	public void setLastUpdated(Date lastUpdated) {
-		this.lastUpdated = lastUpdated;
 	}
 
 	public String getLastUpdatedFormated() {

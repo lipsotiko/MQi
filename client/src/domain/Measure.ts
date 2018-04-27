@@ -1,7 +1,7 @@
 export class MeasureEntity {
     measureId: number;
     measureName: string;
-    measureLogic: MeasureLogic;
+    measureJson: MeasureJson;
     lastUpdatedFormated: Date;
     
     static fromJSON(json: JSON): MeasureEntity {
@@ -10,6 +10,6 @@ export class MeasureEntity {
     }
 }
 
-class MeasureLogic {
+class MeasureJson {
     description: string;
 }

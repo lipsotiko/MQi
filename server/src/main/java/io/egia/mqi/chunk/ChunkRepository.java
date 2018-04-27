@@ -7,5 +7,5 @@ import java.util.List;
 
 @Repository
 public interface ChunkRepository extends JpaRepository<Chunk, Long> {
-	Chunk findOneByServerIdOrderByChunkIdAsc(Long serverId);
+	List<Chunk> findByServerIdOrderByChunkIdAsc(Long serverId);
 }

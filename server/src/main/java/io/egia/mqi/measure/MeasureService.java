@@ -4,7 +4,6 @@ import io.egia.mqi.chunk.ChunkRepository;
 import io.egia.mqi.job.JobRepository;
 import io.egia.mqi.patient.Patient;
 import io.egia.mqi.patient.PatientRepository;
-import io.egia.mqi.server.Server;
 import io.egia.mqi.server.ServerService;
 import io.egia.mqi.visit.Visit;
 import io.egia.mqi.visit.VisitRepository;
@@ -25,51 +24,75 @@ public class MeasureService {
     private ServerService serverService;
     private PatientRepository patientRepository;
     private VisitRepository visitRepository;
+    private MeasureProcessor measureProcessor;
 
     public MeasureService(MeasureRepository measureRepository
             , ChunkRepository chunkRepository
             , JobRepository jobRepository
             , ServerService serverService
             , PatientRepository patientRepository
-            , VisitRepository visitRepository) {
+            , VisitRepository visitRepository
+            , MeasureProcessor measureProcessor) {
         this.measureRepository = measureRepository;
         this.chunkRepository = chunkRepository;
         this.jobRepository = jobRepository;
         this.serverService = serverService;
         this.patientRepository = patientRepository;
         this.visitRepository = visitRepository;
+        this.measureProcessor = measureProcessor;
     }
 
     @Value("${server.port}")
     private String serverPort;
 
-    MeasureProcessor measureProcessor;
+    private List<Patient> patients;
+    private List<Visit> visits;
+    private Long thisServerId;
 
-    public void measureProcess() {
-        Long jobId;
-        Long chunkId;
+    public void process() {
+        thisServerId = getThisServerId();
+        Long jobId = getPendingJobId();
+        setJobStatus(jobId, thisServerId, "running");
 
+        Long chunkId = getChunkIdToProcess();
+        getPatientData(chunkId, thisServerId);
+        measureProcessor.setChunkId(chunkId);
+        measureProcessor.setMeasures(getMeasuresToBeProcessed(jobId, chunkId));
+        measureProcessor.setPatientData(patients, visits);
+        measureProcessor.iterateOverPatientsAndMeasures();
+    }
+
+    private Long getChunkIdToProcess() {
+        return chunkRepository.findByServerIdOrderByChunkIdAsc(thisServerId).get(0).getChunkId();
+    }
+
+    private Long getPendingJobId() {
+        return jobRepository.findByStatusOrderByOrderIdAsc("pending").get(0).getJobId();
+    }
+
+    private Long getThisServerId() {
         try {
-            Server thisServer = serverService.getServerFromHostNameAndPort(serverPort);
-            Long serverId = thisServer.getServerId();
-            jobId = jobRepository.findByStatusOrderByOrderIdAsc("pending").get(0).getJobId();
-
-            log.info(String.format("Processing job(Id): %s, on server(Id):%s", jobId, serverId));
-            jobRepository.updateJobStatus(jobId, "running");
-            chunkId = chunkRepository.findOneByServerIdOrderByChunkIdAsc(serverId).getChunkId();
-
-            log.info(String.format("Populating chunk id: %s into measure processor.", chunkId));
-            List<Patient> patients = patientRepository.findByServerIdAndChunkId(serverId, chunkId);
-            List<Visit> visits = visitRepository.findByServerIdAndChunkId(serverId, chunkId);
-
-            log.info(String.format("Setting measures in measure processor.", chunkId));
-            List<Measure> measures = measureRepository.findAllByJobId(jobId);
-            measureProcessor = new MeasureProcessor(chunkId, measures, patients, visits);
-
-            measureProcessor.process();
+            return serverService.getServerFromHostNameAndPort(serverPort).getServerId();
         } catch (UnknownHostException e) {
-            // TODO Auto-generated catch block
             e.printStackTrace();
         }
+        return -1L;
     }
+
+    private List<Measure> getMeasuresToBeProcessed(Long jobId, Long chunkId) {
+        log.info(String.format("Get measures to be processed.", chunkId));
+        return measureRepository.findAllByJobId(jobId);
+    }
+
+    private void getPatientData(Long chunkId, Long thisServerId) {
+        log.info(String.format("Populating chunk id: %s into measure processor.", chunkId));
+        patients = patientRepository.findByServerIdAndChunkId(thisServerId, chunkId);
+        visits = visitRepository.findByServerIdAndChunkId(thisServerId, chunkId);
+    }
+
+    private void setJobStatus(Long jobId, Long serverId, String status) {
+        log.info(String.format("Processing job(Id): %s, on server(Id):%s", jobId, serverId));
+        jobRepository.updateJobStatus(jobId, status);
+    }
+
 }

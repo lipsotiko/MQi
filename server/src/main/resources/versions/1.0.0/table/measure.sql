@@ -2,7 +2,7 @@ drop table if exists measure;
 create table if not exists measure (
 	measure_id serial primary key,
 	measure_name varchar(100),
-	measure_logic text,
+	measure_json text,
 	last_updated timestamp default current_timestamp
 );
 
