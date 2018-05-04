@@ -13,11 +13,11 @@ import java.util.*;
 
 import static org.assertj.core.api.Java6Assertions.assertThat;
 
-public class MeasureProcessorTest {
+public class MeasureProcessorImplTest {
     private List<Patient> patients = new ArrayList<>();
     private List<Visit> visits = new ArrayList<>();
 
-    private MeasureProcessor measureProcessor = new MeasureProcessor();
+    private MeasureProcessorImpl measureProcessorImpl = new MeasureProcessorImpl();
     private List<Measure> measures = new ArrayList<>();
 
     @Before
@@ -44,19 +44,19 @@ public class MeasureProcessorTest {
 
         Long chunkId = 1L;
 
-        measureProcessor.setChunkId(chunkId);
-        measureProcessor.setMeasures(measures);
-        measureProcessor.setPatientData(patients, visits);
+        measureProcessorImpl.setChunkId(chunkId);
+        measureProcessorImpl.setMeasures(measures);
+        measureProcessorImpl.setPatientData(patients, visits);
     }
 
     @Test
     public void validatePatientDataHash() {
-        Hashtable<Long, PatientData> patientDataHash = measureProcessor.getPatientDataHash();
+        Hashtable<Long, PatientData> patientDataHash = measureProcessorImpl.getPatientDataHash();
         Set<Long> keys = patientDataHash.keySet();
         Iterator<Long> itr = keys.iterator();
         Long patientId;
 
-        int patientCount = measureProcessor.getPatientDataHash().size();
+        int patientCount = measureProcessorImpl.getPatientDataHash().size();
         assertThat(patientCount).isEqualTo(5);
 
         while (itr.hasNext()) {
@@ -67,12 +67,12 @@ public class MeasureProcessorTest {
 
     @Test
     public void callProcess(){
-        measureProcessor.iterateOverPatientsAndMeasures();
+        measureProcessorImpl.process();
     }
 
     @Test
     public void clearMeasureWorkspace() {
-        measureProcessor.clear();
-        assertThat(measureProcessor.getPatientDataHash().size()).isEqualTo(0);
+        measureProcessorImpl.clear();
+        assertThat(measureProcessorImpl.getPatientDataHash().size()).isEqualTo(0);
     }
 }

@@ -59,7 +59,7 @@ public class MeasureService {
         measureProcessor.setChunkId(chunkId);
         measureProcessor.setMeasures(getMeasuresToBeProcessed(jobId, chunkId));
         measureProcessor.setPatientData(patients, visits);
-        measureProcessor.iterateOverPatientsAndMeasures();
+        measureProcessor.process();
     }
 
     private Long getChunkIdToProcess() {
