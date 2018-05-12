@@ -1,10 +1,13 @@
 package io.egia.mqi.measure;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class MeasureResults {
 
     private boolean continueProcessing = true;
-
     private boolean denominator;
+    private List<String> ruleTrace = new ArrayList<>();
 
     public boolean getContinueProcessing() {
         return this.continueProcessing;
@@ -18,7 +21,13 @@ public class MeasureResults {
         this.denominator = denominator;
     }
 
-    public boolean getResult() {
-        return denominator;
+    public void writeRuleTrace(String rule) {
+        ruleTrace.add(rule);
+    }
+
+    public void clear() {
+        continueProcessing = true;
+        denominator = false;
+        ruleTrace.clear();
     }
 }

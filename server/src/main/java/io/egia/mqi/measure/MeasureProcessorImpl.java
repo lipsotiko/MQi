@@ -21,6 +21,7 @@ public class MeasureProcessorImpl implements MeasureProcessor {
     private Long chunkId;
     private List<Measure> measures;
     private Hashtable<Long, PatientData> patientDataHash = new Hashtable<>();
+    private Rules rules = new Rules();
     private int rulesEvaluatedCount;
     private List<MeasureResults> measureResults = new ArrayList<>();
 
@@ -44,13 +45,25 @@ public class MeasureProcessorImpl implements MeasureProcessor {
     public void process() {
         this.patientDataHash.forEach((patientId, patientData) ->
                 this.measures.forEach((measure) -> {
-                    log.info(String.format("Processing chunkId: %s, patient id: %s, measure: %s", this.chunkId, patientId, measure.getMeasureName()));
+                    log.info(String.format("Processing chunkId: %s, patient id: %s, measure: %s",
+                            this.chunkId,
+                            patientId,
+                            measure.getMeasureName()));
                     try {
-                        evaluatePatientDataForMeasure(patientData, measure);
-                    } catch (IOException | NoSuchMethodException | IllegalAccessException | InvocationTargetException e) {
+                        evaluatePatientDataByMeasure(patientData, measure, rules);
+                    } catch (IOException | NoSuchMethodException | IllegalAccessException | InvocationTargetException | MeasureProcessorException e) {
                         e.printStackTrace();
                     }
                 }));
+    }
+
+    @Override
+    public void clear() {
+        this.chunkId = null;
+        this.measures.clear();
+        this.patientDataHash.clear();
+        this.rulesEvaluatedCount = 0;
+        this.measureResults.clear();
     }
 
     private <T extends PatientRecordInterface> void appendToPatientDataHash(List<T> patientRecords) {
@@ -65,12 +78,12 @@ public class MeasureProcessorImpl implements MeasureProcessor {
         }
     }
 
-    private void evaluatePatientDataForMeasure(PatientData patientData, Measure measure) throws IOException, NoSuchMethodException, InvocationTargetException, IllegalAccessException {
-        Rules rules = new Rules();
+    private void evaluatePatientDataByMeasure(PatientData patientData, Measure measure, Rules rules)
+            throws IOException, NoSuchMethodException, InvocationTargetException, IllegalAccessException, MeasureProcessorException {
         MeasureResults measureResults = new MeasureResults();
         List<Step> steps = measure.getLogic().getSteps();
-        int firstStepId = getFirstStepId(steps);
-        Step currentStep = getStepByStepId(firstStepId, steps);
+        int firstStepId = getInitialStepId(steps);
+        Step currentStep = getStepById(firstStepId, steps);
 
         while (measureResults.getContinueProcessing()) {
             String rule = currentStep.getRule();
@@ -79,16 +92,31 @@ public class MeasureProcessorImpl implements MeasureProcessor {
             measureResults = (MeasureResults) ruleMethod.invoke(rules, patientData, measureResults);
 
             if (measureResults.getContinueProcessing()) {
-                currentStep = getStepByStepId(currentStep.getSuccess(), steps);
+                measureResults.writeRuleTrace(rule);
+                currentStep = getNextStep(steps, currentStep.getStepId(), currentStep.getSuccess());
+            } else {
+                currentStep = getNextStep(steps, currentStep.getStepId(), currentStep.getFailure());
             }
 
             rulesEvaluatedCount++;
         }
 
         this.measureResults.add(measureResults);
+        measureResults.clear();
     }
 
-    private int getFirstStepId(List<Step> steps) {
+    private Step getNextStep(List<Step> steps, int currentStepId, int nextStepId) throws MeasureProcessorException {
+        preventInfiniteLoops(currentStepId, nextStepId);
+        return getStepById(nextStepId, steps);
+    }
+
+    private void preventInfiniteLoops(int currentStepId, int nextStepId) throws MeasureProcessorException {
+        if ((nextStepId <= currentStepId) && (currentStepId != 99999)) {
+            throw new MeasureProcessorException("Error: Measure steps configured for infinite loop");
+        }
+    }
+
+    private int getInitialStepId(List<Step> steps) {
         int lowestStepId = steps.get(0).getStepId();
         for (Step step : steps) {
             if (step.getStepId() < lowestStepId) {
@@ -98,22 +126,20 @@ public class MeasureProcessorImpl implements MeasureProcessor {
         return lowestStepId;
     }
 
-    private Step getStepByStepId(int stepId, List<Step> steps) {
+    private Step getStepById(int stepId, List<Step> steps) {
         for (Step step : steps) {
             if (step.getStepId() == stepId) {
                 return step;
             }
         }
-        return new Step();
+        return stepToExitMeasure();
     }
 
-    @Override
-    public void clear() {
-        this.chunkId = null;
-        this.measures.clear();
-        this.patientDataHash.clear();
-        this.rulesEvaluatedCount = 0;
-        this.measureResults.clear();
+    private Step stepToExitMeasure() {
+        Step step = new Step();
+        step.setRule("exitMeasure");
+        step.setStepId(99999);
+        return step;
     }
 
     public Hashtable<Long, PatientData> getPatientDataHash() {

@@ -23,9 +23,6 @@
 			},
 			"success" : 99999,
 			"failure" : 99999
-		}, {
-			"stepId": 99999,
-			"rule": "exitMeasure"
 		}
 	]
 }
