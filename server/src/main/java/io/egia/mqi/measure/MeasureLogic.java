@@ -10,5 +10,5 @@ import java.util.List;
 public class MeasureLogic {
     private String description;
     private String minimumSystemVersion;
-    private List<Steps> logic;
+    private List<Step> steps;
 }

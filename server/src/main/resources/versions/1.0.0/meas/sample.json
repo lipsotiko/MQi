@@ -3,7 +3,7 @@
 	"minimum_system_version" : "1.0.0",
 	"trace_rules" : true,
 	"generate_supplemental_results" : true,
-	"logic" : [
+	"steps" : [
 		{
 			"step_id" : 100, 
 			"rule" : "age_x_asOf_thru",

@@ -3,7 +3,7 @@
 	"minimumSystemVersion" : "1.0.0",
 	"traceRules" : true,
 	"generateSupplementalResults" : true,
-	"logic" : [
+	"steps" : [
 		{
 			"stepId" : 100,
 			"rule" : "age_x_asOf_thru",
@@ -23,6 +23,9 @@
 			},
 			"success" : 99999,
 			"failure" : 99999
+		}, {
+			"stepId": 99999,
+			"rule": "exitMeasure"
 		}
 	]
 }

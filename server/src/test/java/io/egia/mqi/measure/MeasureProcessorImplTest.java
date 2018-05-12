@@ -66,13 +66,19 @@ public class MeasureProcessorImplTest {
     }
 
     @Test
-    public void callProcess(){
+    public void processEvaluatesPatientData(){
         measureProcessorImpl.process();
+        assertThat(measureProcessorImpl.getMeasureResults().size()).isEqualTo(5);
+        assertThat(measureProcessorImpl.getRulesEvaluatedCount()).isEqualTo(15);
     }
 
     @Test
     public void clearMeasureWorkspace() {
         measureProcessorImpl.clear();
         assertThat(measureProcessorImpl.getPatientDataHash().size()).isEqualTo(0);
+        assertThat(measureProcessorImpl.getMeasures().size()).isEqualTo(0);
+        assertThat(measureProcessorImpl.getMeasureResults().size()).isEqualTo(0);
+        assertThat(measureProcessorImpl.getChunkId()).isEqualTo(null);
+        assertThat(measureProcessorImpl.getRulesEvaluatedCount()).isEqualTo(0);
     }
 }
