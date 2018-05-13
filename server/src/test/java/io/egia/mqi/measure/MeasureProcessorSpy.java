@@ -9,17 +9,11 @@ import java.util.List;
 @Data
 public class MeasureProcessorSpy implements MeasureProcessor {
 
-    private Long setChunkIdWasCalledWith;
     private List<Measure> setMeasuresWasCalledWith;
     private boolean processWasCalled = false;
     private boolean clearWasCalled = false;
     private List<Patient> setPatientDataWasCalledWithPatients;
     private List<Visit> setPatientDataWasCalledWithVisits;
-
-    @Override
-    public void setChunkId(Long chunkId) {
-        setChunkIdWasCalledWith = chunkId;
-    }
 
     @Override
     public void setMeasures(List<Measure> measures) {

@@ -39,12 +39,11 @@ public class MeasureProcessorImplTest {
             }
         }
 
-        Measure measure = Helpers.getMeasureFromResource("fixtures","sample.json");
+        Measure measure = Helpers.getMeasureFromResource("fixtures","sampleMeasure.json");
         measures.add(measure);
 
         Long chunkId = 1L;
 
-        measureProcessorImpl.setChunkId(chunkId);
         measureProcessorImpl.setRules(rules);
         measureProcessorImpl.setMeasures(measures);
         measureProcessorImpl.setPatientData(patients, visits);
@@ -79,7 +78,6 @@ public class MeasureProcessorImplTest {
         assertThat(measureProcessorImpl.getPatientDataHash().size()).isEqualTo(0);
         assertThat(measureProcessorImpl.getMeasures().size()).isEqualTo(0);
         assertThat(measureProcessorImpl.getMeasureResults().size()).isEqualTo(0);
-        assertThat(measureProcessorImpl.getChunkId()).isEqualTo(null);
         assertThat(measureProcessorImpl.getRulesEvaluatedCount()).isEqualTo(0);
     }
 }

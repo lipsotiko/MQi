@@ -13,16 +13,16 @@
 				"asOf" : "$ryBegin",
 				"thru" : "$ryBegin"
 			},
-			"success" : 200,
-			"failure" : 99999
+			"successStepId" : 200,
+			"failureStepId" : 99999
 		}, {
 			"step_id" : 200,
 			"rule" : "setDenominatorResult",
 			"parameters" : {
 				"eligible" : true
 			},
-			"success" : 99999,
-			"failure" : 99999
+			"successStepId" : 99999,
+			"failureStepId" : 99999
 		}
 	]
 }

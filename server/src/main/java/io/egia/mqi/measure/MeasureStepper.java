@@ -16,17 +16,17 @@ public class MeasureStepper {
     private final PatientData patientData;
     private final Measure measure;
     private final Rules rules;
-    private MeasureResults measureResults;
+    private MeasureResult measureResult;
     private int rulesEvaluatedCount;
 
-    public MeasureStepper(PatientData patientData, Measure measure, Rules rules, MeasureResults measureResults) {
+    public MeasureStepper(PatientData patientData, Measure measure, Rules rules, MeasureResult measureResult) {
         this.patientData = patientData;
         this.measure = measure;
         this.rules = rules;
-        this.measureResults = measureResults;
+        this.measureResult = measureResult;
     }
 
-    public void stepThroughMeasure() {
+    public void stepThroughMeasure() throws MeasureProcessorException {
         List<Step> steps = null;
 
         try {
@@ -38,35 +38,29 @@ public class MeasureStepper {
         int firstStepId = getInitialStepId(steps);
         Step currentStep = getStepById(firstStepId, steps);
 
-        while (measureResults.getContinueProcessing()) {
+        while (measureResult.getContinueProcessing()) {
             String rule = currentStep.getRule();
-            log.debug(String.format("Processing rule %s", rule));
-            Method ruleMethod = null;
+            Method ruleMethod;
             try {
-                ruleMethod = Rules.class.getMethod(rule, PatientData.class, MeasureResults.class);
+                assert rule != null;
+                log.debug(String.format("Evaluating rule %s", rule));
+                ruleMethod = Rules.class.getMethod(rule, PatientData.class, MeasureResult.class);
             } catch (NoSuchMethodException e) {
-                e.printStackTrace();
+                throw new MeasureProcessorException(String.format("Could not find method %s",rule), e);
             }
             try {
                 assert ruleMethod != null;
-                measureResults = (MeasureResults) ruleMethod.invoke(rules, patientData, measureResults);
+                measureResult = (MeasureResult) ruleMethod.invoke(rules, patientData, measureResult);
             } catch (IllegalAccessException | InvocationTargetException e) {
-                e.printStackTrace();
+                throw new MeasureProcessorException(String.format("Could not invoke method %s",rule), e);
             }
 
-            if (measureResults.getContinueProcessing()) {
-                measureResults.writeRuleTrace(rule);
-                try {
-                    currentStep = getNextStep(steps, currentStep.getStepId(), currentStep.getSuccess());
-                } catch (MeasureProcessorException e) {
-                    e.printStackTrace();
-                }
+            measureResult.writeRuleTrace(rule);
+
+            if (measureResult.getContinueProcessing()) {
+                currentStep = getNextStep(steps, currentStep.getStepId(), currentStep.getSuccessStepId());
             } else {
-                try {
-                    currentStep = getNextStep(steps, currentStep.getStepId(), currentStep.getFailure());
-                } catch (MeasureProcessorException e) {
-                    e.printStackTrace();
-                }
+                currentStep = getNextStep(steps, currentStep.getStepId(), currentStep.getFailureStepId());
             }
 
             rulesEvaluatedCount++;
@@ -81,7 +75,7 @@ public class MeasureStepper {
 
     private void preventInfiniteLoops(int currentStepId, int nextStepId) throws MeasureProcessorException {
         if ((nextStepId <= currentStepId) && (currentStepId != 99999)) {
-            throw new MeasureProcessorException("Error: Measure steps configured for infinite loop");
+            throw new MeasureProcessorException("Measure steps configured for infinite loop");
         }
     }
 
@@ -115,8 +109,8 @@ public class MeasureStepper {
         return rulesEvaluatedCount;
     }
 
-    public MeasureResults getMeasureResults() {
-        return measureResults;
+    public MeasureResult getMeasureResult() {
+        return measureResult;
     }
 
 }

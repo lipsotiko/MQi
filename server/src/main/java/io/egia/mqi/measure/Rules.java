@@ -4,17 +4,17 @@ import io.egia.mqi.patient.PatientData;
 
 public class Rules {
 
-    public MeasureResults age_x_asOf_thru(PatientData patientData, MeasureResults measureResults) {
-        return measureResults;
+    public MeasureResult age_x_asOf_thru(PatientData patientData, MeasureResult measureResult) {
+        return measureResult;
     }
 
-    public MeasureResults setDenominatorResult(PatientData patientData, MeasureResults measureResults) {
-        measureResults.setResults(true);
-        return measureResults;
+    public MeasureResult setDenominatorResult(PatientData patientData, MeasureResult measureResult) {
+        measureResult.setResults(true);
+        return measureResult;
     }
 
-    public MeasureResults exitMeasure(PatientData patientData, MeasureResults measureResults) {
-        measureResults.setContinueProcessing(false);
-        return measureResults;
+    public MeasureResult exitMeasure(PatientData patientData, MeasureResult measureResult) {
+        measureResult.setContinueProcessing(false);
+        return measureResult;
     }
 }

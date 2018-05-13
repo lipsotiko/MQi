@@ -57,7 +57,6 @@ public class MeasureService {
 
         Long chunkId = getChunkIdToProcess();
         getPatientData(chunkId, thisServerId);
-        measureProcessor.setChunkId(chunkId);
         measureProcessor.setMeasures(getMeasuresToBeProcessed(jobId, chunkId));
         measureProcessor.setRules(rules);
         measureProcessor.setPatientData(patients, visits);

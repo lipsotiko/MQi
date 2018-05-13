@@ -15,17 +15,11 @@ import java.util.List;
 @Component
 public class MeasureProcessorImpl implements MeasureProcessor {
     private Logger log = LoggerFactory.getLogger(MeasureProcessorImpl.class);
-    private Long chunkId;
     private List<Measure> measures;
     private Hashtable<Long, PatientData> patientDataHash = new Hashtable<>();
     private Rules rules;
     private int rulesEvaluatedCount;
-    private List<MeasureResults> measureResults = new ArrayList<>();
-
-    @Override
-    public void setChunkId(Long chunkId) {
-        this.chunkId = chunkId;
-    }
+    private List<MeasureResult> measureResults = new ArrayList<>();
 
     @Override
     public void setMeasures(List<Measure> measures) {
@@ -42,17 +36,19 @@ public class MeasureProcessorImpl implements MeasureProcessor {
     public void process() {
         this.patientDataHash.forEach((patientId, patientData) ->
                 this.measures.forEach((measure) -> {
-                    log.info(String.format("Processing chunkId: %s, patient id: %s, measure: %s",
-                            this.chunkId,
+                    log.debug(String.format("Processing patient id: %s, measure: %s",
                             patientId,
                             measure.getMeasureName()));
-                    evaluatePatientDataByMeasure(patientData, measure, rules);
+                    try {
+                        evaluatePatientDataByMeasure(patientData, measure, rules);
+                    } catch (MeasureProcessorException e) {
+                        e.printStackTrace();
+                    }
                 }));
     }
 
     @Override
     public void clear() {
-        this.chunkId = null;
         this.measures.clear();
         this.patientDataHash.clear();
         this.rulesEvaluatedCount = 0;
@@ -76,21 +72,17 @@ public class MeasureProcessorImpl implements MeasureProcessor {
         }
     }
 
-    private void evaluatePatientDataByMeasure(PatientData patientData, Measure measure, Rules rules) {
-        MeasureResults measureResults = new MeasureResults();
-        MeasureStepper measureStepper = new MeasureStepper(patientData, measure, rules, measureResults);
+    private void evaluatePatientDataByMeasure(PatientData patientData, Measure measure, Rules rules)
+            throws MeasureProcessorException {
+        MeasureStepper measureStepper = new MeasureStepper(patientData, measure, rules, new MeasureResult());
         measureStepper.stepThroughMeasure();
         rulesEvaluatedCount = rulesEvaluatedCount + measureStepper.getRulesEvaluatedCount();
-        this.measureResults.add(measureStepper.getMeasureResults());
+        this.measureResults.add(measureStepper.getMeasureResult());
     }
 
 
     public Hashtable<Long, PatientData> getPatientDataHash() {
         return this.patientDataHash;
-    }
-
-    public Long getChunkId() {
-        return chunkId;
     }
 
     public List<Measure> getMeasures() {
@@ -101,7 +93,7 @@ public class MeasureProcessorImpl implements MeasureProcessor {
         return rulesEvaluatedCount;
     }
 
-    public List<MeasureResults> getMeasureResults() {
+    public List<MeasureResult> getMeasureResults() {
         return measureResults;
     }
 }

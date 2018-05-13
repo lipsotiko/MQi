@@ -115,8 +115,8 @@ begin
 	--users may choose to exlude patients by adding records manually to t_patient_exclude
 	delete from chunk where patient_id in (select patient_id from t_patient_exclude);
 
-	-- return value of 0 = success
-	-- return value of -1 = failure
+	-- return value of 0 = successStepId
+	-- return value of -1 = failureStepId
 	return 0;
 
 end;

@@ -11,6 +11,6 @@ public class Step {
     private int stepId;
     private String rule;
     private Map<String, String> parameters;
-    private int success;
-    private int failure;
+    private int successStepId;
+    private int failureStepId;
 }

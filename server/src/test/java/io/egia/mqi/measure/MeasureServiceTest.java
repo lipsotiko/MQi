@@ -100,7 +100,6 @@ public class MeasureServiceTest {
         verify(visitRepository, times(1)).findByServerIdAndChunkId(11L,22L);
         verify(serverService, times(1)).getServerFromHostNameAndPort(serverPort);
         verify(chunkRepository,times(1)).findByServerIdOrderByChunkIdAsc(11L);
-        assertThat(measureProcessor.getSetChunkIdWasCalledWith()).isEqualTo(22L);
         assertThat(measureProcessor.getSetMeasuresWasCalledWith().get(0).getMeasureName()).isEqualTo("Fake Measure");
         assertThat(measureProcessor.getSetPatientDataWasCalledWithPatients().get(0).getPatientId()).isEqualTo(99L);
         assertThat(measureProcessor.getSetPatientDataWasCalledWithVisits().get(0).getPatientId()).isEqualTo(99L);

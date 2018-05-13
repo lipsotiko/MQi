@@ -3,7 +3,7 @@ package io.egia.mqi.measure;
 import java.util.ArrayList;
 import java.util.List;
 
-public class MeasureResults {
+public class MeasureResult {
 
     private boolean continueProcessing = true;
     private boolean denominator;
@@ -25,4 +25,7 @@ public class MeasureResults {
         ruleTrace.add(rule);
     }
 
+    public List<String> getRuleTrace() {
+        return ruleTrace;
+    }
 }
