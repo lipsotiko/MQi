@@ -8,9 +8,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
-import java.io.IOException;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.List;
@@ -49,11 +46,7 @@ public class MeasureProcessorImpl implements MeasureProcessor {
                             this.chunkId,
                             patientId,
                             measure.getMeasureName()));
-                    try {
-                        evaluatePatientDataByMeasure(patientData, measure, rules);
-                    } catch (IOException | NoSuchMethodException | IllegalAccessException | InvocationTargetException | MeasureProcessorException e) {
-                        e.printStackTrace();
-                    }
+                    evaluatePatientDataByMeasure(patientData, measure, rules);
                 }));
     }
 
@@ -83,68 +76,14 @@ public class MeasureProcessorImpl implements MeasureProcessor {
         }
     }
 
-    private void evaluatePatientDataByMeasure(PatientData patientData, Measure measure, Rules rules)
-            throws IOException, NoSuchMethodException, InvocationTargetException, IllegalAccessException, MeasureProcessorException {
+    private void evaluatePatientDataByMeasure(PatientData patientData, Measure measure, Rules rules) {
         MeasureResults measureResults = new MeasureResults();
-        List<Step> steps = measure.getLogic().getSteps();
-        int firstStepId = getInitialStepId(steps);
-        Step currentStep = getStepById(firstStepId, steps);
-
-        while (measureResults.getContinueProcessing()) {
-            String rule = currentStep.getRule();
-            log.debug(String.format("Processing rule %s", rule));
-            Method ruleMethod = Rules.class.getMethod(rule, PatientData.class, MeasureResults.class);
-            measureResults = (MeasureResults) ruleMethod.invoke(rules, patientData, measureResults);
-
-            if (measureResults.getContinueProcessing()) {
-                measureResults.writeRuleTrace(rule);
-                currentStep = getNextStep(steps, currentStep.getStepId(), currentStep.getSuccess());
-            } else {
-                currentStep = getNextStep(steps, currentStep.getStepId(), currentStep.getFailure());
-            }
-
-            rulesEvaluatedCount++;
-        }
-
-        this.measureResults.add(measureResults);
+        MeasureStepper measureStepper = new MeasureStepper(patientData, measure, rules, measureResults);
+        measureStepper.stepThroughMeasure();
+        rulesEvaluatedCount = rulesEvaluatedCount + measureStepper.getRulesEvaluatedCount();
+        this.measureResults.add(measureStepper.getMeasureResults());
     }
 
-    private Step getNextStep(List<Step> steps, int currentStepId, int nextStepId) throws MeasureProcessorException {
-        preventInfiniteLoops(currentStepId, nextStepId);
-        return getStepById(nextStepId, steps);
-    }
-
-    private void preventInfiniteLoops(int currentStepId, int nextStepId) throws MeasureProcessorException {
-        if ((nextStepId <= currentStepId) && (currentStepId != 99999)) {
-            throw new MeasureProcessorException("Error: Measure steps configured for infinite loop");
-        }
-    }
-
-    private int getInitialStepId(List<Step> steps) {
-        int lowestStepId = steps.get(0).getStepId();
-        for (Step step : steps) {
-            if (step.getStepId() < lowestStepId) {
-                lowestStepId = step.getStepId();
-            }
-        }
-        return lowestStepId;
-    }
-
-    private Step getStepById(int stepId, List<Step> steps) {
-        for (Step step : steps) {
-            if (step.getStepId() == stepId) {
-                return step;
-            }
-        }
-        return stepToExitMeasure();
-    }
-
-    private Step stepToExitMeasure() {
-        Step step = new Step();
-        step.setRule("exitMeasure");
-        step.setStepId(99999);
-        return step;
-    }
 
     public Hashtable<Long, PatientData> getPatientDataHash() {
         return this.patientDataHash;
