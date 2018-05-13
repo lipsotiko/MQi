@@ -41,4 +41,9 @@ public class MeasureProcessorSpy implements MeasureProcessor {
     public void clear() {
         clearWasCalled = true;
     }
+
+    @Override
+    public void setRules(Rules rules) {
+
+    }
 }

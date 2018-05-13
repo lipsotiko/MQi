@@ -25,9 +25,4 @@ public class MeasureResults {
         ruleTrace.add(rule);
     }
 
-    public void clear() {
-        continueProcessing = true;
-        denominator = false;
-        ruleTrace.clear();
-    }
 }

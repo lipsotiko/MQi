@@ -21,7 +21,7 @@ public class MeasureProcessorImpl implements MeasureProcessor {
     private Long chunkId;
     private List<Measure> measures;
     private Hashtable<Long, PatientData> patientDataHash = new Hashtable<>();
-    private Rules rules = new Rules();
+    private Rules rules;
     private int rulesEvaluatedCount;
     private List<MeasureResults> measureResults = new ArrayList<>();
 
@@ -66,6 +66,11 @@ public class MeasureProcessorImpl implements MeasureProcessor {
         this.measureResults.clear();
     }
 
+    @Override
+    public void setRules(Rules rules) {
+        this.rules = rules;
+    }
+
     private <T extends PatientRecordInterface> void appendToPatientDataHash(List<T> patientRecords) {
         for (T patientRecord : patientRecords) {
             PatientData patientData = this.patientDataHash.get(patientRecord.getPatientId());
@@ -102,7 +107,6 @@ public class MeasureProcessorImpl implements MeasureProcessor {
         }
 
         this.measureResults.add(measureResults);
-        measureResults.clear();
     }
 
     private Step getNextStep(List<Step> steps, int currentStepId, int nextStepId) throws MeasureProcessorException {

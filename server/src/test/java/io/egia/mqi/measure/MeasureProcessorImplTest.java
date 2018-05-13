@@ -16,8 +16,8 @@ import static org.assertj.core.api.Java6Assertions.assertThat;
 public class MeasureProcessorImplTest {
     private List<Patient> patients = new ArrayList<>();
     private List<Visit> visits = new ArrayList<>();
-
     private MeasureProcessorImpl measureProcessorImpl = new MeasureProcessorImpl();
+    private Rules rules = new Rules();
     private List<Measure> measures = new ArrayList<>();
 
     @Before
@@ -45,6 +45,7 @@ public class MeasureProcessorImplTest {
         Long chunkId = 1L;
 
         measureProcessorImpl.setChunkId(chunkId);
+        measureProcessorImpl.setRules(rules);
         measureProcessorImpl.setMeasures(measures);
         measureProcessorImpl.setPatientData(patients, visits);
     }
