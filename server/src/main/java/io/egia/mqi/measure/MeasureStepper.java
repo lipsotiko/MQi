@@ -15,14 +15,12 @@ public class MeasureStepper {
 
     private final PatientData patientData;
     private final Measure measure;
-    private final Rules rules;
     private MeasureResult measureResult;
     private int rulesEvaluatedCount;
 
-    public MeasureStepper(PatientData patientData, Measure measure, Rules rules, MeasureResult measureResult) {
+    public MeasureStepper(PatientData patientData, Measure measure, MeasureResult measureResult) {
         this.patientData = patientData;
         this.measure = measure;
-        this.rules = rules;
         this.measureResult = measureResult;
     }
 
@@ -37,6 +35,7 @@ public class MeasureStepper {
 
         int firstStepId = getInitialStepId(steps);
         Step currentStep = getStepById(firstStepId, steps);
+        Class<?> ruleClass;
 
         while (measureResult.getContinueProcessing()) {
             String rule = currentStep.getRule();
@@ -44,14 +43,16 @@ public class MeasureStepper {
             try {
                 assert rule != null;
                 log.debug(String.format("Evaluating rule %s", rule));
-                ruleMethod = Rules.class.getMethod(rule, PatientData.class, MeasureResult.class);
-            } catch (NoSuchMethodException e) {
-                throw new MeasureProcessorException(String.format("Could not find method %s",rule), e);
+                ruleClass = Class.forName("io.egia.mqi.rules." + rule);
+                ruleMethod = ruleClass.getMethod("evaluate", PatientData.class, MeasureResult.class);
+            } catch (NoSuchMethodException | ClassNotFoundException e) {
+                throw new MeasureProcessorException(String.format("Could not find method %s", rule), e);
             }
+
             try {
                 assert ruleMethod != null;
-                measureResult = (MeasureResult) ruleMethod.invoke(rules, patientData, measureResult);
-            } catch (IllegalAccessException | InvocationTargetException e) {
+                measureResult = (MeasureResult) ruleMethod.invoke(ruleClass.newInstance(), patientData, measureResult);
+            } catch (IllegalAccessException | InvocationTargetException | InstantiationException e) {
                 throw new MeasureProcessorException(String.format("Could not invoke method %s",rule), e);
             }
 
@@ -100,7 +101,7 @@ public class MeasureStepper {
 
     private Step stepToExitMeasure() {
         Step step = new Step();
-        step.setRule("exitMeasure");
+        step.setRule("ExitMeasure");
         step.setStepId(99999);
         return step;
     }

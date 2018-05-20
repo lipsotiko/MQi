@@ -48,7 +48,6 @@ public class MeasureService {
     private List<Patient> patients;
     private List<Visit> visits;
     private Long thisServerId;
-    private Rules rules = new Rules();
 
     public void process() {
         thisServerId = getThisServerId();
@@ -58,7 +57,6 @@ public class MeasureService {
         Long chunkId = getChunkIdToProcess();
         getPatientData(chunkId, thisServerId);
         measureProcessor.setMeasures(getMeasuresToBeProcessed(jobId, chunkId));
-        measureProcessor.setRules(rules);
         measureProcessor.setPatientData(patients, visits);
         measureProcessor.process();
     }

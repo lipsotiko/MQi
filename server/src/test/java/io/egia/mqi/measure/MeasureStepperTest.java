@@ -19,7 +19,7 @@ public class MeasureStepperTest {
         Measure measure = Helpers.getMeasureFromResource("fixtures","sampleMeasure.json");
         measure.getLogic().getSteps().stream().forEach((step -> testMeasureRules.add(step.getRule())));
         MeasureStepper measureStepper = new MeasureStepper(
-                new PatientData(1L), measure, new Rules(), new MeasureResult());
+                new PatientData(1L), measure, new MeasureResult());
         measureStepper.stepThroughMeasure();
         List<String> ruleTrace = measureStepper.getMeasureResult().getRuleTrace();
         for(String rule: testMeasureRules) {
@@ -31,7 +31,7 @@ public class MeasureStepperTest {
     public void measureWithInfiniteLoopThrowsException() throws IOException, MeasureProcessorException {
         Measure measure = Helpers.getMeasureFromResource("fixtures","measureWithInfiniteLoop.json");
         MeasureStepper measureStepper = new MeasureStepper(
-                new PatientData(1L), measure, new Rules(), new MeasureResult());
+                new PatientData(1L), measure, new MeasureResult());
         assertMeasureProcessorException(measureStepper, "Measure steps configured for infinite loop");
     }
 
@@ -39,7 +39,7 @@ public class MeasureStepperTest {
     public void measureWithInvalidRuleThrowsException() throws IOException, MeasureProcessorException {
         Measure measure = Helpers.getMeasureFromResource("fixtures","measureWithRuleThatDoesNotExist.json");
         MeasureStepper measureStepper = new MeasureStepper(
-                new PatientData(1L), measure, new Rules(), new MeasureResult());
+                new PatientData(1L), measure, new MeasureResult());
         assertMeasureProcessorException(measureStepper, "Could not find method thisRuleDoesntExistInMqi");
     }
 

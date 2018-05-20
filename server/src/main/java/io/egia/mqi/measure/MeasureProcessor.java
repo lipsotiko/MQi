@@ -10,5 +10,4 @@ public interface MeasureProcessor {
     void setPatientData(List<Patient> patients, List<Visit> visits);
     void process();
     void clear();
-    void setRules(Rules rules);
 }

@@ -17,7 +17,6 @@ public class MeasureProcessorImpl implements MeasureProcessor {
     private Logger log = LoggerFactory.getLogger(MeasureProcessorImpl.class);
     private List<Measure> measures;
     private Hashtable<Long, PatientData> patientDataHash = new Hashtable<>();
-    private Rules rules;
     private int rulesEvaluatedCount;
     private List<MeasureResult> measureResults = new ArrayList<>();
 
@@ -40,7 +39,7 @@ public class MeasureProcessorImpl implements MeasureProcessor {
                             patientId,
                             measure.getMeasureName()));
                     try {
-                        evaluatePatientDataByMeasure(patientData, measure, rules);
+                        evaluatePatientDataByMeasure(patientData, measure);
                     } catch (MeasureProcessorException e) {
                         e.printStackTrace();
                     }
@@ -55,11 +54,6 @@ public class MeasureProcessorImpl implements MeasureProcessor {
         this.measureResults.clear();
     }
 
-    @Override
-    public void setRules(Rules rules) {
-        this.rules = rules;
-    }
-
     private <T extends PatientRecordInterface> void appendToPatientDataHash(List<T> patientRecords) {
         for (T patientRecord : patientRecords) {
             PatientData patientData = this.patientDataHash.get(patientRecord.getPatientId());
@@ -72,9 +66,9 @@ public class MeasureProcessorImpl implements MeasureProcessor {
         }
     }
 
-    private void evaluatePatientDataByMeasure(PatientData patientData, Measure measure, Rules rules)
+    private void evaluatePatientDataByMeasure(PatientData patientData, Measure measure)
             throws MeasureProcessorException {
-        MeasureStepper measureStepper = new MeasureStepper(patientData, measure, rules, new MeasureResult());
+        MeasureStepper measureStepper = new MeasureStepper(patientData, measure, new MeasureResult());
         measureStepper.stepThroughMeasure();
         rulesEvaluatedCount = rulesEvaluatedCount + measureStepper.getRulesEvaluatedCount();
         this.measureResults.add(measureStepper.getMeasureResult());
