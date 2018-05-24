@@ -17,6 +17,8 @@ node_modules
 .idea
 .vscode
 *.iml
+server/.profile
+server/.profile~
 
 # Packages #
 ############
