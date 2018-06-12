@@ -8,12 +8,13 @@ import Styles
 import Http
 import Json.Decode as Json exposing (int, at, string, list, map)
 
+main : Program Never Model Msg
 main =
     Html.program
         { init = init
         , view = view
         , update = update
-        , subscriptions = subscriptions}
+        , subscriptions = subscriptions }
 
 -- MODEL
 
@@ -59,6 +60,7 @@ init =
     , measureList = [ MeasureItem 0 "" ]
     } ! [getMeasureList]
 
+measureSteps : List Step
 measureSteps =
     [ Step 100 "Original Step 1" 200 400 False
     , Step 200 "Original Step 2" 300 400 False
@@ -356,7 +358,7 @@ onMouseDown msg =
 getMeasureList : Cmd Msg
 getMeasureList =
     let
-        url = "http://localhost:8080/measure_list"
+        url = "/measure_list"
         request = Http.get url decodeMeasureList
     in
         Http.send GetMeasureList request

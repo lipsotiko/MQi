@@ -9,6 +9,11 @@ node_modules
 *.exe
 *.o
 *.so
+dist
+elm-stuff
+package-lock.json
+yarn-error.log
+yarn.lock
 
 # Project Metadata Files #
 .settings
