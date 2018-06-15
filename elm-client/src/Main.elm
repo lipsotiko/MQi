@@ -4,7 +4,6 @@ import Html exposing (..)
 import Html.Attributes exposing (..)
 import Html.Events exposing (on, onClick, onInput)
 import Mouse exposing (Position)
-import Styles
 import Http
 import Json.Decode as Json exposing (int, at, string, list, map)
 
@@ -265,52 +264,51 @@ view model =
             ]
 
             , div [ class "measure" ] [
-                div [ style Styles.fldContainer ]
+                div []
                     [
                         h3 [ ] [text "Name:"]
-                        , input [  style Styles.titleTextBox
+                        , input [  class "measure-name"
                                    , placeholder "Measure name..."
                                    , value model.measure.name
                                    , onInput Name][]
                     ]
 
                 , div
-                    [ style Styles.fldContainer ]
+                    []
                     [
                         h3 [ ] [text "Description:"]
-                        , textarea [  style Styles.descriptionTextBox
+                        , textarea [ class "measure-desc"
                                     , placeholder "Describe this measure..."
                                     , value model.measure.description
                                     , onInput Description][]
                     ]
 
                , div
-                    [ style Styles.fldContainer ]
+                    []
                     [
                         h3 [ ]
                         [ text "Steps:" ]
                         , button
-                            [ style Styles.addBtn
-                            , onClick AddStep]
-                            [text "Add"]
+                            [ onClick AddStep]
+                            [text "+"]
                     ]
                 , ul
-                    [ style Styles.listContainer ]
+                    [ class "list-container" ]
                     <| List.indexedMap (itemView model) model.measure.steps
-                , button [style Styles.saveBtn] [ text "Save" ]
+                , button [] [ text "Save" ]
             ]
         ]
 
 itemView : Model -> Int -> Step -> Html Msg
 itemView model idx item =
     let
-        deleteButtonStyle =
-            if item.isEditing then Styles.showBtn
-            else Styles.hideBtn
+        deleteBtnStyle =
+            if item.isEditing then "show"
+            else "hide"
 
         stepStyle =
-            if item.isEditing then Styles.expandedListItem
-            else Styles.listItem
+            if item.isEditing then "expanded list-item"
+            else "list-item"
 
         moveStyle =
             case model.measure.drag of
@@ -346,14 +344,14 @@ itemView model idx item =
                     []
 
     in
-        li [ style <| stepStyle ++ moveStyle ++ makingWayStyle ]
-            [ input [style Styles.itemTextBox, maxlength 5, value (toString item.stepId)][]
-            , div [ style Styles.itemText ][ text item.rule]
-            , input [style Styles.itemTextBox, maxlength 5, value (toString item.successStepId)][]
-            , input [style Styles.itemTextBox, maxlength 5, value (toString item.failureStepId)][]
-            , button [ style deleteButtonStyle, onClick (DeleteStep idx) ] [ text "Delete" ]
-            , button [ style Styles.editBtn, onClick (EditStep idx) ][ text "Edit" ]
-            , a [ style Styles.dragBtn, onMouseDown <| DragStart idx ] [ ]
+        li [ class stepStyle, style <| moveStyle ++ makingWayStyle ]
+            [ input [ maxlength 5, value (toString item.stepId)][]
+            , div [][text item.rule]
+            , input [ maxlength 5, value (toString item.successStepId)][]
+            , input [ maxlength 5, value (toString item.failureStepId)][]
+            , button [ class deleteBtnStyle, onClick (DeleteStep idx) ] [ text "Delete" ]
+            , button [ onClick (EditStep idx) ][ text "Edit" ]
+            , div [ class "drag-btn", onMouseDown <| DragStart idx ] [ ]
             ]
 
 onMouseDown : (Position -> msg) -> Attribute msg
