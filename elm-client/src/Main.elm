@@ -258,42 +258,47 @@ view : Model -> Html Msg
 view model =
 
     div
-        [ style Styles.pageContainer ]
+        [ class "container" ]
         [
-            div
-                [ style Styles.fldContainer ]
-                [
-                    h3 [style Styles.headerTitle] [text "Name:"]
-                    , input [  style Styles.titleTextBox
-                               , placeholder "Measure name..."
-                               , value model.measure.name
-                               , onInput Name][]
-                ]
+            div [ class "measure-list" ] [
+                h3 [ ] [text "Measures:"]
+            ]
 
-            , div
-                [ style Styles.fldContainer ]
-                [
-                    h3 [style Styles.headerTitle] [text "Description:"]
-                    , textarea [  style Styles.descriptionTextBox
-                                , placeholder "Describe this measure..."
-                                , value model.measure.description
-                                , onInput Description][]
-                ]
+            , div [ class "measure" ] [
+                div [ style Styles.fldContainer ]
+                    [
+                        h3 [ ] [text "Name:"]
+                        , input [  style Styles.titleTextBox
+                                   , placeholder "Measure name..."
+                                   , value model.measure.name
+                                   , onInput Name][]
+                    ]
 
-           , div
-                [ style Styles.fldContainer ]
-                [ h3
-                    [ style Styles.headerTitle ]
-                    [ text "Steps:" ]
-                    , button
-                        [ style Styles.addBtn
-                        , onClick AddStep]
-                        [text "Add"]
-                ]
-            , ul
-                [ style Styles.listContainer ]
-                <| List.indexedMap (itemView model) model.measure.steps
-            , button [style Styles.saveBtn] [ text "Save" ]
+                , div
+                    [ style Styles.fldContainer ]
+                    [
+                        h3 [ ] [text "Description:"]
+                        , textarea [  style Styles.descriptionTextBox
+                                    , placeholder "Describe this measure..."
+                                    , value model.measure.description
+                                    , onInput Description][]
+                    ]
+
+               , div
+                    [ style Styles.fldContainer ]
+                    [
+                        h3 [ ]
+                        [ text "Steps:" ]
+                        , button
+                            [ style Styles.addBtn
+                            , onClick AddStep]
+                            [text "Add"]
+                    ]
+                , ul
+                    [ style Styles.listContainer ]
+                    <| List.indexedMap (itemView model) model.measure.steps
+                , button [style Styles.saveBtn] [ text "Save" ]
+            ]
         ]
 
 itemView : Model -> Int -> Step -> Html Msg

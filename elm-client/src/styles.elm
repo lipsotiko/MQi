@@ -4,29 +4,11 @@ module Styles exposing (..)
 
 type alias StyleList = List (String, String)
 
-
--- for page container (root element)
-pageContainer : StyleList
-pageContainer =
-    [ ("width","50rem")
-    , ("margin","auto")
-    , ("padding","0 1rem 0 0")
-    , ("backgroundColor","#fafafa")
-    , ("fontFamily","Verdana")
-    ]
-
 -- for list header (with title and toggle button)
 fldContainer : StyleList
 fldContainer =
     [("padding","1rem 0 0 1rem")
     , ("margin-bottom","0")
-    ]
-
--- for title in header
-headerTitle : StyleList
-headerTitle =
-    [("display", "inline")
-    ,("vertical-align", "middle")
     ]
 
 -- for list container (ul)
