@@ -261,6 +261,9 @@ view model =
         [
             div [ class "measure-list" ] [
                 h3 [ ] [text "Measures:"]
+                , ul
+                  [ class "list-container" ]
+                  <| List.indexedMap measureItemView model.measureList
             ]
 
             , div [ class "measure" ] [
@@ -294,13 +297,17 @@ view model =
                     ]
                 , ul
                     [ class "list-container" ]
-                    <| List.indexedMap (itemView model) model.measure.steps
+                    <| List.indexedMap (stepView model) model.measure.steps
                 , button [] [ text "Save" ]
             ]
         ]
 
-itemView : Model -> Int -> Step -> Html Msg
-itemView model idx item =
+measureItemView: Int -> MeasureItem -> Html Msg
+measureItemView idx item =
+    li[attribute "index" (toString item.id) ][text item.name]
+
+stepView : Model -> Int -> Step -> Html Msg
+stepView model idx item =
     let
         deleteBtnStyle =
             if item.isEditing then "show"
@@ -344,7 +351,7 @@ itemView model idx item =
                     []
 
     in
-        li [ class stepStyle, style <| moveStyle ++ makingWayStyle ]
+        li [ class stepStyle, style <| moveStyle ++ makingWayStyle, attribute "index" (toString idx) ]
             [ input [ maxlength 5, value (toString item.stepId)][]
             , div [][text item.rule]
             , input [ maxlength 5, value (toString item.successStepId)][]
