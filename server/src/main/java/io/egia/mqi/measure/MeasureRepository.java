@@ -8,8 +8,7 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 
 @Repository
-public interface MeasureRepository extends JpaRepository<Measure, String> {
-	Measure findOneByMeasureId(Long measureId);
+public interface MeasureRepository extends JpaRepository<Measure, Long> {
 
 	@Query(value="select new io.egia.mqi.measure.MeasureListItem(m.measureId, m.measureName) from Measure m")
 	List<MeasureListItem> findAllMeasureListItems();

@@ -1,11 +1,11 @@
 {
 	"description" : "Patients that are between the ages of 2 and 5 on the first day of the reporting year with an occurrence of a broken leg at some time during the reporting year",
-	"minimum_system_version" : "1.0.0",
-	"trace_rules" : true,
-	"generate_supplemental_results" : true,
+	"minimumSystemVersion" : "1.0.0",
+	"traceRules" : true,
+	"generateSupplementalResults" : true,
 	"steps" : [
 		{
-			"step_id" : 100, 
+			"stepId" : 100,
 			"rule" : "AgeWithinDateRange",
 			"parameters" : {
 				"min" : 2,
@@ -16,7 +16,7 @@
 			"successStepId" : 200,
 			"failureStepId" : 99999
 		}, {
-			"step_id" : 200,
+			"stepId" : 200,
 			"rule" : "SetResult",
 			"parameters" : {
 				"eligible" : true

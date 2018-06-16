@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 
 public class MeasureStepperTest {
 
@@ -16,42 +17,37 @@ public class MeasureStepperTest {
 
     @Test
     public void measureIsSteppedThrough() throws MeasureProcessorException, IOException {
-        Measure measure = Helpers.getMeasureFromResource("fixtures","sampleMeasure.json");
+        Measure measure = Helpers.getMeasureFromResource("fixtures", "sampleMeasure.json");
         measure.getLogic().getSteps().stream().forEach((step -> testMeasureRules.add(step.getRule())));
         MeasureStepper measureStepper = new MeasureStepper(
                 new PatientData(1L), measure, new MeasureResult());
         measureStepper.stepThroughMeasure();
         List<String> ruleTrace = measureStepper.getMeasureResult().getRuleTrace();
-        for(String rule: testMeasureRules) {
+        for (String rule : testMeasureRules) {
             assertThat(ruleTrace.contains(rule)).isTrue();
         }
     }
 
     @Test
     public void measureWithInfiniteLoopThrowsException() throws IOException, MeasureProcessorException {
-        Measure measure = Helpers.getMeasureFromResource("fixtures","measureWithInfiniteLoop.json");
+        Measure measure = Helpers.getMeasureFromResource("fixtures", "measureWithInfiniteLoop.json");
         MeasureStepper measureStepper = new MeasureStepper(
                 new PatientData(1L), measure, new MeasureResult());
-        assertMeasureProcessorException(measureStepper, "Measure steps configured for infinite loop");
+
+        assertThatExceptionOfType(MeasureProcessorException.class).isThrownBy(() -> {
+                    measureStepper.stepThroughMeasure();
+                }
+        );
     }
 
     @Test
     public void measureWithInvalidRuleThrowsException() throws IOException, MeasureProcessorException {
-        Measure measure = Helpers.getMeasureFromResource("fixtures","measureWithRuleThatDoesNotExist.json");
+        Measure measure = Helpers.getMeasureFromResource("fixtures", "measureWithRuleThatDoesNotExist.json");
         MeasureStepper measureStepper = new MeasureStepper(
                 new PatientData(1L), measure, new MeasureResult());
-        assertMeasureProcessorException(measureStepper, "Could not find method thisRuleDoesntExistInMqi");
-    }
-
-    private void assertMeasureProcessorException(MeasureStepper measureStepper, String s) {
-        boolean exceptionWasCaught = false;
-        try {
-            measureStepper.stepThroughMeasure();
-        } catch (MeasureProcessorException e) {
-            exceptionWasCaught = true;
-            assertThat(e.getMessage()).contains(s);
-        }
-
-        assertThat(exceptionWasCaught).isTrue();
+        assertThatExceptionOfType(MeasureProcessorException.class).isThrownBy(() -> {
+                    measureStepper.stepThroughMeasure();
+                }
+        );
     }
 }

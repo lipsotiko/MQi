@@ -5,6 +5,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 public class MeasureController {
@@ -17,13 +18,13 @@ public class MeasureController {
     }
 
     @RequestMapping("/measures")
-    public List<Measure> measures() {
+    public Iterable<Measure> measures() {
         return measureRepository.findAll();
     }
 
     @RequestMapping("/measure")
-    public Measure measure(@RequestParam(value = "measure_id") String measureId) {
-        return measureRepository.findOneByMeasureId(Long.parseLong(measureId));
+    public Optional<Measure> measure(@RequestParam(value = "id") Long id) {
+        return measureRepository.findById(id);
     }
 
     @RequestMapping("/measure_list")
