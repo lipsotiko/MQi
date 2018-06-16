@@ -33,11 +33,8 @@ measureDecoder = decode Measure
     |> required "measureId" int
     |> required "measureName" string
     |> requiredAt ["measureJson","description"] string
-    |> requiredAt ["measureJson","steps"] stepsDecoder
+    |> requiredAt ["measureJson","steps"] (Json.list stepDecoder)
     |> hardcoded Nothing
-
-stepsDecoder: Json.Decoder (List Step)
-stepsDecoder = Json.list stepDecoder
 
 stepDecoder: Decoder Step
 stepDecoder = decode Step

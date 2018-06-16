@@ -54,12 +54,13 @@ view model =
                     [ class "list-container" ]
                     <| List.indexedMap (stepView model) model.measure.steps
                 , button [] [ text "Save" ]
+                , button [] [ text "Delete" ]
             ]
         ]
 
 measureItemView: Int -> MeasureItem -> Html Msg
 measureItemView idx measureItem =
-    li[class "list-item", onClick (SelectMeasure measureItem.id)][
+    li [ class "measure list-item", onClick (SelectMeasure measureItem.id)][
        text measureItem.name
     ]
 

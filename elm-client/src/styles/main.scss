@@ -40,6 +40,10 @@
     display: flex;
 }
 
+.measure.list-item {
+    cursor: pointer;
+}
+
 .expanded.list-item  {
     height: 8rem;
 }
