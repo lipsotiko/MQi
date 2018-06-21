@@ -12,7 +12,7 @@ import javax.persistence.Id;
 public class RuleParam {
     @Id
     @GeneratedValue(strategy= GenerationType.IDENTITY)
-    Long id;
+    Long ruleParamId;
 
     private String ruleName;
     private String paramName;

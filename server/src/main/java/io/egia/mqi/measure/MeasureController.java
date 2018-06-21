@@ -42,8 +42,8 @@ public class MeasureController {
         return "measure Process";
     }
 
-    @RequestMapping("/rule-params")
-    public Optional<RuleParam> measure(@RequestParam(value = "ruleName") String ruleName) {
+    @RequestMapping("/rule_params")
+    public Iterable<RuleParam> measure(@RequestParam(value = "rule_name") String ruleName) {
         return ruleParamRepository.findAllByRuleNameOrderByDisplayOrder(ruleName);
     }
 

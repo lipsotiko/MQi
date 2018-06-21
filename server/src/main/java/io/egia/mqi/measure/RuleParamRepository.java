@@ -7,5 +7,5 @@ import java.util.Optional;
 
 @Repository
 public interface RuleParamRepository extends JpaRepository<RuleParam, Long> {
-    Optional<RuleParam> findAllByRuleNameOrderByDisplayOrder(String ruleName);
+    Iterable<RuleParam> findAllByRuleNameOrderByDisplayOrder(String ruleName);
 }
