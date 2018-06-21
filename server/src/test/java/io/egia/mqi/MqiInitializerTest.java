@@ -50,9 +50,9 @@ public class MqiInitializerTest {
     public void verifyMqiInitializerDoesWhatItsSupposedTo() throws ClassNotFoundException {
         subject.onApplicationEvent(contextRefreshedEvent);
         verify(ruleParamUtility, times(1)).saveRuleParams();
-        when(versionRepository.findAll()).thenReturn(Arrays.asList(new Version("0.0.0")));
+//        when(versionRepository.findAll()).thenReturn(Arrays.asList(new Version("0.0.0")));
         verify(versionRepository, times(1)).save(captor.capture());
-        assertThat(captor.getValue().getVersionId(), equalTo("0.0.0"));
+        assertThat(captor.getValue().getVersionId(), equalTo("1.0.0"));
     }
 
 }
