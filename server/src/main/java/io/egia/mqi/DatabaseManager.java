@@ -23,19 +23,17 @@ public class DatabaseManager {
     private String[] dbObjects = {"func", "table", "view", "proc", "data", "meas"};
     private SqlExecutor sqlExec;
     private MeasureRepository measureRepository;
-    private VersionRepository versionRepository;
 
     public DatabaseManager(SqlExecutor sqlExec, MeasureRepository measureRepository, VersionRepository versionRepository) {
         this.sqlExec = sqlExec;
         this.measureRepository = measureRepository;
-        this.versionRepository = versionRepository;
     }
 
     public void setVersionsDirectory(String versionsDirectory) {
         this.versionsDbDirectory = versionsDirectory;
     }
 
-    public void applyVersion(Version v) {
+    public Version applyVersion(Version v) {
         log.info(String.format("Applying update: %s", v.getVersionId()));
 
         for (int i = 0; i < dbObjects.length; i++) {
@@ -46,7 +44,7 @@ public class DatabaseManager {
             }
         }
 
-        versionRepository.updateVersion(v.getVersionId());
+        return v;
     }
 
     public void createVersionTable() {

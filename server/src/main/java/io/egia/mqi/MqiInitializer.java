@@ -46,11 +46,18 @@ public class MqiInitializer implements ApplicationListener<ContextRefreshedEvent
 
 	private List<Version> versions = new ArrayList<Version>();
 
-	public MqiInitializer(VersionRepository versionRepository, DatabaseManager databaseManager, ServerService serverService, RuleParamUtility ruleParamUtility) {
+	private VersionUtility versionUtility;
+
+	public MqiInitializer(VersionRepository versionRepository
+				, DatabaseManager databaseManager
+				, ServerService serverService
+				, RuleParamUtility ruleParamUtility
+				, VersionUtility versionUtility) {
 		this.versionRepository = versionRepository;
 		this.dbManager = databaseManager;
 		this.serverService = serverService;
 		this.ruleParamUtility = ruleParamUtility;
+		this.versionUtility = versionUtility;
 	}
 
 	@Override
@@ -120,13 +127,13 @@ public class MqiInitializer implements ApplicationListener<ContextRefreshedEvent
 			if (serverType.equalsIgnoreCase("primary")) {
 
 				log.info("Performing database update.");
-				versions = retrieveVersions();
+				versions = versionUtility.retrieveVersions(homeDirectory);
 				// Loop through all the versions in the updates directory
 				for (Version v : versions) {
 					// if the version is newer than the current version, apply
 					// the update
 					if (v.compareTo(currDbVer) > 0) {
-						dbManager.applyVersion(v);
+						versionRepository.save(dbManager.applyVersion(v));
 					}
 				}
 			} else {
@@ -152,7 +159,7 @@ public class MqiInitializer implements ApplicationListener<ContextRefreshedEvent
 					serverService.updateServerTypeAndVersion(thisServer, serverType, serverVersion);
 				} else if (thisServer == null && primaryServer == null) {
 					log.info("Primary server does not exist in the server table, adding entry.");
-					serverService.saveServer(buildNewServer(serverService.thisServersHostName()));
+					serverService.saveServer(buildNewServer(ServerService.thisServersHostName()));
 				}
 			} else if (serverType.equals("secondary")) {
 				if (thisServer != null) {
@@ -160,7 +167,7 @@ public class MqiInitializer implements ApplicationListener<ContextRefreshedEvent
                     serverService.updateServerTypeAndVersion(thisServer, serverType, serverVersion);
 				} else if (thisServer == null) {
 					log.info("Secondary server does not exist in the server table, adding entry.");
-                    serverService.saveServer(buildNewServer(serverService.thisServersHostName()));
+                    serverService.saveServer(buildNewServer(ServerService.thisServersHostName()));
 				} else {
 					throw new MqiExceptions("There is more than one entry for this server in the server table. " +
                             "Please remove one of the entries.");
@@ -180,22 +187,4 @@ public class MqiInitializer implements ApplicationListener<ContextRefreshedEvent
         return server;
     }
 
-    private List<Version> retrieveVersions() {
-		log.info("Retrieving versions from home/updates directory");
-		Path updatesPath = FileSystems.getDefault().getPath(homeDirectory + File.separator + "versions");
-		DirectoryStream.Filter<Path> dir_filter = path -> (Files.isDirectory(path, NOFOLLOW_LINKS));
-
-		try (DirectoryStream<Path> stream = Files.newDirectoryStream(updatesPath, dir_filter)) {
-			for (Path file : stream) {
-				Version v = new Version(file.getFileName().toString());
-				versions.add(v);
-			}
-		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-
-		versions.sort((vA, vB) -> vA.compareTo(vB));
-		return versions;
-	}
 }

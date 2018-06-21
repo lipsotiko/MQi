@@ -13,7 +13,7 @@ import org.mockito.junit.MockitoJUnitRunner;
 import org.springframework.context.event.ContextRefreshedEvent;
 import org.springframework.test.util.ReflectionTestUtils;
 
-import java.util.Arrays;
+import java.util.Collections;
 
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertThat;
@@ -31,6 +31,8 @@ public class MqiInitializerTest {
     @Mock
     private RuleParamUtility ruleParamUtility;
     @Mock
+    private VersionUtility versionUtility;
+    @Mock
     private ContextRefreshedEvent contextRefreshedEvent;
 
     @Captor
@@ -38,21 +40,25 @@ public class MqiInitializerTest {
 
     private MqiInitializer subject;
 
+    Version expectedVersion = new Version("1.0.0");
+
     @Before
     public void setUp() {
-        subject = new MqiInitializer(versionRepository, databaseManager, serverService, ruleParamUtility);
+        when(versionUtility.retrieveVersions(anyString())).thenReturn(Collections.singletonList(expectedVersion));
+        when(databaseManager.applyVersion(any())).thenReturn(expectedVersion);
+        subject = new MqiInitializer(versionRepository, databaseManager, serverService, ruleParamUtility, versionUtility);
         ReflectionTestUtils.setField(subject, "serverPort", "8080");
         ReflectionTestUtils.setField(subject, "serverType", "primary");
-        ReflectionTestUtils.setField(subject, "serverVersion", "1.0.0");
+        ReflectionTestUtils.setField(subject, "serverVersion", expectedVersion.getVersionId());
+        ReflectionTestUtils.setField(subject, "homeDirectory", "some file path");
     }
 
     @Test
     public void verifyMqiInitializerDoesWhatItsSupposedTo() throws ClassNotFoundException {
         subject.onApplicationEvent(contextRefreshedEvent);
         verify(ruleParamUtility, times(1)).saveRuleParams();
-//        when(versionRepository.findAll()).thenReturn(Arrays.asList(new Version("0.0.0")));
-        verify(versionRepository, times(1)).save(captor.capture());
-        assertThat(captor.getValue().getVersionId(), equalTo("1.0.0"));
+        verify(versionRepository, times(2)).save(captor.capture());
+        assertThat(captor.getValue(), equalTo(expectedVersion));
     }
 
 }

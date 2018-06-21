@@ -34,11 +34,19 @@ public class RuleParamUtility {
         for (Class c : annotated) {
             ruleClass = Class.forName(c.getName());
             Rule rule = ruleClass.getAnnotation(Rule.class);
+
+            String ruleName = c.getName().substring(packagePrefix.length()+1);
+
+            if (rule.params().length == 0) {
+                ruleParamRepository.save(new RuleParam(ruleName, "", "", displayOrder));
+                continue;
+            }
+
             for (Param param : rule.params()) {
-                String ruleName = c.getName().substring(packagePrefix.length()+1);
                 ruleParamRepository.save(new RuleParam(ruleName,param.name(), param.type(), displayOrder));
                 displayOrder++;
             }
+
             displayOrder = 1;
         }
 
