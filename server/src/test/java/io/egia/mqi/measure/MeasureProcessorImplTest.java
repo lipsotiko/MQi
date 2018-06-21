@@ -41,8 +41,6 @@ public class MeasureProcessorImplTest {
         Measure measure = Helpers.getMeasureFromResource("fixtures","sampleMeasure.json");
         measures.add(measure);
 
-        Long chunkId = 1L;
-
         measureProcessorImpl.setMeasures(measures);
         measureProcessorImpl.setPatientData(patients, visits);
     }

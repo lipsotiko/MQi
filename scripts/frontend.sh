@@ -1,0 +1,1 @@
+cd ./elm-client && npm run client

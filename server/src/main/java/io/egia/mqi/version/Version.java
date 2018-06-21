@@ -12,17 +12,21 @@ public class Version implements Serializable {
 	@Transient private int majorVersion;	
 	@Transient private int minorVersion;	
 	@Transient private int patchVersion;
-	
-	public String getVersionId() {
-		return versionId;
+
+	public Version() {
+
 	}
 
-	public void setVersionId(String versionId) {
+	public Version(String versionId) {
 		this.versionId = versionId;
 		String[] v = this.versionId.split("\\.");
 		majorVersion = Integer.parseInt(v[0]);
 		minorVersion = Integer.parseInt(v[1]);
 		patchVersion = Integer.parseInt(v[2]);
+	}
+
+	public String getVersionId() {
+		return versionId;
 	}
 	
 	public int compareTo(Version v) {

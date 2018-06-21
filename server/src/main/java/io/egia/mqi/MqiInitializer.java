@@ -28,6 +28,7 @@ public class MqiInitializer implements ApplicationListener<ContextRefreshedEvent
 	private VersionRepository versionRepository;
 	private DatabaseManager dbManager;
 	private ServerService serverService;
+	private RuleParamUtility ruleParamUtility;
 
 	@Value("${mqi.properties.home.directory}")
 	private String homeDirectory;
@@ -45,10 +46,11 @@ public class MqiInitializer implements ApplicationListener<ContextRefreshedEvent
 
 	private List<Version> versions = new ArrayList<Version>();
 
-	public MqiInitializer(VersionRepository versionRepository, DatabaseManager dbManager, ServerService serverService) {
+	public MqiInitializer(VersionRepository versionRepository, DatabaseManager databaseManager, ServerService serverService, RuleParamUtility ruleParamUtility) {
 		this.versionRepository = versionRepository;
-		this.dbManager = dbManager;
+		this.dbManager = databaseManager;
 		this.serverService = serverService;
+		this.ruleParamUtility = ruleParamUtility;
 	}
 
 	@Override
@@ -61,6 +63,8 @@ public class MqiInitializer implements ApplicationListener<ContextRefreshedEvent
 
 			initializeMqi(this.currentDatabaseVersion, this.serverVersion);
 
+			ruleParamUtility.saveRuleParams();
+
 			log.info("--------------------------------------------------");
 			log.info("Egia Software Solutions, Inc");
 			log.info("Medical Quality Informatics ");
@@ -68,7 +72,7 @@ public class MqiInitializer implements ApplicationListener<ContextRefreshedEvent
 			log.info(String.format("server Type: %s", this.serverType));
 			log.info(String.format("Home Direcotry: %s", this.homeDirectory));
 			log.info("--------------------------------------------------");
-		} catch (MqiExceptions e) {
+		} catch (ClassNotFoundException | MqiExceptions e) {
 			e.printStackTrace();
 		}
 	}
@@ -99,19 +103,15 @@ public class MqiInitializer implements ApplicationListener<ContextRefreshedEvent
 			// "0.0.0"
 			// This was done so when the standalone configuration creates an
 			// hsql db, a version is inserted.
-			Version v = new Version();
-			v.setVersionId("0.0.0");
-			versionRepository.saveAndFlush(v);
+			Version v = new Version("0.0.0");
+			versionRepository.save(v);
 			return v.getVersionId();
 		}
 	}
 
-	public void initializeMqi(String currentDatabaseVersion, String currentServerVersion) throws MqiExceptions {
-		Version currDbVer = new Version();
-		Version currSrvVer = new Version();
-
-		currDbVer.setVersionId(currentDatabaseVersion);
-		currSrvVer.setVersionId(currentServerVersion);
+	private void initializeMqi(String currentDatabaseVersion, String currentServerVersion) throws MqiExceptions {
+		Version currDbVer = new Version(currentDatabaseVersion);
+		Version currSrvVer = new Version(currentServerVersion);
 
 		// If the database version is out of date, apply the necessary updates
 		if (currSrvVer.compareTo(currDbVer) > 0) {
@@ -187,8 +187,7 @@ public class MqiInitializer implements ApplicationListener<ContextRefreshedEvent
 
 		try (DirectoryStream<Path> stream = Files.newDirectoryStream(updatesPath, dir_filter)) {
 			for (Path file : stream) {
-				Version v = new Version();
-				v.setVersionId(file.getFileName().toString());
+				Version v = new Version(file.getFileName().toString());
 				versions.add(v);
 			}
 		} catch (Exception e) {

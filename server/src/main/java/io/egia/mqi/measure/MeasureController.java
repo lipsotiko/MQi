@@ -11,10 +11,14 @@ import java.util.Optional;
 public class MeasureController {
     private MeasureService measureService;
     private MeasureRepository measureRepository;
+    private RuleParamRepository ruleParamRepository;
 
-    public MeasureController(MeasureService measureService, MeasureRepository measureRepository) {
+    public MeasureController(MeasureService measureService
+                , MeasureRepository measureRepository
+                , RuleParamRepository ruleParamRepository) {
         this.measureService = measureService;
         this.measureRepository = measureRepository;
+        this.ruleParamRepository = ruleParamRepository;
     }
 
     @RequestMapping("/measures")
@@ -37,4 +41,10 @@ public class MeasureController {
         measureService.process();
         return "measure Process";
     }
+
+    @RequestMapping("/rule-params")
+    public Optional<RuleParam> measure(@RequestParam(value = "ruleName") String ruleName) {
+        return ruleParamRepository.findAllByRuleNameOrderByDisplayOrder(ruleName);
+    }
+
 }

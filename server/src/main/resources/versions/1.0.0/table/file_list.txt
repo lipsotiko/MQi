@@ -7,3 +7,4 @@ patient_exclude.sql
 patient.sql
 server.sql
 visit.sql
+rule_param.sql

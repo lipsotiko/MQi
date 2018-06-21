@@ -53,12 +53,12 @@ public class DatabaseManager {
         log.info("Creating version table");
         sqlExec.execute("drop table if exists version; " +
                 "create table version (version_id varchar(10)); " +
-                "insert into version (version_id) values ('0.0.0');");
+                "insert into version (version_id) values ('0.0.0');", "");
     }
 
     public void dropVersionTable() {
         log.info("Drop the version table if it exists");
-        sqlExec.execute("drop table if exists version;");
+        sqlExec.execute("drop table if exists version;", "");
     }
 
     private boolean isMeasure(String dbObject) {
@@ -69,7 +69,7 @@ public class DatabaseManager {
         return versionsDbDirectory + File.separator + v.getVersionId() + File.separator + dbObjects[i];
     }
 
-    public void importMeasures(String measuresDirecotry) {
+    private void importMeasures(String measuresDirecotry) {
         File measuresDirectory = new File(measuresDirecotry);
 
         for (final File f : Objects.requireNonNull(measuresDirectory.listFiles())) {
@@ -86,7 +86,7 @@ public class DatabaseManager {
         return getFileContentAsString(measuresDirecotry + File.separator + f.getName());
     }
 
-    public void applySqlScripts(String objectsDirecotry) {
+    private void applySqlScripts(String objectsDirecotry) {
         File sqlObjectsFile = new File(objectsDirecotry + File.separator + "file_list.txt");
 
         if (sqlObjectsFile.exists()) {
@@ -104,8 +104,7 @@ public class DatabaseManager {
             for (String s : tmpSqlFiles) {
                 File sqlFile = new File(objectsDirecotry + File.separator + s);
                 if (sqlFile.exists()) {
-                    log.info(String.format("Applying sql file: %s", sqlFile.toString()));
-                    sqlExec.execute(getFileContentAsString(sqlFile.toString()));
+                    sqlExec.execute(getFileContentAsString(sqlFile.toString()), sqlFile.toString());
                 }
             }
         }

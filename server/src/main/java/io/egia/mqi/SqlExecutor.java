@@ -21,13 +21,14 @@ public class SqlExecutor {
         this.dataSource = dataSource;
     }
 
-    public void execute(String sql) {
+    public void execute(String sql, String fileName) {
         if ((sql != null) && (!sql.isEmpty())) {
             try {
                 connection = dataSource.getConnection();
                 connection.setAutoCommit(false);
                 url = connection.getMetaData().getURL();
                 if (!url.contains("hsqldb")) {
+                    log.info(String.format("Applying sql file: %s", fileName));
                     log.debug(sql);
                     statement = connection.createStatement();
                     statement.executeUpdate(sql);

@@ -24,7 +24,7 @@ public class ChunkRepositoryIntegrationTest {
 
     @Before
     public void setUp() {
-        for(Long i = 5L; i > 0; i--) {
+        for(Long i = 25L; i > 0; i--) {
             Chunk chunk = new Chunk();
             chunk.setPatientId(i);
             chunk.setRecordCnt(i);

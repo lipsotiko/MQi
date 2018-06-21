@@ -1,8 +1,7 @@
 module HttpActions exposing (getMeasureList, getMeasure)
 
 import Http
-import Json.Decode as Json exposing (at, decodeString, int, list, string, succeed)
-import Json.Decode exposing (int, string, float, Decoder)
+import Json.Decode as Json exposing (list, int, string, Decoder)
 import Json.Decode.Pipeline exposing (decode, hardcoded, optional, required, requiredAt)
 import Messages exposing (Msg(GetMeasure, GetMeasureList))
 import Models exposing (Drag, Measure, MeasureItem, Step)
