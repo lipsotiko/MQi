@@ -13,14 +13,8 @@ import org.springframework.stereotype.Component;
 
 import java.io.File;
 import java.net.UnknownHostException;
-import java.nio.file.DirectoryStream;
-import java.nio.file.FileSystems;
-import java.nio.file.Files;
-import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
-
-import static java.nio.file.LinkOption.NOFOLLOW_LINKS;
 
 @Component
 public class MqiInitializer implements ApplicationListener<ContextRefreshedEvent> {

@@ -40,7 +40,7 @@ public class MqiInitializerTest {
 
     private MqiInitializer subject;
 
-    Version expectedVersion = new Version("1.0.0");
+    private Version expectedVersion = new Version("1.0.0");
 
     @Before
     public void setUp() {

@@ -11,7 +11,6 @@ import org.mockito.junit.MockitoJUnitRunner;
 import org.reflections.Reflections;
 import org.reflections.scanners.SubTypesScanner;
 import org.reflections.scanners.TypeAnnotationsScanner;
-import org.springframework.boot.test.context.SpringBootTest;
 
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -21,7 +20,6 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
 @RunWith(MockitoJUnitRunner.class)
-@SpringBootTest(classes = {StandaloneConfig.class})
 public class RuleParamUtilityTest {
 
     private RuleParam[] expected = {
