@@ -38,7 +38,7 @@ public class RuleParamUtility {
             String ruleName = c.getName().substring(packagePrefix.length()+1);
 
             if (rule.params().length == 0) {
-                ruleParamRepository.save(new RuleParam(ruleName, "", "", displayOrder));
+                ruleParamRepository.save(new RuleParam(ruleName, null, null, displayOrder));
                 continue;
             }
 

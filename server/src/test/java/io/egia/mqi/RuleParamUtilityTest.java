@@ -10,8 +10,6 @@ import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.springframework.boot.test.context.SpringBootTest;
 
-import java.util.List;
-
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.*;
 
@@ -24,7 +22,7 @@ public class RuleParamUtilityTest {
             , new RuleParam("AgeWithinDateRange","START_DATE","DATE",2)
             , new RuleParam("AgeWithinDateRange","END_DATE","DATE",3)
             , new RuleParam("ExitMeasure","CONTINUE","BOOLEAN",1)
-            , new RuleParam("SetResult","","",1)
+            , new RuleParam("SetResult",null,null,1)
     };
 
     @Mock
@@ -38,7 +36,6 @@ public class RuleParamUtilityTest {
         RuleParamUtility subject = new RuleParamUtility(ruleParamRepository);
         subject.saveRuleParams();
         verify(ruleParamRepository, times(expected.length)).save(captor.capture());
-        when(ruleParamRepository.findAll()).thenReturn(captor.getAllValues());
-        assertThat(ruleParamRepository.findAll()).contains(expected);
+        assertThat(captor.getAllValues()).contains(expected);
     }
 }
