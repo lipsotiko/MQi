@@ -17,13 +17,11 @@ public class RuleParam {
     private String ruleName;
     private String paramName;
     private String paramType;
-    private int displayOrder;
 
-    public RuleParam(String ruleName, String paramName, String paramType, int displayOrder){
+    public RuleParam(String ruleName, String paramName, String paramType){
         this.ruleName = ruleName;
         this.paramName = paramName;
         this.paramType = paramType;
-        this.displayOrder = displayOrder;
     }
 
     public RuleParam() {

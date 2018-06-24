@@ -1,5 +1,6 @@
 package io.egia.mqi;
 
+import io.egia.mqi.measure.RuleParamUtility;
 import io.egia.mqi.server.ServerService;
 import io.egia.mqi.version.Version;
 import io.egia.mqi.version.VersionRepository;

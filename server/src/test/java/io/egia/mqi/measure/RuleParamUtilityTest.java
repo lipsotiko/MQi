@@ -1,7 +1,5 @@
-package io.egia.mqi;
+package io.egia.mqi.measure;
 
-import io.egia.mqi.measure.RuleParam;
-import io.egia.mqi.measure.RuleParamRepository;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
@@ -23,11 +21,11 @@ import static org.mockito.Mockito.verify;
 public class RuleParamUtilityTest {
 
     private RuleParam[] expected = {
-            new RuleParam("AgeWithinDateRange","AGE","INTEGER", 1)
-            , new RuleParam("AgeWithinDateRange","START_DATE","DATE",2)
-            , new RuleParam("AgeWithinDateRange","END_DATE","DATE",3)
-            , new RuleParam("ExitMeasure","CONTINUE","BOOLEAN",1)
-            , new RuleParam("SetResult",null,null,1)
+            new RuleParam("AgeWithinDateRange","AGE","INTEGER")
+            , new RuleParam("AgeWithinDateRange","START_DATE","DATE")
+            , new RuleParam("AgeWithinDateRange","END_DATE","DATE")
+            , new RuleParam("ExitMeasure","CONTINUE","BOOLEAN")
+            , new RuleParam("SetResult",null,null)
     };
 
     @Mock

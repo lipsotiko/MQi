@@ -13,40 +13,40 @@ import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 
 public class MeasureStepperTest {
 
-    private List<String> testMeasureRules = new ArrayList<>();
-
     @Test
     public void measureIsSteppedThrough() throws MeasureProcessorException, IOException {
         Measure measure = Helpers.getMeasureFromResource("fixtures", "sampleMeasure.json");
+        List<String> testMeasureRules = new ArrayList<>();
         measure.getLogic().getSteps().stream().forEach((step -> testMeasureRules.add(step.getRule())));
-        MeasureStepper measureStepper = new MeasureStepper(
+        MeasureStepper subject = new MeasureStepper(
                 new PatientData(1L), measure, new MeasureResult());
-        measureStepper.stepThroughMeasure();
-        List<String> ruleTrace = measureStepper.getMeasureResult().getRuleTrace();
-        for (String rule : testMeasureRules) {
-            assertThat(ruleTrace.contains(rule)).isTrue();
-        }
+        subject.stepThroughMeasure();
+
+        testMeasureRules.stream().forEach(rule -> {
+            assertThat(testMeasureRules).contains(rule);
+        });
     }
 
     @Test
-    public void measureWithInfiniteLoopThrowsException() throws IOException, MeasureProcessorException {
+    public void measureWithInfiniteLoopThrowsException() throws IOException {
         Measure measure = Helpers.getMeasureFromResource("fixtures", "measureWithInfiniteLoop.json");
-        MeasureStepper measureStepper = new MeasureStepper(
+        MeasureStepper subject = new MeasureStepper(
                 new PatientData(1L), measure, new MeasureResult());
 
         assertThatExceptionOfType(MeasureProcessorException.class).isThrownBy(() -> {
-                    measureStepper.stepThroughMeasure();
+                    subject.stepThroughMeasure();
                 }
         );
     }
 
     @Test
-    public void measureWithInvalidRuleThrowsException() throws IOException, MeasureProcessorException {
+    public void measureWithInvalidRuleThrowsException() throws IOException {
         Measure measure = Helpers.getMeasureFromResource("fixtures", "measureWithRuleThatDoesNotExist.json");
-        MeasureStepper measureStepper = new MeasureStepper(
+        MeasureStepper subject = new MeasureStepper(
                 new PatientData(1L), measure, new MeasureResult());
+
         assertThatExceptionOfType(MeasureProcessorException.class).isThrownBy(() -> {
-                    measureStepper.stepThroughMeasure();
+                    subject.stepThroughMeasure();
                 }
         );
     }

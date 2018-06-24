@@ -1,4 +1,4 @@
-package io.egia.mqi;
+package io.egia.mqi.measure;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.Target;

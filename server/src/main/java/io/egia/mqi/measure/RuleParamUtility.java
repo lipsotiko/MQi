@@ -1,7 +1,5 @@
-package io.egia.mqi;
+package io.egia.mqi.measure;
 
-import io.egia.mqi.measure.RuleParam;
-import io.egia.mqi.measure.RuleParamRepository;
 import org.reflections.Reflections;
 import org.reflections.scanners.SubTypesScanner;
 import org.reflections.scanners.TypeAnnotationsScanner;
@@ -28,27 +26,21 @@ public class RuleParamUtility {
 
     public void saveRuleParams() throws ClassNotFoundException {
         ruleParamRepository.deleteAll();
-
         Class<?> ruleClass;
-        int displayOrder = 1;
+
         for (Class c : annotated) {
             ruleClass = Class.forName(c.getName());
             Rule rule = ruleClass.getAnnotation(Rule.class);
-
             String ruleName = c.getName().substring(packagePrefix.length()+1);
 
             if (rule.params().length == 0) {
-                ruleParamRepository.save(new RuleParam(ruleName, null, null, displayOrder));
+                ruleParamRepository.save(new RuleParam(ruleName, null, null));
                 continue;
             }
 
             for (Param param : rule.params()) {
-                ruleParamRepository.save(new RuleParam(ruleName,param.name(), param.type(), displayOrder));
-                displayOrder++;
+                ruleParamRepository.save(new RuleParam(ruleName,param.name(), param.type()));
             }
-
-            displayOrder = 1;
         }
-
     }
 }
