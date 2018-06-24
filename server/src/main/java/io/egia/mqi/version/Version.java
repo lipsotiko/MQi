@@ -3,11 +3,10 @@ package io.egia.mqi.version;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Transient;
-import java.io.Serializable;
 
 @Entity
-public class Version implements Serializable {
-	private static final long serialVersionUID = 1L;
+public class Version {
+
 	@Id private String versionId;
 	@Transient private int majorVersion;	
 	@Transient private int minorVersion;	

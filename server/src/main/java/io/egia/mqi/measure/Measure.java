@@ -7,15 +7,13 @@ import lombok.Data;
 
 import javax.persistence.*;
 import java.io.IOException;
-import java.io.Serializable;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
 @Data
 @Entity
-public class Measure implements Serializable {
-	private static final long serialVersionUID = 1L;
-	
+public class Measure {
+
 	@Id
 	@GeneratedValue(strategy=GenerationType.IDENTITY)
 	private Long measureId;

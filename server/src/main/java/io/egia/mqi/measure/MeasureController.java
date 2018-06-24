@@ -20,12 +20,7 @@ public class MeasureController {
         this.measureRepository = measureRepository;
         this.ruleParamRepository = ruleParamRepository;
     }
-
-    @GetMapping("/measures")
-    public Iterable<Measure> measures() {
-        return measureRepository.findAll();
-    }
-
+    
     @GetMapping("/measure")
     public Optional<Measure> measure(@RequestParam(value = "id") Long id) {
         return measureRepository.findById(id);

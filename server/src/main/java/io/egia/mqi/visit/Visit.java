@@ -6,13 +6,11 @@ import io.egia.mqi.patient.PatientRecordInterface;
 import lombok.Data;
 
 import javax.persistence.*;
-import java.io.Serializable;
 import java.util.Date;
 
 @Data
 @Entity
-public class Visit implements PatientRecordInterface, Serializable {
-	private static final long serialVersionUID = 1L;
+public class Visit implements PatientRecordInterface {
 
 	@Id
 	@GeneratedValue(strategy=GenerationType.IDENTITY)
