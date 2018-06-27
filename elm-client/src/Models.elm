@@ -2,7 +2,8 @@ module Models exposing (..)
 
 type alias Model = {
     measure : Measure
-    , measureList : List MeasureItem
+    , measures : List MeasureItem
+    , rules : List String
     }
 
 type alias Measure = {

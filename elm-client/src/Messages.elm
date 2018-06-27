@@ -13,6 +13,9 @@ type Msg
     | DragEnd Position
     | Description String
     | Name String
-    | GetMeasureList (Result Http.Error (List MeasureItem))
+    | SuccessStepId Int String
+    | FailureStepId Int String
     | SelectMeasure Int
+    | GetMeasures (Result Http.Error (List MeasureItem))
     | GetMeasure (Result Http.Error (Measure))
+    | GetRules (Result Http.Error (List String))

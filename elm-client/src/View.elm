@@ -18,7 +18,7 @@ view model =
                 h3 [ ] [text "Measures:"]
                 , ul
                   [ class "list-container" ]
-                  <| List.indexedMap measureItemView model.measureList
+                  <| List.indexedMap measureItemView model.measures
             ]
 
             , div [ class "measure" ] [
@@ -65,14 +65,14 @@ measureItemView idx measureItem =
     ]
 
 stepView : Model -> Int -> Step -> Html Msg
-stepView model idx item =
+stepView model idx step =
     let
         deleteBtnStyle =
-            if item.isEditing then "show"
+            if step.isEditing then "show"
             else "hide"
 
         stepStyle =
-            if item.isEditing then "expanded list-item"
+            if step.isEditing then "expanded list-item"
             else "list-item"
 
         moveStyle =
@@ -110,10 +110,10 @@ stepView model idx item =
 
     in
         li [ class stepStyle, style <| moveStyle ++ makingWayStyle ]
-            [ input [ maxlength 5, value (toString item.stepId)][]
-            , div [][text item.rule]
-            , input [ maxlength 5, value (toString item.successStepId)][]
-            , input [ maxlength 5, value (toString item.failureStepId)][]
+            [ p [][text (toString step.stepId)]
+            , div [][text step.rule]
+            , input [ maxlength 5, value (toString step.successStepId), onInput (SuccessStepId idx)][]
+            , input [ maxlength 5, value (toString step.failureStepId), onInput (FailureStepId idx)][]
             , button [ class deleteBtnStyle, onClick (DeleteStep idx) ] [ text "Delete" ]
             , button [ onClick (EditStep idx) ][ text "Edit" ]
             , div [ class "drag-btn", onMouseDown <| DragStart idx ] [ ]

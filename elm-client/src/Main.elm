@@ -1,7 +1,7 @@
 module Main exposing (..)
 
 import Html exposing (program)
-import HttpActions exposing (getMeasureList)
+import HttpActions exposing (getMeasureList, getRules)
 import Messages exposing (Msg(DragAt, DragEnd))
 import Models exposing (MeasureItem, Model, Step)
 import Mouse exposing (Position)
@@ -25,8 +25,9 @@ init =
             , steps = List.sortBy .stepId [ Step 0 "defaultStep" 0 0 False]
             , drag = Nothing
         }
-    , measureList = [ MeasureItem 0 "default measure name" ]
-    } ! [getMeasureList]
+    , measures = [ MeasureItem 0 "default measure name" ]
+    , rules = [""]
+    } ! [getMeasureList, getRules]
 
 
 -- SUBSCRIPTIONS

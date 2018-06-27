@@ -3,7 +3,6 @@ module Update exposing (..)
 import HttpActions exposing (getMeasure)
 import Messages exposing (..)
 import Models exposing (..)
-import Mouse exposing (Position)
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
@@ -14,7 +13,7 @@ update msg model =
             let
                 oldMeasure = model.measure
                 stepsWithRemovedStepIdx = List.append (List.take idx oldMeasure.steps) (List.drop (idx+1) oldMeasure.steps)
-                stepsWithUpdatedStepIds = updateListStepIds oldMeasure.steps stepsWithRemovedStepIdx
+                stepsWithUpdatedStepIds = updateStepIds oldMeasure.steps stepsWithRemovedStepIdx
                 newMeasure = {oldMeasure | steps = stepsWithUpdatedStepIds}
             in
                 { model | measure = newMeasure } ! []
@@ -95,12 +94,34 @@ update msg model =
             in
                 { model | measure = newMeasure } ! []
 
-        GetMeasureList (Ok measureList) ->
-            { model | measureList = measureList } ! []
-
-        GetMeasureList (Err _) ->
+        SuccessStepId idx successStepIdString ->
             let
-                d = Debug.crash "Could not retrieve the measure list"
+                successStepId = String.toInt successStepIdString |> Result.toMaybe |> Maybe.withDefault 99999
+                oldMeasure = model.measure
+                stepToUpdate = List.take 1 (List.drop idx oldMeasure.steps)
+                updatedStep = stepToUpdate |> List.map (\step -> { step | successStepId = successStepId } )
+                updatedSteps = (List.take idx oldMeasure.steps) ++ updatedStep ++ (List.drop (idx+1) oldMeasure.steps)
+                newMeasure = {oldMeasure | steps = updatedSteps}
+            in
+                { model | measure = newMeasure } ! []
+
+        FailureStepId idx failureStepIdString ->
+            let
+                failureStepId = String.toInt failureStepIdString |> Result.toMaybe |> Maybe.withDefault 99999
+                oldMeasure = model.measure
+                stepToUpdate = List.take 1 (List.drop idx oldMeasure.steps)
+                updatedStep = stepToUpdate |> List.map (\step -> { step | failureStepId = failureStepId } )
+                updatedSteps = (List.take idx oldMeasure.steps) ++ updatedStep ++ (List.drop (idx+1) oldMeasure.steps)
+                newMeasure = {oldMeasure | steps = updatedSteps}
+            in
+                { model | measure = newMeasure } ! []
+
+        GetMeasures (Ok measures) ->
+            { model | measures = measures } ! []
+
+        GetMeasures (Err _) ->
+            let
+                d = Debug.crash "Could not retrieve the measures"
             in
                 model ! []
 
@@ -116,15 +137,22 @@ update msg model =
              in
                  model ! []
 
+        GetRules (Ok rules) ->
+                { model | rules = rules } ! []
+
+        GetRules (Err _) ->
+             let
+                 d = Debug.crash "Could not retrieve the rules"
+             in
+                 model ! []
 
 
-toggleStepIsEditing: Step -> Step
+toggleStepIsEditing : Step -> Step
 toggleStepIsEditing step =
    if (step.isEditing == True) then
       { step | isEditing = False }
    else
       { step | isEditing = True }
-
 
 moveStep : Int -> Int -> List Step -> List Step
 moveStep fromPos offset steps =
@@ -135,17 +163,17 @@ moveStep fromPos offset steps =
         movedStep =
             List.take 1 <| List.drop fromPos steps
 
-        listWithRevisedOrder =
+        reorderedSteps =
             List.take (fromPos + offset) listWithoutMovedStep
                     ++ movedStep
                     ++ List.drop (fromPos + offset) listWithoutMovedStep
 
     in
-        updateListStepIds steps listWithRevisedOrder
+        updateStepIds steps reorderedSteps
 
 
-updateListStepIds: List Step -> List Step -> List Step
-updateListStepIds originalList revisedList =
+updateStepIds: List Step -> List Step -> List Step
+updateStepIds originalList revisedList =
     List.map2 reviseStepIds originalList revisedList
 
 reviseStepIds: Step -> Step -> Step

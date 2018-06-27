@@ -1,9 +1,9 @@
-module HttpActions exposing (getMeasureList, getMeasure)
+module HttpActions exposing (getMeasureList, getMeasure, getRules)
 
 import Http
 import Json.Decode as Json exposing (list, int, string, Decoder)
 import Json.Decode.Pipeline exposing (decode, hardcoded, optional, required, requiredAt)
-import Messages exposing (Msg(GetMeasure, GetMeasureList))
+import Messages exposing (Msg(GetMeasure, GetMeasures, GetRules))
 import Models exposing (Drag, Measure, MeasureItem, Step)
 
 getMeasureList : Cmd Msg
@@ -12,7 +12,7 @@ getMeasureList =
         url = "/measure_list"
         request = Http.get url (Json.list measureListItemDecoder)
     in
-        Http.send GetMeasureList request
+        Http.send GetMeasures request
 
 measureListItemDecoder: Decoder MeasureItem
 measureListItemDecoder = decode MeasureItem
@@ -42,3 +42,11 @@ stepDecoder = decode Step
     |> required "successStepId" int
     |> required "failureStepId" int
     |> hardcoded False
+
+getRules : Cmd Msg
+getRules =
+    let
+        url = "/rules"
+        request = Http.get url (Json.list Json.string)
+    in
+        Http.send GetRules request
