@@ -14,27 +14,25 @@ public class MeasureStepper {
     private Logger log = LoggerFactory.getLogger(MeasureStepper.class);
 
     private final PatientData patientData;
-    private final Measure measure;
     private MeasureResult measureResult;
     private int rulesEvaluatedCount;
+    private List<Step> steps;
 
-    public MeasureStepper(PatientData patientData, Measure measure, MeasureResult measureResult) {
+    MeasureStepper(PatientData patientData, Measure measure, MeasureResult measureResult) throws MeasureProcessorException {
         this.patientData = patientData;
-        this.measure = measure;
         this.measureResult = measureResult;
+        try {
+            this.steps = measure.getLogic().getSteps();
+        } catch (IOException e) {
+            e.printStackTrace();
+            throw new MeasureProcessorException("Can't retrieve steps from measure");
+        }
     }
 
     public void stepThroughMeasure() throws MeasureProcessorException {
-        List<Step> steps = null;
 
-        try {
-            steps = measure.getLogic().getSteps();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-        int firstStepId = getInitialStepId(steps);
-        Step currentStep = getStepById(firstStepId, steps);
+        int firstStepId = getInitialStepId();
+        Step currentStep = getStepById(firstStepId);
         Class<?> ruleClass;
 
         while (measureResult.getContinueProcessing()) {
@@ -59,9 +57,9 @@ public class MeasureStepper {
             measureResult.writeRuleTrace(rule);
 
             if (measureResult.getContinueProcessing()) {
-                currentStep = getNextStep(steps, currentStep.getStepId(), currentStep.getSuccessStepId());
+                currentStep = getNextStep(currentStep.getStepId(), currentStep.getSuccessStepId());
             } else {
-                currentStep = getNextStep(steps, currentStep.getStepId(), currentStep.getFailureStepId());
+                currentStep = getNextStep(currentStep.getStepId(), currentStep.getFailureStepId());
             }
 
             rulesEvaluatedCount++;
@@ -69,9 +67,9 @@ public class MeasureStepper {
 
     }
 
-    private Step getNextStep(List<Step> steps, int currentStepId, int nextStepId) throws MeasureProcessorException {
+    private Step getNextStep(int currentStepId, int nextStepId) throws MeasureProcessorException {
         preventInfiniteLoops(currentStepId, nextStepId);
-        return getStepById(nextStepId, steps);
+        return getStepById(nextStepId);
     }
 
     private void preventInfiniteLoops(int currentStepId, int nextStepId) throws MeasureProcessorException {
@@ -80,7 +78,7 @@ public class MeasureStepper {
         }
     }
 
-    private int getInitialStepId(List<Step> steps) {
+    private int getInitialStepId() {
         int lowestStepId = steps.get(0).getStepId();
         for (Step step : steps) {
             if (step.getStepId() < lowestStepId) {
@@ -90,7 +88,7 @@ public class MeasureStepper {
         return lowestStepId;
     }
 
-    private Step getStepById(int stepId, List<Step> steps) {
+    private Step getStepById(int stepId) {
         for (Step step : steps) {
             if (step.getStepId() == stepId) {
                 return step;

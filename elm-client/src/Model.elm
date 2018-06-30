@@ -1,4 +1,6 @@
-module Models exposing (..)
+module Model exposing (..)
+import Http
+import Mouse exposing (Position)
 
 type alias Model = {
     measure : Measure
@@ -32,3 +34,19 @@ type alias Drag = {
     , startY : Int
     , currentY : Int
     }
+
+type Msg
+    = AddStep
+    | DeleteStep Int
+    | EditStep Int
+    | DragStart Int Position
+    | DragAt Position
+    | DragEnd Position
+    | MeasureName String
+    | MeasureDescription String
+    | SuccessStepId Int String
+    | FailureStepId Int String
+    | SelectMeasure Int
+    | GetMeasures (Result Http.Error (List MeasureItem))
+    | GetMeasure (Result Http.Error (Measure))
+    | GetRules (Result Http.Error (List String))

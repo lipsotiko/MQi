@@ -4,8 +4,7 @@ import Html exposing (..)
 import Html.Attributes exposing (..)
 import Html.Events exposing (on, onClick, onInput)
 import Json.Decode
-import Messages exposing (..)
-import Models exposing (..)
+import Model exposing (..)
 import Mouse exposing (Position)
 
 view : Model -> Html Msg
@@ -28,7 +27,7 @@ view model =
                         , input [  class "measure-name"
                                    , placeholder "Measure name..."
                                    , value model.measure.name
-                                   , onInput Name][]
+                                   , onInput MeasureName][]
                     ]
 
                 , div
@@ -38,7 +37,7 @@ view model =
                         , textarea [ class "measure-desc"
                                     , placeholder "Describe this measure..."
                                     , value model.measure.description
-                                    , onInput Description][]
+                                    , onInput MeasureDescription][]
                     ]
 
                , div

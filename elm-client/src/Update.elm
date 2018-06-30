@@ -1,8 +1,7 @@
 module Update exposing (..)
 
 import HttpActions exposing (getMeasure)
-import Messages exposing (..)
-import Models exposing (..)
+import Model exposing (..)
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
@@ -80,14 +79,14 @@ update msg model =
             in
                 { model | measure = newMeasure } ! []
 
-        Name name ->
+        MeasureName name ->
             let
                 oldMeasure = model.measure
                 newMeasure = { oldMeasure | name = name }
             in
                 { model | measure = newMeasure } ! []
 
-        Description description ->
+        MeasureDescription description ->
             let
                 oldMeasure = model.measure
                 newMeasure = { oldMeasure | description = description }
@@ -98,10 +97,7 @@ update msg model =
             let
                 successStepId = String.toInt successStepIdString |> Result.toMaybe |> Maybe.withDefault 99999
                 oldMeasure = model.measure
-                stepToUpdate = List.take 1 (List.drop idx oldMeasure.steps)
-                updatedStep = stepToUpdate |> List.map (\step -> { step | successStepId = successStepId } )
-                updatedSteps = (List.take idx oldMeasure.steps) ++ updatedStep ++ (List.drop (idx+1) oldMeasure.steps)
-                newMeasure = {oldMeasure | steps = updatedSteps}
+                newMeasure = updateStepAtIndex oldMeasure idx (\step -> { step | successStepId = successStepId } )
             in
                 { model | measure = newMeasure } ! []
 
@@ -109,10 +105,7 @@ update msg model =
             let
                 failureStepId = String.toInt failureStepIdString |> Result.toMaybe |> Maybe.withDefault 99999
                 oldMeasure = model.measure
-                stepToUpdate = List.take 1 (List.drop idx oldMeasure.steps)
-                updatedStep = stepToUpdate |> List.map (\step -> { step | failureStepId = failureStepId } )
-                updatedSteps = (List.take idx oldMeasure.steps) ++ updatedStep ++ (List.drop (idx+1) oldMeasure.steps)
-                newMeasure = {oldMeasure | steps = updatedSteps}
+                newMeasure = updateStepAtIndex oldMeasure idx (\step -> { step | failureStepId = failureStepId } )
             in
                 { model | measure = newMeasure } ! []
 
@@ -147,12 +140,23 @@ update msg model =
                  model ! []
 
 
+updateStepAtIndex : Measure -> Int -> (Step -> Step) -> Measure
+updateStepAtIndex measure idx updateFunction =
+    let
+        stepToUpdate = List.take 1 (List.drop idx measure.steps)
+        updatedStep = stepToUpdate |> List.map (updateFunction)
+        updatedSteps = (List.take idx measure.steps) ++ updatedStep ++ (List.drop (idx+1) measure.steps)
+    in
+        { measure | steps = updatedSteps }
+
+
 toggleStepIsEditing : Step -> Step
 toggleStepIsEditing step =
    if (step.isEditing == True) then
       { step | isEditing = False }
    else
       { step | isEditing = True }
+
 
 moveStep : Int -> Int -> List Step -> List Step
 moveStep fromPos offset steps =
@@ -176,6 +180,7 @@ updateStepIds: List Step -> List Step -> List Step
 updateStepIds originalList revisedList =
     List.map2 reviseStepIds originalList revisedList
 
+
 reviseStepIds: Step -> Step -> Step
 reviseStepIds step_a step_b =
     if (step_a.stepId /= step_b.stepId) then
@@ -186,6 +191,7 @@ reviseStepIds step_a step_b =
             , failureStepId = step_a.failureStepId}
     else
         step_b
+
 
 getNextStepId: List Step -> Int
 getNextStepId steps =
@@ -198,3 +204,4 @@ getNextStepId steps =
             maxStepId + 100
         Nothing ->
             100
+

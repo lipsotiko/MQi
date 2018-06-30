@@ -14,7 +14,7 @@ import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 public class MeasureStepperTest {
 
     @Test
-    public void measureIsSteppedThrough() throws MeasureProcessorException, IOException {
+    public void measureIsSteppedThrough() throws IOException, MeasureProcessorException {
         Measure measure = Helpers.getMeasureFromResource("fixtures", "sampleMeasure.json");
         List<String> testMeasureRules = new ArrayList<>();
         measure.getLogic().getSteps().stream().forEach((step -> testMeasureRules.add(step.getRule())));
@@ -28,7 +28,7 @@ public class MeasureStepperTest {
     }
 
     @Test
-    public void measureWithInfiniteLoopThrowsException() throws IOException {
+    public void measureWithInfiniteLoopThrowsException() throws IOException, MeasureProcessorException {
         Measure measure = Helpers.getMeasureFromResource("fixtures", "measureWithInfiniteLoop.json");
         MeasureStepper subject = new MeasureStepper(
                 new PatientData(1L), measure, new MeasureResult());
@@ -40,7 +40,7 @@ public class MeasureStepperTest {
     }
 
     @Test
-    public void measureWithInvalidRuleThrowsException() throws IOException {
+    public void measureWithInvalidRuleThrowsException() throws IOException, MeasureProcessorException {
         Measure measure = Helpers.getMeasureFromResource("fixtures", "measureWithRuleThatDoesNotExist.json");
         MeasureStepper subject = new MeasureStepper(
                 new PatientData(1L), measure, new MeasureResult());

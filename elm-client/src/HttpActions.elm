@@ -3,8 +3,7 @@ module HttpActions exposing (getMeasureList, getMeasure, getRules)
 import Http
 import Json.Decode as Json exposing (list, int, string, Decoder)
 import Json.Decode.Pipeline exposing (decode, hardcoded, optional, required, requiredAt)
-import Messages exposing (Msg(GetMeasure, GetMeasures, GetRules))
-import Models exposing (Drag, Measure, MeasureItem, Step)
+import Model exposing (..)
 
 getMeasureList : Cmd Msg
 getMeasureList =
