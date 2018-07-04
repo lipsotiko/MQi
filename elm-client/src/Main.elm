@@ -19,13 +19,13 @@ init : ( Model, Cmd Msg )
 init =
     { measure = {
             id = 0
-            , name = "default measure name"
-            , description = "default measure description"
-            , steps = List.sortBy .stepId [ Step 0 "defaultStep" 0 0 False]
+            , name = ""
+            , description = ""
+            , steps = []
             , drag = Nothing
         }
-    , measures = [ MeasureItem 0 "default measure name" ]
-    , rules = [""]
+    , measures = []
+    , rules = []
     } ! [getMeasureList, getRules]
 
 

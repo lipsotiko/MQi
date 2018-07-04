@@ -75,7 +75,7 @@ update msg model =
                 oldMeasure = model.measure
                 newMeasure = { oldMeasure
                     | steps = oldMeasure.steps ++
-                        [Step (getNextStepId oldMeasure.steps) "Added Step" 99999 99999 False] }
+                        [Step (getNextStepId oldMeasure.steps) "(select)" 99999 99999 False] }
             in
                 { model | measure = newMeasure } ! []
 
@@ -138,6 +138,13 @@ update msg model =
                  d = Debug.crash "Could not retrieve the rules"
              in
                  model ! []
+
+        SelectRule idx rule ->
+            let
+                oldMeasure = model.measure
+                newMeasure = updateStepAtIndex oldMeasure idx (\step -> { step | rule = rule } )
+            in
+                { model | measure = newMeasure } ! []
 
 
 updateStepAtIndex : Measure -> Int -> (Step -> Step) -> Measure

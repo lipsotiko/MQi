@@ -110,7 +110,8 @@ stepView model idx step =
     in
         li [ class stepStyle, style <| moveStyle ++ makingWayStyle ]
             [ p [][text (toString step.stepId)]
-            , div [][text step.rule]
+            , select [value step.rule, onInput (SelectRule idx)]
+                (List.map (\a -> option [value a, selected (a == step.rule)][text a]) ("(select)"::model.rules))
             , input [ maxlength 5, value (toString step.successStepId), onInput (SuccessStepId idx)][]
             , input [ maxlength 5, value (toString step.failureStepId), onInput (FailureStepId idx)][]
             , button [ class deleteBtnStyle, onClick (DeleteStep idx) ] [ text "Delete" ]

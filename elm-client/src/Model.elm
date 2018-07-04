@@ -50,3 +50,4 @@ type Msg
     | GetMeasures (Result Http.Error (List MeasureItem))
     | GetMeasure (Result Http.Error (Measure))
     | GetRules (Result Http.Error (List String))
+    | SelectRule Int String
