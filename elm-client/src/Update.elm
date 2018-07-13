@@ -158,7 +158,9 @@ update msg model =
         SelectRule idx ruleName ->
             let
                 oldMeasure = model.measure
-                newMeasure = updateStepAtIndex oldMeasure idx (\step -> { step | ruleName = ruleName } )
+                newStepParameters = getStepParameters model.ruleParameters ruleName
+                oldMeasure2 = updateStepAtIndex oldMeasure idx (\step -> { step | ruleName = ruleName } )
+                newMeasure = updateStepAtIndex oldMeasure2 idx (\step -> { step | parameters = newStepParameters })
             in
                 { model | measure = newMeasure } ! []
 
@@ -204,12 +206,12 @@ moveStep fromPos offset steps =
         updateStepIds steps reorderedSteps
 
 
-updateStepIds: List Step -> List Step -> List Step
+updateStepIds : List Step -> List Step -> List Step
 updateStepIds originalList revisedList =
     List.map2 reviseStepIds originalList revisedList
 
 
-reviseStepIds: Step -> Step -> Step
+reviseStepIds : Step -> Step -> Step
 reviseStepIds step_a step_b =
     if (step_a.stepId /= step_b.stepId) then
 
@@ -221,7 +223,7 @@ reviseStepIds step_a step_b =
         step_b
 
 
-getNextStepId: List Step -> Int
+getNextStepId : List Step -> Int
 getNextStepId steps =
     let
         stepIds = List.map .stepId steps
@@ -233,3 +235,15 @@ getNextStepId steps =
         Nothing ->
             100
 
+getStepParameters : List RuleParameter -> String -> List StepParameter
+getStepParameters ruleParameters ruleName =
+    let
+        ruleParams = List.filter (\r -> r.ruleName == ruleName) ruleParameters
+        stepParameters = List.map (\r ->
+            let
+                 {paramName} = r
+            in
+               StepParameter paramName ""
+            ) ruleParams
+    in
+        stepParameters
