@@ -44,7 +44,6 @@ update msg model =
         DragEnd pos ->
             let
                 oldMeasure = model.measure
-
                 newMeasure = case oldMeasure.drag of
                     Just { itemIndex, startY, currentY } ->
                         { oldMeasure
@@ -75,7 +74,7 @@ update msg model =
                 oldMeasure = model.measure
                 newMeasure = { oldMeasure
                     | steps = oldMeasure.steps ++
-                        [Step (getNextStepId oldMeasure.steps) "(select)" 99999 99999 False] }
+                        [Step (getNextStepId oldMeasure.steps) "(select)" 99999 99999 False []] }
             in
                 { model | measure = newMeasure } ! []
 
@@ -109,6 +108,14 @@ update msg model =
             in
                 { model | measure = newMeasure } ! []
 
+        ParameterValue idx name value ->
+            let
+                 oldMeasure = model.measure
+                 newMeasure = updateStepAtIndex oldMeasure idx (\step ->
+                    { step | parameters = updateParameterValue step.parameters name value })
+            in
+                { model | measure = newMeasure } ! []
+
         GetMeasures (Ok measures) ->
             { model | measures = measures } ! []
 
@@ -139,10 +146,19 @@ update msg model =
              in
                  model ! []
 
-        SelectRule idx rule ->
+        GetRuleParams (Ok ruleParameters) ->
+                { model | ruleParameters = ruleParameters } ! []
+
+        GetRuleParams (Err _) ->
+             let
+                 d = Debug.crash "Could not retrieve the rule params"
+             in
+                 model ! []
+
+        SelectRule idx ruleName ->
             let
                 oldMeasure = model.measure
-                newMeasure = updateStepAtIndex oldMeasure idx (\step -> { step | rule = rule } )
+                newMeasure = updateStepAtIndex oldMeasure idx (\step -> { step | ruleName = ruleName } )
             in
                 { model | measure = newMeasure } ! []
 
@@ -150,11 +166,16 @@ update msg model =
 updateStepAtIndex : Measure -> Int -> (Step -> Step) -> Measure
 updateStepAtIndex measure idx updateFunction =
     let
-        stepToUpdate = List.take 1 (List.drop idx measure.steps)
-        updatedStep = stepToUpdate |> List.map (updateFunction)
+        oldStep = List.take 1 (List.drop idx measure.steps)
+        updatedStep = oldStep |> List.map (updateFunction)
         updatedSteps = (List.take idx measure.steps) ++ updatedStep ++ (List.drop (idx+1) measure.steps)
     in
         { measure | steps = updatedSteps }
+
+
+updateParameterValue : List StepParameter -> String -> String -> List StepParameter
+updateParameterValue parameters paramName paramValue =
+    List.map (\a -> if (a.paramName == paramName) then { a | paramValue = paramValue } else a ) parameters
 
 
 toggleStepIsEditing : Step -> Step

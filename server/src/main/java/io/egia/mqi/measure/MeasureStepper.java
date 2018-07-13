@@ -64,7 +64,6 @@ public class MeasureStepper {
 
             rulesEvaluatedCount++;
         }
-
     }
 
     private Step getNextStep(int currentStepId, int nextStepId) throws MeasureProcessorException {

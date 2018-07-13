@@ -1,28 +1,39 @@
 {
-	"description" : "Patients that are between the ages of 2 and 5 on the first day of the reporting year with an occurrence of a broken leg at some time during the reporting year",
-	"minimumSystemVersion" : "1.0.0",
-	"traceRules" : true,
-	"generateSupplementalResults" : true,
-	"steps" : [
-		{
-			"stepId" : 100,
-			"rule" : "AgeWithinDateRange",
-			"parameters" : {
-				"min" : 2,
-				"max" : 5,
-				"asOf" : "$ryBegin",
-				"thru" : "$ryBegin"
-			},
-			"successStepId" : 200,
-			"failureStepId" : 99999
-		}, {
-			"stepId" : 200,
-			"rule" : "SetResult",
-			"parameters" : {
-				"eligible" : true
-			},
-			"successStepId" : 99999,
-			"failureStepId" : 99999
-		}
-	]
+  "description": "Patients that are two years of age on the first day of the reporting year with an occurrence of a broken leg at some time during the reporting year",
+  "minimumSystemVersion": "1.0.0",
+  "traceRules": true,
+  "generateSupplementalResults": true,
+  "steps": [
+    {
+      "stepId": 100,
+      "rule": "AgesWithinDateRange",
+      "parameters": [
+        {
+          "name": "FROM_AGE",
+          "value": "2"
+        },
+        {
+          "name": "TO_AGE",
+          "value": "2"
+        },
+        {
+          "name": "START_DATE",
+          "value": "$ryBegin"
+        },
+        {
+          "name": "END_DATE",
+          "value": "$ryBegin"
+        }
+      ],
+      "successStepId": 200,
+      "failureStepId": 99999
+    },
+    {
+      "stepId": 200,
+      "rule": "SetResult",
+      "parameters": [],
+      "successStepId": 99999,
+      "failureStepId": 99999
+    }
+  ]
 }

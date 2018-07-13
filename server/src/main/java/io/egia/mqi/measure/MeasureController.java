@@ -38,12 +38,12 @@ public class MeasureController {
     }
 
     @GetMapping("/rule_params")
-    public Iterable<RuleParam> rule(@RequestParam(value = "rule_name") String ruleName) {
-        return ruleParamRepository.findAllByRuleNameOrderByRuleParamId(ruleName);
+    public Iterable<RuleParam> ruleParams() {
+        return ruleParamRepository.findAll();
     }
 
     @GetMapping("/rules")
-    public Iterable<String> rules() {
+    public Iterable<String> ruleNames() {
         return ruleParamRepository.findAllDistinctRules();
     }
 

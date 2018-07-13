@@ -1,4 +1,4 @@
-module HttpActions exposing (getMeasureList, getMeasure, getRules)
+module HttpActions exposing (getMeasureList, getMeasure, getRules, getRuleParams)
 
 import Http
 import Json.Decode as Json exposing (list, int, string, Decoder)
@@ -41,6 +41,12 @@ stepDecoder = decode Step
     |> required "successStepId" int
     |> required "failureStepId" int
     |> hardcoded False
+    |> required "parameters" (Json.list parameterDecoder)
+
+parameterDecoder: Decoder StepParameter
+parameterDecoder = decode StepParameter
+    |> required "name" string
+    |> required "value" string
 
 getRules : Cmd Msg
 getRules =
@@ -49,3 +55,18 @@ getRules =
         request = Http.get url (Json.list Json.string)
     in
         Http.send GetRules request
+
+getRuleParams : Cmd Msg
+getRuleParams =
+    let
+        url = "/rule_params"
+        request = Http.get url (Json.list ruleParamDecoder)
+    in
+        Http.send GetRuleParams request
+
+ruleParamDecoder : Decoder RuleParameter
+ruleParamDecoder = decode RuleParameter
+    |> required "ruleParamId" int
+    |> required "ruleName" string
+    |> optional "paramName" string ""
+    |> optional "paramType" string ""

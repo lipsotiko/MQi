@@ -1,7 +1,7 @@
 module Main exposing (..)
 
 import Html exposing (program)
-import HttpActions exposing (getMeasureList, getRules)
+import HttpActions exposing (getMeasureList, getRules, getRuleParams)
 import Model exposing (..)
 import Mouse exposing (Position)
 import Update exposing (..)
@@ -26,7 +26,8 @@ init =
         }
     , measures = []
     , rules = []
-    } ! [getMeasureList, getRules]
+    , ruleParameters = []
+    } ! [getMeasureList, getRules, getRuleParams]
 
 
 -- SUBSCRIPTIONS

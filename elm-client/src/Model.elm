@@ -6,6 +6,7 @@ type alias Model = {
     measure : Measure
     , measures : List MeasureItem
     , rules : List String
+    , ruleParameters : List RuleParameter
     }
 
 type alias Measure = {
@@ -18,10 +19,23 @@ type alias Measure = {
 
 type alias Step = {
     stepId : Int
-    , rule : String
+    , ruleName : String
     , successStepId : Int
     , failureStepId: Int
     , isEditing : Bool
+    , parameters : List StepParameter
+    }
+
+type alias StepParameter = {
+    paramName : String
+    , paramValue : String
+    }
+
+type alias RuleParameter = {
+    ruleParamId : Int
+    , ruleName : String
+    , paramName : String
+    , paramType : String
     }
 
 type alias MeasureItem = {
@@ -46,8 +60,10 @@ type Msg
     | MeasureDescription String
     | SuccessStepId Int String
     | FailureStepId Int String
+    | ParameterValue Int String String
     | SelectMeasure Int
     | GetMeasures (Result Http.Error (List MeasureItem))
     | GetMeasure (Result Http.Error (Measure))
     | GetRules (Result Http.Error (List String))
+    | GetRuleParams (Result Http.Error (List RuleParameter))
     | SelectRule Int String

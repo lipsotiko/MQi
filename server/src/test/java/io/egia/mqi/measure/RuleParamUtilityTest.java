@@ -21,9 +21,10 @@ import static org.mockito.Mockito.verify;
 public class RuleParamUtilityTest {
 
     private RuleParam[] expected = {
-            new RuleParam("AgeWithinDateRange","AGE","INTEGER")
-            , new RuleParam("AgeWithinDateRange","START_DATE","DATE")
-            , new RuleParam("AgeWithinDateRange","END_DATE","DATE")
+            new RuleParam("AgesWithinDateRange","FROM_AGE","INTEGER")
+            , new RuleParam("AgesWithinDateRange","TO_AGE","INTEGER")
+            , new RuleParam("AgesWithinDateRange","START_DATE","DATE")
+            , new RuleParam("AgesWithinDateRange","END_DATE","DATE")
             , new RuleParam("ExitMeasure","CONTINUE","BOOLEAN")
             , new RuleParam("SetResult",null,null)
     };

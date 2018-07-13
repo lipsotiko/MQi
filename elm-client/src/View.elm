@@ -59,20 +59,24 @@ view model =
 
 measureItemView: Int -> MeasureItem -> Html Msg
 measureItemView idx measureItem =
-    li [ class "measure list-item", onClick (SelectMeasure measureItem.id)][
+    li [ class "list-item", onClick (SelectMeasure measureItem.id)][
        text measureItem.name
     ]
 
 stepView : Model -> Int -> Step -> Html Msg
 stepView model idx step =
     let
-        deleteBtnStyle =
+        showStyle =
             if step.isEditing then "show"
             else "hide"
 
         stepStyle =
             if step.isEditing then "expanded list-item"
             else "list-item"
+
+        editSaveStepText =
+            if step.isEditing then "Save"
+                else "Edit"
 
         moveStyle =
             case model.measure.drag of
@@ -109,15 +113,64 @@ stepView model idx step =
 
     in
         li [ class stepStyle, style <| moveStyle ++ makingWayStyle ]
-            [ p [][text (toString step.stepId)]
-            , select [value step.rule, onInput (SelectRule idx)]
-                (List.map (\a -> option [value a, selected (a == step.rule)][text a]) ("(select)"::model.rules))
-            , input [ maxlength 5, value (toString step.successStepId), onInput (SuccessStepId idx)][]
-            , input [ maxlength 5, value (toString step.failureStepId), onInput (FailureStepId idx)][]
-            , button [ class deleteBtnStyle, onClick (DeleteStep idx) ] [ text "Delete" ]
-            , button [ onClick (EditStep idx) ][ text "Edit" ]
-            , div [ class "drag-btn", onMouseDown <| DragStart idx ] [ ]
+            [
+                div[ class "step-header" ][
+                    label [][text (toString step.stepId)]
+                    , select [value step.ruleName, onInput (SelectRule idx)]
+                        (List.map (\a -> option [value a, selected (a == step.ruleName)][text a]) ("(select)"::model.rules))
+                    , input [ maxlength 5, value (toString step.successStepId), onInput (SuccessStepId idx)][]
+                    , input [ maxlength 5, value (toString step.failureStepId), onInput (FailureStepId idx)][]
+                    , button [ class showStyle, onClick (DeleteStep idx) ] [ text "Delete" ]
+                    , button [ onClick (EditStep idx) ][ text editSaveStepText ]
+                    , button [ class "drag-btn", onMouseDown <| DragStart idx ] [ text "Drag" ]
+                   ]
+                , div [ class "step-parameters", class showStyle ]
+                    (parametersView idx step.parameters (filterByRuleName model.ruleParameters step.ruleName))
             ]
+
+
+filterByRuleName : List RuleParameter -> String -> List RuleParameter
+filterByRuleName ruleParameters ruleName =
+    List.filter (\r -> r.ruleName == ruleName) ruleParameters
+
+
+parametersView : Int -> List StepParameter -> List RuleParameter -> List (Html Msg)
+parametersView idx stepParameters ruleParameters =
+    List.map (\a -> parameterView idx a (getParameterType a.paramName ruleParameters)) stepParameters
+
+
+parameterView : Int -> StepParameter -> String -> Html Msg
+parameterView idx stepParameter paramType =
+    let
+        inputBox = (
+            if (paramType == "INTEGER") then
+                input [value stepParameter.paramValue, placeholder "###", onInput (ParameterValue idx stepParameter.paramName)][]
+            else if (paramType == "BOOLEAN") then
+                input [value stepParameter.paramValue, placeholder "TRUE or FALSE", onInput (ParameterValue idx stepParameter.paramName)][]
+            else if (paramType == "DATE") then
+                input [value stepParameter.paramValue, placeholder "YYYYMMDD", onInput (ParameterValue idx stepParameter.paramName)][]
+            else
+                input [value stepParameter.paramValue, placeholder paramType, onInput (ParameterValue idx stepParameter.paramName)][]
+            )
+
+    in
+        div [ class "parameter-item"][
+                label[][text stepParameter.paramName]
+                , inputBox
+        ]
+
+
+getParameterType : String -> List RuleParameter -> String
+getParameterType paramName ruleParameters =
+    let
+        ruleParam = List.head (List.filter (\m -> m.paramName == paramName) ruleParameters)
+    in
+        case ruleParam of
+            Nothing ->
+                "EMPTY LIST!!!"
+            Just val ->
+                val.paramType
+
 
 onMouseDown : (Position -> msg) -> Attribute msg
 onMouseDown msg =

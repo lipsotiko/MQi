@@ -36,16 +36,36 @@
     border: 1px solid rgba(0,0,0,.27);
     border-radius: 2px;
     box-shadow: 0 1px 2px rgba(0,0,0,0.24);
-    justify-content: space-between;
-    display: flex;
-}
-
-.measure.list-item {
-    cursor: pointer;
 }
 
 .expanded.list-item  {
     height: 8rem;
+}
+
+.step-header {
+    justify-content: space-between;
+    display: flex;
+}
+
+.step-parameters {
+    display: block;
+    margin-top: 1rem;
+    height: 5rem;
+    overflow: scroll;
+}
+
+.parameter-item {
+    display: flex;
+}
+
+.parameter-item label {
+    padding-left: 1rem;
+    display: block;
+    width: 10rem;
+}
+
+.measure.list-item {
+    cursor: pointer;
 }
 
 button {
@@ -54,9 +74,6 @@ button {
 }
 
 .drag-btn {
-    height: 100%;
-    width: 1rem;
-    background-color: grey;
     cursor: move;
 }
 
