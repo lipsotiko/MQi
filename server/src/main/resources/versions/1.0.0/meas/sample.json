@@ -9,20 +9,24 @@
       "rule": "AgesWithinDateRange",
       "parameters": [
         {
-          "name": "FROM_AGE",
-          "value": "2"
+          "paramName": "FROM_AGE",
+          "paramValue": "2",
+          "paramType": "INTEGER"
         },
         {
-          "name": "TO_AGE",
-          "value": "2"
+          "paramName": "TO_AGE",
+          "paramValue": "2",
+          "paramType": "INTEGER"
         },
         {
-          "name": "START_DATE",
-          "value": "$ryBegin"
+          "paramName": "START_DATE",
+          "paramValue": "$ryBegin",
+          "paramType": "DATE"
         },
         {
-          "name": "END_DATE",
-          "value": "$ryBegin"
+          "paramName": "END_DATE",
+          "paramValue": "$ryBegin",
+          "paramType": "DATE"
         }
       ],
       "successStepId": 200,

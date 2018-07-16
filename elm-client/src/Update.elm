@@ -158,7 +158,7 @@ update msg model =
         SelectRule idx ruleName ->
             let
                 oldMeasure = model.measure
-                newStepParameters = getStepParameters model.ruleParameters ruleName
+                newStepParameters = getRuleParameters model.ruleParameters ruleName
                 oldMeasure2 = updateStepAtIndex oldMeasure idx (\step -> { step | ruleName = ruleName } )
                 newMeasure = updateStepAtIndex oldMeasure2 idx (\step -> { step | parameters = newStepParameters })
             in
@@ -175,7 +175,7 @@ updateStepAtIndex measure idx updateFunction =
         { measure | steps = updatedSteps }
 
 
-updateParameterValue : List StepParameter -> String -> String -> List StepParameter
+updateParameterValue : List RuleParameter -> String -> String -> List RuleParameter
 updateParameterValue parameters paramName paramValue =
     List.map (\a -> if (a.paramName == paramName) then { a | paramValue = paramValue } else a ) parameters
 
@@ -235,15 +235,7 @@ getNextStepId steps =
         Nothing ->
             100
 
-getStepParameters : List RuleParameter -> String -> List StepParameter
-getStepParameters ruleParameters ruleName =
-    let
-        ruleParams = List.filter (\r -> r.ruleName == ruleName) ruleParameters
-        stepParameters = List.map (\r ->
-            let
-                 {paramName} = r
-            in
-               StepParameter paramName ""
-            ) ruleParams
-    in
-        stepParameters
+getRuleParameters : List RuleParameter -> String -> List RuleParameter
+getRuleParameters ruleParameters ruleName =
+     List.filter (\r -> r.ruleName == ruleName) ruleParameters
+

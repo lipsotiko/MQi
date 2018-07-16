@@ -23,12 +23,7 @@ type alias Step = {
     , successStepId : Int
     , failureStepId: Int
     , isEditing : Bool
-    , parameters : List StepParameter
-    }
-
-type alias StepParameter = {
-    paramName : String
-    , paramValue : String
+    , parameters : List RuleParameter
     }
 
 type alias RuleParameter = {
@@ -36,6 +31,7 @@ type alias RuleParameter = {
     , ruleName : String
     , paramName : String
     , paramType : String
+    , paramValue : String
     }
 
 type alias MeasureItem = {

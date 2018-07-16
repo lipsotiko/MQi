@@ -41,12 +41,7 @@ stepDecoder = decode Step
     |> required "successStepId" int
     |> required "failureStepId" int
     |> hardcoded False
-    |> required "parameters" (Json.list parameterDecoder)
-
-parameterDecoder: Decoder StepParameter
-parameterDecoder = decode StepParameter
-    |> required "name" string
-    |> required "value" string
+    |> required "parameters" (Json.list ruleParamDecoder)
 
 getRules : Cmd Msg
 getRules =
@@ -66,7 +61,8 @@ getRuleParams =
 
 ruleParamDecoder : Decoder RuleParameter
 ruleParamDecoder = decode RuleParameter
-    |> required "ruleParamId" int
-    |> required "ruleName" string
-    |> optional "paramName" string ""
-    |> optional "paramType" string ""
+    |> optional "ruleParamId" int 0
+    |> optional "ruleName" string ""
+    |> required "paramName" string
+    |> required "paramType" string
+    |> optional "paramValue" string ""

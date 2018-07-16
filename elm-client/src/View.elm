@@ -54,6 +54,7 @@ view model =
                     <| List.indexedMap (stepView model) model.measure.steps
                 , button [] [ text "Save" ]
                 , button [] [ text "Delete" ]
+                , button [ onClick (SelectMeasure model.measure.id) ] [ text "Cancel"]
             ]
         ]
 
@@ -75,7 +76,7 @@ stepView model idx step =
             else "list-item"
 
         editSaveStepText =
-            if step.isEditing then "Save"
+            if step.isEditing then "Close"
                 else "Edit"
 
         moveStyle =
@@ -125,7 +126,7 @@ stepView model idx step =
                     , button [ class "drag-btn", onMouseDown <| DragStart idx ] [ text "Drag" ]
                    ]
                 , div [ class "step-parameters", class showStyle ]
-                    (parametersView idx step.parameters (filterByRuleName model.ruleParameters step.ruleName))
+                    (parametersView idx step.parameters)
             ]
 
 
@@ -134,42 +135,32 @@ filterByRuleName ruleParameters ruleName =
     List.filter (\r -> r.ruleName == ruleName) ruleParameters
 
 
-parametersView : Int -> List StepParameter -> List RuleParameter -> List (Html Msg)
-parametersView idx stepParameters ruleParameters =
-    List.map (\a -> parameterView idx a (getParameterType a.paramName ruleParameters)) stepParameters
+parametersView : Int -> List RuleParameter -> List (Html Msg)
+parametersView idx ruleParameters  =
+    List.map (\a -> parameterView idx a) ruleParameters
 
 
-parameterView : Int -> StepParameter -> String -> Html Msg
-parameterView idx stepParameter paramType =
+parameterView : Int -> RuleParameter -> Html Msg
+parameterView idx ruleParameters =
     let
         inputBox = (
-            if (paramType == "INTEGER") then
-                input [value stepParameter.paramValue, placeholder "###", onInput (ParameterValue idx stepParameter.paramName)][]
-            else if (paramType == "BOOLEAN") then
-                input [value stepParameter.paramValue, placeholder "TRUE or FALSE", onInput (ParameterValue idx stepParameter.paramName)][]
-            else if (paramType == "DATE") then
-                input [value stepParameter.paramValue, placeholder "YYYYMMDD", onInput (ParameterValue idx stepParameter.paramName)][]
+            if (ruleParameters.paramType == "INTEGER") then
+                input [value ruleParameters.paramValue, placeholder "###", onInput (ParameterValue idx ruleParameters.paramName)][]
+            else if (ruleParameters.paramType == "BOOLEAN") then
+                input [value ruleParameters.paramValue, placeholder "TRUE or FALSE", onInput (ParameterValue idx ruleParameters.paramName)][]
+            else if (ruleParameters.paramType == "DATE") then
+                input [value ruleParameters.paramValue, placeholder "YYYYMMDD", onInput (ParameterValue idx ruleParameters.paramName)][]
+             else if (ruleParameters.paramType == "TEXT") then
+                input [value ruleParameters.paramValue, placeholder "Free text field", onInput (ParameterValue idx ruleParameters.paramName)][]
             else
-                input [value stepParameter.paramValue, placeholder paramType, onInput (ParameterValue idx stepParameter.paramName)][]
+                input [value ruleParameters.paramValue, placeholder ruleParameters.paramType, onInput (ParameterValue idx ruleParameters.paramName)][]
             )
 
     in
         div [ class "parameter-item"][
-                label[][text stepParameter.paramName]
+                label[][text ruleParameters.paramName]
                 , inputBox
         ]
-
-
-getParameterType : String -> List RuleParameter -> String
-getParameterType paramName ruleParameters =
-    let
-        ruleParam = List.head (List.filter (\m -> m.paramName == paramName) ruleParameters)
-    in
-        case ruleParam of
-            Nothing ->
-                "EMPTY LIST!!!"
-            Just val ->
-                val.paramType
 
 
 onMouseDown : (Position -> msg) -> Attribute msg
