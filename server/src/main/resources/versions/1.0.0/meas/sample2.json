@@ -6,7 +6,7 @@
   "steps": [
     {
       "stepId": 100,
-      "rule": "AgesWithinDateRange",
+      "ruleName": "AgesWithinDateRange",
       "parameters": [
         {
           "paramName": "FROM_AGE",
@@ -34,8 +34,14 @@
     },
     {
       "stepId": 200,
-      "rule": "SetResult",
-      "parameters": [],
+      "ruleName": "SetResultCode",
+      "parameters": [
+        {
+          "paramName": "RESULT_CODE",
+          "paramValue": "DENOMINATOR",
+          "paramType": "TEXT"
+        }
+      ],
       "successStepId": 99999,
       "failureStepId": 99999
     }

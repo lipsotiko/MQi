@@ -6,6 +6,7 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface MeasureRepository extends JpaRepository<Measure, Long> {
@@ -15,4 +16,6 @@ public interface MeasureRepository extends JpaRepository<Measure, Long> {
 
 	@Query(value = "select m from Measure m join JobMeasure jm on m.measureId = jm.measureId where jm.jobId = :id")
     List<Measure> findAllByJobId(@Param("id")Long jobId);
+
+	Optional<Measure> findByMeasureName(String measureName);
 }

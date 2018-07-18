@@ -2,10 +2,7 @@ package io.egia.mqi.measure;
 
 import lombok.Data;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+import javax.persistence.*;
 
 @Data
 @Entity
@@ -17,6 +14,7 @@ public class RuleParam {
     private String ruleName;
     private String paramName;
     private String paramType;
+    @Transient private String paramValue;
 
     public RuleParam(String ruleName, String paramName, String paramType){
         this.ruleName = ruleName;

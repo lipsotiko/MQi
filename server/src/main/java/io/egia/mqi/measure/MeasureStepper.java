@@ -20,13 +20,8 @@ public class MeasureStepper {
 
     MeasureStepper(PatientData patientData, Measure measure, MeasureResult measureResult) throws MeasureProcessorException {
         this.patientData = patientData;
+        this.steps = measure.getMeasureLogic().getSteps();
         this.measureResult = measureResult;
-        try {
-            this.steps = measure.getLogic().getSteps();
-        } catch (IOException e) {
-            e.printStackTrace();
-            throw new MeasureProcessorException("Can't retrieve steps from measure");
-        }
     }
 
     public void stepThroughMeasure() throws MeasureProcessorException {
@@ -36,7 +31,7 @@ public class MeasureStepper {
         Class<?> ruleClass;
 
         while (measureResult.getContinueProcessing()) {
-            String rule = currentStep.getRule();
+            String rule = currentStep.getRuleName();
             Method ruleMethod;
             try {
                 assert rule != null;
@@ -98,7 +93,7 @@ public class MeasureStepper {
 
     private Step stepToExitMeasure() {
         Step step = new Step();
-        step.setRule("ExitMeasure");
+        step.setRuleName("ExitMeasure");
         step.setStepId(99999);
         return step;
     }

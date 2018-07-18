@@ -1,8 +1,6 @@
 package io.egia.mqi.measure;
 
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Optional;
@@ -22,13 +20,24 @@ public class MeasureController {
     }
 
     @GetMapping("/measure")
-    public Optional<Measure> measure(@RequestParam(value = "id") Long id) {
-        return measureRepository.findById(id);
+    public Optional<Measure> getMeasure(@RequestParam(value = "measureName") String measureName) {
+        return measureRepository.findByMeasureName(measureName);
+    }
+
+    @PutMapping("/measure")
+    public Measure putMeasure(@RequestBody Measure measure) {
+        measure.setMeasureJson(measure.getMeasureLogic());
+        return measureRepository.save(measure);
     }
 
     @GetMapping("/measure_list")
-    public List<MeasureListItem> measureList() {
+    public List<MeasureListItem> getMeasureList() {
         return measureRepository.findAllMeasureListItems();
+    }
+
+    @GetMapping("/rules_params")
+    public Iterable<RuleParam> rulesParams() {
+        return ruleParamRepository.findAll();
     }
 
     @GetMapping("/process")
@@ -37,14 +46,5 @@ public class MeasureController {
         return "measure Process";
     }
 
-    @GetMapping("/rule_params")
-    public Iterable<RuleParam> ruleParams() {
-        return ruleParamRepository.findAll();
-    }
-
-    @GetMapping("/rules")
-    public Iterable<String> ruleNames() {
-        return ruleParamRepository.findAllDistinctRules();
-    }
 
 }

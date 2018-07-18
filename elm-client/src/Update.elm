@@ -1,6 +1,7 @@
 module Update exposing (..)
 
-import HttpActions exposing (getMeasure)
+import HttpActions exposing (getMeasure, getMeasureList, putMeasure)
+import List.Extra exposing (unique)
 import Model exposing (..)
 
 
@@ -72,9 +73,10 @@ update msg model =
         AddStep ->
             let
                 oldMeasure = model.measure
+                nextStepId = getNextStepId oldMeasure.steps
                 newMeasure = { oldMeasure
                     | steps = oldMeasure.steps ++
-                        [Step (getNextStepId oldMeasure.steps) "(select)" 99999 99999 False []] }
+                        [Step nextStepId "(select)" (nextStepId + 10) 99999 True []] }
             in
                 { model | measure = newMeasure } ! []
 
@@ -116,8 +118,11 @@ update msg model =
             in
                 { model | measure = newMeasure } ! []
 
-        GetMeasures (Ok measures) ->
-            { model | measures = measures } ! []
+        GetMeasures (Ok measureListItems) ->
+            let
+                measureNames = List.map (.name) measureListItems
+            in
+                { model | measures = measureNames } ! []
 
         GetMeasures (Err _) ->
             let
@@ -125,29 +130,27 @@ update msg model =
             in
                 model ! []
 
-        SelectMeasure id ->
-            model ! [ getMeasure id ]
+        SelectMeasure measureName ->
+            model ! [ getMeasure measureName ]
+
+        ClearMeasure ->
+                { model | measure = Measure 0 "" "" [] Nothing } ! []
 
         GetMeasure (Ok measure) ->
                 { model | measure = measure } ! []
 
         GetMeasure (Err _) ->
              let
-                 d = Debug.crash "Could not retrieve the measure"
+                 d = Debug.log "Could not retrieve the measure"
              in
-                 model ! []
-
-        GetRules (Ok rules) ->
-                { model | rules = rules } ! []
-
-        GetRules (Err _) ->
-             let
-                 d = Debug.crash "Could not retrieve the rules"
-             in
-                 model ! []
+                 { model | measure = Measure 0 "" "" [] Nothing } ! []
 
         GetRuleParams (Ok ruleParameters) ->
-                { model | ruleParameters = ruleParameters } ! []
+            let
+                rules = List.map .ruleName ruleParameters
+                uniqueSortedRules = List.sort (unique rules)
+            in
+                { model | ruleParameters = ruleParameters, rules = uniqueSortedRules  } ! []
 
         GetRuleParams (Err _) ->
              let
@@ -155,12 +158,38 @@ update msg model =
              in
                  model ! []
 
+        SaveMeasure measure ->
+            model ! [ putMeasure measure ]
+
+        NewMeasure (Ok newMeasure) ->
+            let
+                exists = List.member newMeasure.name model.measures
+
+                newMeasureList = (
+                    if (exists == False) then
+                        newMeasure.name :: model.measures
+                    else
+                        model.measures
+                    )
+            in
+                { model | measures = newMeasureList } ! []
+
+        NewMeasure (Err _) ->
+            model ! []
+
         SelectRule idx ruleName ->
             let
                 oldMeasure = model.measure
                 newStepParameters = getRuleParameters model.ruleParameters ruleName
-                oldMeasure2 = updateStepAtIndex oldMeasure idx (\step -> { step | ruleName = ruleName } )
-                newMeasure = updateStepAtIndex oldMeasure2 idx (\step -> { step | parameters = newStepParameters })
+
+                newMeasure = (
+                    if (ruleName == "ExitMeasure") then
+                        updateStepAtIndex oldMeasure idx (\step ->
+                            { step | ruleName = ruleName, parameters = newStepParameters, successStepId = 99999 })
+                    else
+                        updateStepAtIndex oldMeasure idx (\step ->
+                            { step | ruleName = ruleName, parameters = newStepParameters })
+                    )
             in
                 { model | measure = newMeasure } ! []
 
@@ -231,9 +260,9 @@ getNextStepId steps =
     in
         case maxStepId of
         Just maxStepId ->
-            maxStepId + 100
+            maxStepId + 10
         Nothing ->
-            100
+            10
 
 getRuleParameters : List RuleParameter -> String -> List RuleParameter
 getRuleParameters ruleParameters ruleName =

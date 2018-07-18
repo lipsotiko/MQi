@@ -1,24 +1,18 @@
 {
-	"steps" : [
+
+	"steps": [
 		{
-			"stepId" : 100,
-			"rule" : "AgeWithinDateRange",
-			"parameters" : {
-				"min" : 2,
-				"max" : 5,
-				"asOf" : "$ryBegin",
-				"thru" : "$ryBegin"
-			},
-			"successStepId" : 200,
-			"failureStepId" : 99999
-		}, {
-			"stepId" : 200,
-			"rule" : "thisRuleDoesntExistInMqi",
-			"parameters" : {
-				"eligible" : true
-			},
-			"successStepId" : 100,
-			"failureStepId" : 99999
+			"stepId": 100,
+			"ruleName": "ThisRuleDoesNotExist",
+			"parameters": [
+				{
+					"paramName": "WHATEVER",
+					"paramValue": "WOOT",
+					"paramType": "TEXT"
+				}
+			],
+			"successStepId": 99999,
+			"failureStepId": 99999
 		}
 	]
 }

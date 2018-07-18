@@ -52,16 +52,17 @@ view model =
                 , ul
                     [ class "list-container" ]
                     <| List.indexedMap (stepView model) model.measure.steps
-                , button [] [ text "Save" ]
+                , button [ onClick (SaveMeasure model.measure)] [ text "Save" ]
                 , button [] [ text "Delete" ]
-                , button [ onClick (SelectMeasure model.measure.id) ] [ text "Cancel"]
+                , button [ onClick ClearMeasure ] [ text "Clear" ]
+                , button [ onClick (SelectMeasure model.measure.name) ] [ text "Reset"]
             ]
         ]
 
-measureItemView: Int -> MeasureItem -> Html Msg
-measureItemView idx measureItem =
-    li [ class "list-item", onClick (SelectMeasure measureItem.id)][
-       text measureItem.name
+measureItemView: Int -> String -> Html Msg
+measureItemView idx measureName =
+    li [ class "list-item", onClick (SelectMeasure measureName)][
+       text measureName
     ]
 
 stepView : Model -> Int -> Step -> Html Msg
@@ -119,8 +120,8 @@ stepView model idx step =
                     label [][text (toString step.stepId)]
                     , select [value step.ruleName, onInput (SelectRule idx)]
                         (List.map (\a -> option [value a, selected (a == step.ruleName)][text a]) ("(select)"::model.rules))
-                    , input [ maxlength 5, value (toString step.successStepId), onInput (SuccessStepId idx)][]
-                    , input [ maxlength 5, value (toString step.failureStepId), onInput (FailureStepId idx)][]
+                    , input [ maxlength 5, value (toString step.successStepId), placeholder "###", onInput (SuccessStepId idx)][]
+                    , input [ maxlength 5, value (toString step.failureStepId), placeholder "###", onInput (FailureStepId idx)][]
                     , button [ class showStyle, onClick (DeleteStep idx) ] [ text "Delete" ]
                     , button [ onClick (EditStep idx) ][ text editSaveStepText ]
                     , button [ class "drag-btn", onMouseDown <| DragStart idx ] [ text "Drag" ]
@@ -150,8 +151,10 @@ parameterView idx ruleParameters =
                 input [value ruleParameters.paramValue, placeholder "TRUE or FALSE", onInput (ParameterValue idx ruleParameters.paramName)][]
             else if (ruleParameters.paramType == "DATE") then
                 input [value ruleParameters.paramValue, placeholder "YYYYMMDD", onInput (ParameterValue idx ruleParameters.paramName)][]
-             else if (ruleParameters.paramType == "TEXT") then
+            else if (ruleParameters.paramType == "TEXT") then
                 input [value ruleParameters.paramValue, placeholder "Free text field", onInput (ParameterValue idx ruleParameters.paramName)][]
+            else if (ruleParameters.paramType == "INVISIBLE") then
+                 div[][]
             else
                 input [value ruleParameters.paramValue, placeholder ruleParameters.paramType, onInput (ParameterValue idx ruleParameters.paramName)][]
             )

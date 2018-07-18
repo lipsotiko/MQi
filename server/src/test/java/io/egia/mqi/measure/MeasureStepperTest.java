@@ -17,13 +17,13 @@ public class MeasureStepperTest {
     public void measureIsSteppedThrough() throws IOException, MeasureProcessorException {
         Measure measure = Helpers.getMeasureFromResource("fixtures", "sampleMeasure.json");
         List<String> testMeasureRules = new ArrayList<>();
-        measure.getLogic().getSteps().stream().forEach((step -> testMeasureRules.add(step.getRule())));
+        measure.getMeasureLogic().getSteps().stream().forEach((step -> testMeasureRules.add(step.getRuleName())));
         MeasureStepper subject = new MeasureStepper(
                 new PatientData(1L), measure, new MeasureResult());
         subject.stepThroughMeasure();
 
         testMeasureRules.stream().forEach(rule -> {
-            assertThat(testMeasureRules).contains(rule);
+            assertThat(subject.getMeasureResult().getRuleTrace()).contains(rule);
         });
     }
 

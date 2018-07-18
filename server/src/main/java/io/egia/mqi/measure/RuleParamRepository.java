@@ -6,6 +6,5 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface RuleParamRepository extends JpaRepository<RuleParam, Long> {
-    @Query(value = "select distinct ruleName from RuleParam order by ruleName")
-    Iterable<String> findAllDistinctRules();
+
 }

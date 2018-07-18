@@ -8,7 +8,7 @@ import io.egia.mqi.measure.Param;
 @Rule(params={
         @Param(name="RESULT_CODE", type = "TEXT")
 })
-public class SetResult {
+public class SetResultCode {
     public MeasureResult evaluate(PatientData patientData, MeasureResult measureResult) {
         measureResult.setResults(true);
         return measureResult;

@@ -4,7 +4,7 @@ import Mouse exposing (Position)
 
 type alias Model = {
     measure : Measure
-    , measures : List MeasureItem
+    , measures : List String
     , rules : List String
     , ruleParameters : List RuleParameter
     }
@@ -57,9 +57,11 @@ type Msg
     | SuccessStepId Int String
     | FailureStepId Int String
     | ParameterValue Int String String
-    | SelectMeasure Int
+    | SelectMeasure String
+    | ClearMeasure
     | GetMeasures (Result Http.Error (List MeasureItem))
     | GetMeasure (Result Http.Error (Measure))
-    | GetRules (Result Http.Error (List String))
     | GetRuleParams (Result Http.Error (List RuleParameter))
+    | SaveMeasure Measure
+    | NewMeasure (Result Http.Error Measure)
     | SelectRule Int String

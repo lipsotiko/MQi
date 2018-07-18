@@ -25,8 +25,8 @@ public class RuleParamUtilityTest {
             , new RuleParam("AgesWithinDateRange","TO_AGE","INTEGER")
             , new RuleParam("AgesWithinDateRange","START_DATE","DATE")
             , new RuleParam("AgesWithinDateRange","END_DATE","DATE")
-            , new RuleParam("ExitMeasure","CONTINUE","BOOLEAN")
-            , new RuleParam("SetResult","RESULT_CODE","TEXT")
+            , new RuleParam("ExitMeasure","","INVISIBLE")
+            , new RuleParam("SetResultCode","RESULT_CODE","TEXT")
     };
 
     @Mock
