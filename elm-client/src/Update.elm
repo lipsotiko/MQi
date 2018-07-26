@@ -1,6 +1,6 @@
 module Update exposing (..)
 
-import HttpActions exposing (getMeasure, getMeasureList, putMeasure)
+import HttpActions exposing (deleteMeasure, getMeasure, getMeasureList, putMeasure)
 import List.Extra exposing (unique)
 import Model exposing (..)
 
@@ -118,50 +118,65 @@ update msg model =
             in
                 { model | measure = newMeasure } ! []
 
-        GetMeasures (Ok measureListItems) ->
+        GetMeasuresResponse (Ok measureListItems) ->
             let
                 measureNames = List.map (.name) measureListItems
             in
                 { model | measures = measureNames } ! []
 
-        GetMeasures (Err _) ->
+        GetMeasuresResponse (Err _) ->
             let
-                d = Debug.crash "Could not retrieve the measures"
+                d = Debug.crash "Error when attempting to retrieve the measures"
             in
                 model ! []
 
         SelectMeasure measureName ->
             model ! [ getMeasure measureName ]
 
+        DeleteMeasure measureId ->
+            model ! [ deleteMeasure measureId ]
+
+        DeleteMeasureResponse (Ok response) ->
+            let
+                -- remove deleted measure from measure list...
+            in
+                model ! []
+
+        DeleteMeasureResponse (Err _) ->
+           let
+               d = Debug.log "Error when attempting to delete the measure"
+           in
+               model ! []
+
         ClearMeasure ->
                 { model | measure = Measure 0 "" "" [] Nothing } ! []
 
-        GetMeasure (Ok measure) ->
+        GetMeasureResponse (Ok measure) ->
                 { model | measure = measure } ! []
 
-        GetMeasure (Err _) ->
+        GetMeasureResponse (Err _) ->
              let
-                 d = Debug.log "Could not retrieve the measure"
+                 d = Debug.log "Error when attempting to retrieve the measure"
              in
                  { model | measure = Measure 0 "" "" [] Nothing } ! []
 
-        GetRuleParams (Ok ruleParameters) ->
+        GetRuleParamsResponse (Ok ruleParameters) ->
             let
                 rules = List.map .ruleName ruleParameters
                 uniqueSortedRules = List.sort (unique rules)
             in
                 { model | ruleParameters = ruleParameters, rules = uniqueSortedRules  } ! []
 
-        GetRuleParams (Err _) ->
+        GetRuleParamsResponse (Err _) ->
              let
-                 d = Debug.crash "Could not retrieve the rule params"
+                 d = Debug.crash "Error when attempting to retrieve the rule params"
              in
                  model ! []
 
         SaveMeasure measure ->
             model ! [ putMeasure measure ]
 
-        NewMeasure (Ok newMeasure) ->
+        NewMeasureResponse (Ok newMeasure) ->
             let
                 exists = List.member newMeasure.name model.measures
 
@@ -174,7 +189,7 @@ update msg model =
             in
                 { model | measures = newMeasureList } ! []
 
-        NewMeasure (Err _) ->
+        NewMeasureResponse (Err _) ->
             model ! []
 
         SelectRule idx ruleName ->

@@ -1,4 +1,4 @@
-module HttpActions exposing (getMeasureList, getMeasure , getRulesParams, putMeasure)
+module HttpActions exposing (getMeasureList, getMeasure , getRulesParams, putMeasure, deleteMeasure)
 
 import Array exposing (Array, fromList)
 import Http
@@ -8,13 +8,21 @@ import Json.Encode as Encode
 import Model exposing (..)
 
 
+deleteMeasure: Int -> Cmd Msg
+deleteMeasure measureId =
+    let
+        url = String.append "/measure?measureId=" (toString measureId)
+        request = delete url
+    in
+        Http.send DeleteMeasureResponse request
+
 getMeasure : String -> Cmd Msg
 getMeasure measureName =
     let
         url = String.append "/measure?measureName=" measureName
         request = Http.get url measureDecoder
     in
-        Http.send GetMeasure request
+        Http.send GetMeasureResponse request
 
 
 putMeasure : Measure -> Cmd Msg
@@ -23,7 +31,7 @@ putMeasure measure =
         body = Http.jsonBody (measureEncoder measure)
         request = put "/measure" body measureDecoder
     in
-        Http.send NewMeasure request
+        Http.send NewMeasureResponse request
 
 
 put : String -> Http.Body -> Decoder a -> Http.Request (a)
@@ -38,13 +46,25 @@ put url body decoder =
     , withCredentials = False
     }
 
+delete : String -> Http.Request String
+delete url =
+  Http.request {
+    method = "DELETE"
+    , headers = []
+    , url = url
+    , body = Http.emptyBody
+    , expect = Http.expectString
+    , timeout = Nothing
+    , withCredentials = False
+    }
+
 getMeasureList : Cmd Msg
 getMeasureList =
     let
         url = "/measure_list"
         request = Http.get url (Decode.list measureListItemDecoder)
     in
-        Http.send GetMeasures request
+        Http.send GetMeasuresResponse request
 
 measureListItemDecoder: Decoder MeasureItem
 measureListItemDecoder = decode MeasureItem
@@ -129,7 +149,7 @@ getRulesParams =
         url = "/rules_params"
         request = Http.get url (Decode.list ruleParamDecoder)
     in
-        Http.send GetRuleParams request
+        Http.send GetRuleParamsResponse request
 
 
 ruleParamDecoder : Decoder RuleParameter

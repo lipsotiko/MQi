@@ -73,7 +73,7 @@ public class DatabaseManager {
         for (final File f : Objects.requireNonNull(measuresDirectory.listFiles())) {
             if (!f.isDirectory()) {
                 Measure m = new Measure();
-                m.setMeasureName(f.getName());
+                m.setMeasureName(f.getName().replace(".json",""));
                 String measureLogicString =  getMeasureFileAsString(measuresDirecotry, f);
                 m.setMeasureJson(measureLogicString);
                 measureRepository.saveAndFlush(m);

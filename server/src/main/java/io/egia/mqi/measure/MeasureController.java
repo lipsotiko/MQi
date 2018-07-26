@@ -24,6 +24,12 @@ public class MeasureController {
         return measureRepository.findByMeasureName(measureName);
     }
 
+    @DeleteMapping("/measure")
+    public String deleteMeasure(@RequestParam(value = "measureId") Long measureId) {
+        measureRepository.deleteById(measureId);
+        return "HI";
+    }
+
     @PutMapping("/measure")
     public Measure putMeasure(@RequestBody Measure measure) {
         measure.setMeasureJson(measure.getMeasureLogic());

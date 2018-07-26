@@ -59,9 +59,11 @@ type Msg
     | ParameterValue Int String String
     | SelectMeasure String
     | ClearMeasure
-    | GetMeasures (Result Http.Error (List MeasureItem))
-    | GetMeasure (Result Http.Error (Measure))
-    | GetRuleParams (Result Http.Error (List RuleParameter))
+    | GetMeasuresResponse (Result Http.Error (List MeasureItem))
+    | GetMeasureResponse (Result Http.Error (Measure))
+    | GetRuleParamsResponse (Result Http.Error (List RuleParameter))
     | SaveMeasure Measure
-    | NewMeasure (Result Http.Error Measure)
+    | DeleteMeasure Int
+    | DeleteMeasureResponse (Result Http.Error String)
+    | NewMeasureResponse (Result Http.Error Measure)
     | SelectRule Int String

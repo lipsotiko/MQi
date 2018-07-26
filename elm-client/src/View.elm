@@ -53,9 +53,9 @@ view model =
                     [ class "list-container" ]
                     <| List.indexedMap (stepView model) model.measure.steps
                 , button [ onClick (SaveMeasure model.measure)] [ text "Save" ]
-                , button [] [ text "Delete" ]
-                , button [ onClick ClearMeasure ] [ text "Clear" ]
+                , button [ onClick (DeleteMeasure model.measure.id)] [ text "Delete" ]
                 , button [ onClick (SelectMeasure model.measure.name) ] [ text "Reset"]
+                , button [ onClick ClearMeasure ] [ text "Clear" ]
             ]
         ]
 

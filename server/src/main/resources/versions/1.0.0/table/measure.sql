@@ -6,6 +6,8 @@ create table if not exists measure (
 	last_updated timestamp default current_timestamp
 );
 
+create unique index ux_measure on measure (LOWER(measure_name));
+
 create trigger tr_update_measure_last_updated
 before update on measure
 for each row
