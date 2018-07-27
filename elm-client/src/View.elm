@@ -54,15 +54,15 @@ view model =
                     <| List.indexedMap (stepView model) model.measure.steps
                 , button [ onClick (SaveMeasure model.measure)] [ text "Save" ]
                 , button [ onClick (DeleteMeasure model.measure.id)] [ text "Delete" ]
-                , button [ onClick (SelectMeasure model.measure.name) ] [ text "Reset"]
+                , button [ onClick (SelectMeasure model.measure.id) ] [ text "Reset"]
                 , button [ onClick ClearMeasure ] [ text "Clear" ]
             ]
         ]
 
-measureItemView: Int -> String -> Html Msg
-measureItemView idx measureName =
-    li [ class "list-item", onClick (SelectMeasure measureName)][
-       text measureName
+measureItemView: Int -> MeasureItem -> Html Msg
+measureItemView idx measureItem =
+    li [ class "list-item", onClick (SelectMeasure measureItem.id)][
+       text measureItem.name
     ]
 
 stepView : Model -> Int -> Step -> Html Msg

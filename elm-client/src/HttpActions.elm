@@ -16,10 +16,10 @@ deleteMeasure measureId =
     in
         Http.send DeleteMeasureResponse request
 
-getMeasure : String -> Cmd Msg
-getMeasure measureName =
+getMeasure : Int -> Cmd Msg
+getMeasure measureId =
     let
-        url = String.append "/measure?measureName=" measureName
+        url = String.append "/measure?measureId=" (toString measureId)
         request = Http.get url measureDecoder
     in
         Http.send GetMeasureResponse request

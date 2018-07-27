@@ -118,11 +118,8 @@ update msg model =
             in
                 { model | measure = newMeasure } ! []
 
-        GetMeasuresResponse (Ok measureListItems) ->
-            let
-                measureNames = List.map (.name) measureListItems
-            in
-                { model | measures = measureNames } ! []
+        GetMeasuresResponse (Ok measureItems) ->
+            { model | measures = measureItems } ! []
 
         GetMeasuresResponse (Err _) ->
             let
@@ -130,17 +127,17 @@ update msg model =
             in
                 model ! []
 
-        SelectMeasure measureName ->
-            model ! [ getMeasure measureName ]
+        SelectMeasure measureId ->
+            model ! [ getMeasure measureId ]
 
         DeleteMeasure measureId ->
             model ! [ deleteMeasure measureId ]
 
-        DeleteMeasureResponse (Ok response) ->
+        DeleteMeasureResponse (Ok _) ->
             let
-                -- remove deleted measure from measure list...
+                newMeasures = List.filter (\m -> m.id /= model.measure.id) model.measures
             in
-                model ! []
+                { model | measures = newMeasures, measure = emptyMeasure } ! []
 
         DeleteMeasureResponse (Err _) ->
            let
@@ -149,7 +146,7 @@ update msg model =
                model ! []
 
         ClearMeasure ->
-                { model | measure = Measure 0 "" "" [] Nothing } ! []
+                { model | measure = emptyMeasure } ! []
 
         GetMeasureResponse (Ok measure) ->
                 { model | measure = measure } ! []
@@ -158,7 +155,7 @@ update msg model =
              let
                  d = Debug.log "Error when attempting to retrieve the measure"
              in
-                 { model | measure = Measure 0 "" "" [] Nothing } ! []
+                 { model | measure = emptyMeasure } ! []
 
         GetRuleParamsResponse (Ok ruleParameters) ->
             let
@@ -178,16 +175,19 @@ update msg model =
 
         NewMeasureResponse (Ok newMeasure) ->
             let
-                exists = List.member newMeasure.name model.measures
-
-                newMeasureList = (
+                measureIds = List.map (\m -> m.id) model.measures
+                exists = List.member newMeasure.id measureIds
+                newMeasures = (
                     if (exists == False) then
-                        newMeasure.name :: model.measures
+                        MeasureItem newMeasure.id newMeasure.name :: model.measures
                     else
-                        model.measures
+                        List.map (\m ->
+                            if (m.id == newMeasure.id) then
+                                MeasureItem m.id newMeasure.name
+                            else m) model.measures
                     )
             in
-                { model | measures = newMeasureList } ! []
+                { model | measures = newMeasures, measure = newMeasure } ! []
 
         NewMeasureResponse (Err _) ->
             model ! []
@@ -283,3 +283,6 @@ getRuleParameters : List RuleParameter -> String -> List RuleParameter
 getRuleParameters ruleParameters ruleName =
      List.filter (\r -> r.ruleName == ruleName) ruleParameters
 
+emptyMeasure : Measure
+emptyMeasure =
+    Measure 0 "" "" [] Nothing

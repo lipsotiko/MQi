@@ -20,14 +20,13 @@ public class MeasureController {
     }
 
     @GetMapping("/measure")
-    public Optional<Measure> getMeasure(@RequestParam(value = "measureName") String measureName) {
-        return measureRepository.findByMeasureName(measureName);
+    public Optional<Measure> getMeasure(@RequestParam(value = "measureId") Long measureId) {
+        return measureRepository.findById(measureId);
     }
 
     @DeleteMapping("/measure")
-    public String deleteMeasure(@RequestParam(value = "measureId") Long measureId) {
+    public void deleteMeasure(@RequestParam(value = "measureId") Long measureId) {
         measureRepository.deleteById(measureId);
-        return "HI";
     }
 
     @PutMapping("/measure")
