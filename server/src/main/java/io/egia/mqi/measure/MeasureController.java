@@ -2,8 +2,10 @@ package io.egia.mqi.measure;
 
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
-import java.util.Optional;
+import java.text.DateFormat;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
+import java.util.*;
 
 @RestController
 public class MeasureController {
@@ -12,16 +14,20 @@ public class MeasureController {
     private RuleParamRepository ruleParamRepository;
 
     public MeasureController(MeasureService measureService
-                , MeasureRepository measureRepository
-                , RuleParamRepository ruleParamRepository) {
+            , MeasureRepository measureRepository
+            , RuleParamRepository ruleParamRepository) {
         this.measureService = measureService;
         this.measureRepository = measureRepository;
         this.ruleParamRepository = ruleParamRepository;
     }
 
     @GetMapping("/measure")
-    public Optional<Measure> getMeasure(@RequestParam(value = "measureId") Long measureId) {
-        return measureRepository.findById(measureId);
+    public Measure getMeasure(@RequestParam(value = "measureId") Long measureId) {
+        Optional<Measure> optionalMeasure = measureRepository.findById(measureId);
+        if (optionalMeasure.isPresent()) {
+            return optionalMeasure.get();
+        }
+        return null;
     }
 
     @DeleteMapping("/measure")
@@ -31,8 +37,13 @@ public class MeasureController {
 
     @PutMapping("/measure")
     public Measure putMeasure(@RequestBody Measure measure) {
+
+        //TODO: Update timestamp only when core measure logic changes
+
+        ZonedDateTime now = ZonedDateTime.now(ZoneId.of("America/New_York"));
         measure.setMeasureJson(measure.getMeasureLogic());
-        return measureRepository.save(measure);
+        measure.setLastUpdated(now);
+        return measureRepository.saveAndFlush(measure);
     }
 
     @GetMapping("/measure_list")
@@ -50,6 +61,5 @@ public class MeasureController {
         measureService.process();
         return "measure Process";
     }
-
 
 }

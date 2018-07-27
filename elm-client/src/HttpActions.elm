@@ -16,6 +16,7 @@ deleteMeasure measureId =
     in
         Http.send DeleteMeasureResponse request
 
+
 getMeasure : Int -> Cmd Msg
 getMeasure measureId =
     let
@@ -78,6 +79,7 @@ measureDecoder = decode Measure
     |> required "measureName" string
     |> requiredAt ["measureLogic","description"] string
     |> requiredAt ["measureLogic","steps"] (Decode.list stepDecoder)
+    |> requiredAt ["lastUpdated"] string
     |> hardcoded Nothing
 
 
@@ -104,6 +106,8 @@ stepsEncoder steps =
                     ("stepId", Encode.int s.stepId)
                     , ("ruleName", Encode.string s.ruleName)
                     , ("parameters", parametersEncoder s.parameters)
+                    , ("successStepId", Encode.int s.successStepId)
+                    , ("failureStepId", Encode.int s.failureStepId)
                 ]
             ) steps
     in

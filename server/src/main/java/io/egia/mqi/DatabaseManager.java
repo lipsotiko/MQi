@@ -12,6 +12,8 @@ import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -76,6 +78,7 @@ public class DatabaseManager {
                 m.setMeasureName(f.getName().replace(".json",""));
                 String measureLogicString =  getMeasureFileAsString(measuresDirecotry, f);
                 m.setMeasureJson(measureLogicString);
+                m.setLastUpdated(ZonedDateTime.now(ZoneId.of("America/New_York")));
                 measureRepository.saveAndFlush(m);
             }
         }

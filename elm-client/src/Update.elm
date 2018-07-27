@@ -121,9 +121,9 @@ update msg model =
         GetMeasuresResponse (Ok measureItems) ->
             { model | measures = measureItems } ! []
 
-        GetMeasuresResponse (Err _) ->
+        GetMeasuresResponse (Err message) ->
             let
-                d = Debug.crash "Error when attempting to retrieve the measures"
+                d = Debug.log "Error" (toString message)
             in
                 model ! []
 
@@ -139,9 +139,9 @@ update msg model =
             in
                 { model | measures = newMeasures, measure = emptyMeasure } ! []
 
-        DeleteMeasureResponse (Err _) ->
+        DeleteMeasureResponse (Err message) ->
            let
-               d = Debug.log "Error when attempting to delete the measure"
+               d = Debug.log "Error" (toString message)
            in
                model ! []
 
@@ -151,9 +151,9 @@ update msg model =
         GetMeasureResponse (Ok measure) ->
                 { model | measure = measure } ! []
 
-        GetMeasureResponse (Err _) ->
+        GetMeasureResponse (Err message) ->
              let
-                 d = Debug.log "Error when attempting to retrieve the measure"
+                 d = Debug.log "Error" (toString message)
              in
                  { model | measure = emptyMeasure } ! []
 
@@ -164,9 +164,9 @@ update msg model =
             in
                 { model | ruleParameters = ruleParameters, rules = uniqueSortedRules  } ! []
 
-        GetRuleParamsResponse (Err _) ->
+        GetRuleParamsResponse (Err message) ->
              let
-                 d = Debug.crash "Error when attempting to retrieve the rule params"
+                 d = Debug.log "Error" (toString message)
              in
                  model ! []
 
@@ -175,6 +175,8 @@ update msg model =
 
         NewMeasureResponse (Ok newMeasure) ->
             let
+                d = Debug.log "MEASURE: " (toString newMeasure)
+
                 measureIds = List.map (\m -> m.id) model.measures
                 exists = List.member newMeasure.id measureIds
                 newMeasures = (
@@ -189,8 +191,11 @@ update msg model =
             in
                 { model | measures = newMeasures, measure = newMeasure } ! []
 
-        NewMeasureResponse (Err _) ->
-            model ! []
+        NewMeasureResponse (Err message) ->
+            let
+                d = Debug.log "Error" (toString message)
+            in
+                model ! []
 
         SelectRule idx ruleName ->
             let
@@ -285,4 +290,4 @@ getRuleParameters ruleParameters ruleName =
 
 emptyMeasure : Measure
 emptyMeasure =
-    Measure 0 "" "" [] Nothing
+    Measure 0 "" "" [] "" Nothing

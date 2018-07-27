@@ -14,6 +14,7 @@ type alias Measure = {
     , name : String
     , description : String
     , steps : List Step
+    , lastUpdated : String
     , drag : Maybe Drag
     }
 

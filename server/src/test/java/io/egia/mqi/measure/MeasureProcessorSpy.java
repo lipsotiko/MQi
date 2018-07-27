@@ -16,12 +16,8 @@ public class MeasureProcessorSpy implements MeasureProcessor {
     private List<Visit> setPatientDataWasCalledWithVisits;
 
     @Override
-    public void setMeasures(List<Measure> measures) {
+    public void initProcessor(List<Measure> measures, List<Patient> patients, List<Visit> visits) {
         setMeasuresWasCalledWith = measures;
-    }
-
-    @Override
-    public void setPatientData(List<Patient> patients, List<Visit> visits) {
         setPatientDataWasCalledWithPatients = patients;
         setPatientDataWasCalledWithVisits = visits;
     }

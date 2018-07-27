@@ -41,8 +41,7 @@ public class MeasureProcessorImplTest {
         Measure measure = Helpers.getMeasureFromResource("fixtures","sampleMeasure.json");
         measures.add(measure);
 
-        measureProcessorImpl.setMeasures(measures);
-        measureProcessorImpl.setPatientData(patients, visits);
+        measureProcessorImpl.initProcessor(measures, patients, visits);
     }
 
     @Test

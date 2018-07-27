@@ -56,6 +56,7 @@ view model =
                 , button [ onClick (DeleteMeasure model.measure.id)] [ text "Delete" ]
                 , button [ onClick (SelectMeasure model.measure.id) ] [ text "Reset"]
                 , button [ onClick ClearMeasure ] [ text "Clear" ]
+                , p [][text model.measure.lastUpdated]
             ]
         ]
 

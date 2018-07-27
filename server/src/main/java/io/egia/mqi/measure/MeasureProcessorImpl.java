@@ -21,12 +21,8 @@ public class MeasureProcessorImpl implements MeasureProcessor {
     private List<MeasureResult> measureResults = new ArrayList<>();
 
     @Override
-    public void setMeasures(List<Measure> measures) {
+    public void initProcessor(List<Measure> measures, List<Patient> patients, List<Visit> visits) {
         this.measures = measures;
-    }
-
-    @Override
-    public void setPatientData(List<Patient> patients, List<Visit> visits) {
         appendToPatientDataHash(patients);
         appendToPatientDataHash(visits);
     }

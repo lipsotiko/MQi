@@ -6,8 +6,7 @@ import io.egia.mqi.visit.Visit;
 import java.util.List;
 
 public interface MeasureProcessor {
-    void setMeasures(List<Measure> measures);
-    void setPatientData(List<Patient> patients, List<Visit> visits);
+    void initProcessor(List<Measure> measures, List<Patient> patients, List<Visit> visits);
     void process();
     void clear();
 }

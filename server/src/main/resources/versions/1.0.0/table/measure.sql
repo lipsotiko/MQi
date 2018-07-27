@@ -7,8 +7,3 @@ create table if not exists measure (
 );
 
 create unique index ux_measure on measure (LOWER(measure_name));
-
-create trigger tr_update_measure_last_updated
-before update on measure
-for each row
-execute procedure fn_update_timestamp();

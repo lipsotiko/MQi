@@ -1,5 +1,6 @@
 package io.egia.mqi.measure;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -7,7 +8,7 @@ import lombok.Data;
 
 import javax.persistence.*;
 import java.io.IOException;
-import java.util.Date;
+import java.time.ZonedDateTime;
 
 @Data
 @Entity
@@ -19,22 +20,15 @@ public class Measure {
 	private String measureName;
 
 	@JsonIgnore
+	@Column(columnDefinition = "LONGVARCHAR")
 	private String measureJson;
 
 	@Transient
 	private MeasureLogic measureLogic;
 
-	@Column(updatable=false,insertable=false) private Date lastUpdated;
-	
-	@JsonIgnore
-	public Date getLastUpdated() {
-		return lastUpdated;
-	}
-
-//	public String getLastUpdatedFormated() {
-//		SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd:HH:mm:SS");
-//		return DATE_FORMAT.format(lastUpdated).toString();
-//	}
+	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy hh:mm:ss", timezone = "America/New_York")
+	@Column(updatable=false,insertable=false)
+	private ZonedDateTime lastUpdated;
 
 	@JsonProperty("measureLogic")
 	public MeasureLogic getMeasureLogic() {

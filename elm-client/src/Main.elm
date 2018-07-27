@@ -22,6 +22,7 @@ init =
             , name = ""
             , description = ""
             , steps = []
+            , lastUpdated = ""
             , drag = Nothing
         }
     , measures = []

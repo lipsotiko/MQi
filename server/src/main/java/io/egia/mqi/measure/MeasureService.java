@@ -56,8 +56,8 @@ public class MeasureService {
 
         Long chunkId = getChunkIdToProcess();
         getPatientData(chunkId, thisServerId);
-        measureProcessor.setMeasures(getMeasuresToBeProcessed(jobId, chunkId));
-        measureProcessor.setPatientData(patients, visits);
+        List<Measure> measuresToBeProcessed = getMeasuresToBeProcessed(jobId, chunkId);
+        measureProcessor.initProcessor(measuresToBeProcessed, patients, visits);
         measureProcessor.process();
     }
 
