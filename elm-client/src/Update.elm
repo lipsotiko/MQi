@@ -174,22 +174,7 @@ update msg model =
             model ! [ putMeasure measure ]
 
         NewMeasureResponse (Ok newMeasure) ->
-            let
-                d = Debug.log "MEASURE: " (toString newMeasure)
-
-                measureIds = List.map (\m -> m.id) model.measures
-                exists = List.member newMeasure.id measureIds
-                newMeasures = (
-                    if (exists == False) then
-                        MeasureItem newMeasure.id newMeasure.name :: model.measures
-                    else
-                        List.map (\m ->
-                            if (m.id == newMeasure.id) then
-                                MeasureItem m.id newMeasure.name
-                            else m) model.measures
-                    )
-            in
-                { model | measures = newMeasures, measure = newMeasure } ! []
+           { model | measure = newMeasure } ! [getMeasureList]
 
         NewMeasureResponse (Err message) ->
             let

@@ -11,7 +11,8 @@ import java.util.Optional;
 @Repository
 public interface MeasureRepository extends JpaRepository<Measure, Long> {
 
-	@Query(value="select new io.egia.mqi.measure.MeasureListItem(m.measureId, m.measureName) from Measure m")
+	@Query(value="select new io.egia.mqi.measure.MeasureListItem(m.measureId, m.measureName) " +
+			"from Measure m order by m.measureName")
 	List<MeasureListItem> findAllMeasureListItems();
 
 	@Query(value = "select m from Measure m join JobMeasure jm on m.measureId = jm.measureId where jm.jobId = :id")
