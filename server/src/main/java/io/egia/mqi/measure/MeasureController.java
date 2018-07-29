@@ -6,7 +6,6 @@ import org.springframework.web.bind.annotation.*;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.util.List;
-import java.util.Objects;
 import java.util.Optional;
 
 @RestController
@@ -42,24 +41,28 @@ public class MeasureController {
         ZonedDateTime now = ZonedDateTime.now(ZoneId.of("America/New_York"));
         String systemVersion = versionRepository.findAll().get(0).getVersionId();
         Optional<Measure> measure = measureRepository.findById(newMeasure.getMeasureId());
+        MeasureLogic measureLogic;
 
         if (measure.isPresent()) {
             Measure existingMeasure = measure.get();
 
+            measureLogic = existingMeasure.getMeasureLogic();
+            measureLogic.setMinimumSystemVersion(null);
+            existingMeasure.setMeasureJson(measureLogic);
+
             if (existingMeasure.getMeasureLogic().equals(newMeasure.getMeasureLogic())) {
                 existingMeasure.setMeasureName(newMeasure.getMeasureName());
-
-                MeasureLogic existingMeasureLogic = existingMeasure.getMeasureLogic();
-                existingMeasureLogic.setDescription(newMeasure.getMeasureLogic().getDescription());
-                existingMeasureLogic.setMinimumSystemVersion(systemVersion);
-                existingMeasure.setMeasureLogic(existingMeasureLogic);
-                existingMeasure.setMeasureJson(existingMeasure.getMeasureLogic());
+                measureLogic = existingMeasure.getMeasureLogic();
+                measureLogic.setDescription(newMeasure.getMeasureLogic().getDescription());
+                measureLogic.setMinimumSystemVersion(systemVersion);
+                existingMeasure.setMeasureJson(measureLogic);
                 return measureRepository.saveAndFlush(existingMeasure);
             }
         }
 
-        newMeasure.getMeasureLogic().setMinimumSystemVersion(systemVersion);
-        newMeasure.setMeasureJson(newMeasure.getMeasureLogic());
+        measureLogic = newMeasure.getMeasureLogic();
+        measureLogic.setMinimumSystemVersion(systemVersion);
+        newMeasure.setMeasureJson(measureLogic);
         newMeasure.setLastUpdated(now);
         return measureRepository.saveAndFlush(newMeasure);
     }

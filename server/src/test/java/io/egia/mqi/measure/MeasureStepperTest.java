@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatCode;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 
 public class MeasureStepperTest {
@@ -45,9 +46,6 @@ public class MeasureStepperTest {
         MeasureStepper subject = new MeasureStepper(
                 new PatientData(1L), measure, new MeasureResult());
 
-        assertThatExceptionOfType(MeasureProcessorException.class).isThrownBy(() -> {
-                    subject.stepThroughMeasure();
-                }
-        );
+        assertThatExceptionOfType(MeasureProcessorException.class).isThrownBy(subject::stepThroughMeasure);
     }
 }

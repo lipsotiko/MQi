@@ -10,7 +10,6 @@ import java.util.Objects;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class MeasureLogic {
     private String description;
-    private boolean traceRules;
     private String minimumSystemVersion;
     private List<Step> steps;
 

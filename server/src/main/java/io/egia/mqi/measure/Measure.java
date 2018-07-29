@@ -31,18 +31,22 @@ public class Measure {
 
 	@JsonProperty("measureLogic")
 	public MeasureLogic getMeasureLogic() {
+
+		if (measureLogic != null) {
+			return measureLogic;
+		}
+
 		if (measureJson != null) {
 			ObjectMapper mapper = new ObjectMapper();
-			MeasureLogic measureLogic = null;
+
 			try {
-				measureLogic = mapper.readValue(measureJson, MeasureLogic.class);
+				return mapper.readValue(measureJson, MeasureLogic.class);
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
-			this.measureLogic = measureLogic;
 		}
 
-		return measureLogic;
+		return null;
 	}
 
 	public void setMeasureJson(MeasureLogic measureLogic) {
