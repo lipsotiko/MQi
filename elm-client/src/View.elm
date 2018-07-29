@@ -57,6 +57,7 @@ view model =
                 , button [ onClick (SelectMeasure model.measure.id) ] [ text "Reset"]
                 , button [ onClick ClearMeasure ] [ text "Clear" ]
                 , p [][text model.measure.lastUpdated]
+                , p [][text model.measure.minimumSystemVersion]
             ]
         ]
 

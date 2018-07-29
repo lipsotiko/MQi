@@ -2,7 +2,6 @@
   "description": "Patients that are two years of age on the first day of the reporting year with an occurrence of a broken leg at some time during the reporting year",
   "minimumSystemVersion": "1.0.0",
   "traceRules": true,
-  "generateSupplementalResults": true,
   "steps": [
     {
       "stepId": 100,

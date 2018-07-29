@@ -6,7 +6,7 @@ import javax.persistence.*;
 
 @Data
 @Entity
-public class RuleParam {
+class RuleParam {
     @Id
     @GeneratedValue(strategy= GenerationType.IDENTITY)
     Long ruleParamId;
@@ -16,13 +16,13 @@ public class RuleParam {
     private String paramType;
     @Transient private String paramValue;
 
-    public RuleParam(String ruleName, String paramName, String paramType){
+    RuleParam(String ruleName, String paramName, String paramType){
         this.ruleName = ruleName;
         this.paramName = paramName;
         this.paramType = paramType;
     }
 
-    public RuleParam() {
+    RuleParam() {
 
     }
 }

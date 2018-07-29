@@ -8,6 +8,7 @@ import org.springframework.core.io.ClassPathResource;
 
 import java.io.File;
 import java.io.IOException;
+import java.time.ZonedDateTime;
 
 public class Helpers {
 
@@ -21,7 +22,7 @@ public class Helpers {
         ObjectMapper mapper = new ObjectMapper();
         MeasureLogic measureLogic = mapper.readValue(measureLogicString, MeasureLogic.class);
         measure.setMeasureLogic(measureLogic);
-
+        measure.setLastUpdated(ZonedDateTime.parse("2007-12-03T10:15:30+01:00[Europe/Paris]"));
         return measure;
     }
 

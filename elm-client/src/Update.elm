@@ -128,7 +128,15 @@ update msg model =
                 model ! []
 
         SelectMeasure measureId ->
-            model ! [ getMeasure measureId ]
+            let
+                command = (
+                    if (measureId == 0) then
+                        Cmd.none
+                    else
+                        getMeasure measureId
+                    )
+            in
+                model ! [ command ]
 
         DeleteMeasure measureId ->
             model ! [ deleteMeasure measureId ]
@@ -275,4 +283,4 @@ getRuleParameters ruleParameters ruleName =
 
 emptyMeasure : Measure
 emptyMeasure =
-    Measure 0 "" "" [] "" Nothing
+    Measure 0 "" "" [] "" "" Nothing

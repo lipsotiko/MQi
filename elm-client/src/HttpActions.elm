@@ -79,6 +79,7 @@ measureDecoder = decode Measure
     |> required "measureName" string
     |> requiredAt ["measureLogic","description"] string
     |> requiredAt ["measureLogic","steps"] (Decode.list stepDecoder)
+    |> requiredAt ["measureLogic","minimumSystemVersion"] string
     |> requiredAt ["lastUpdated"] string
     |> hardcoded Nothing
 

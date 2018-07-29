@@ -1,33 +1,35 @@
 package io.egia.mqi.measure;
 
+import io.egia.mqi.version.VersionRepository;
 import org.springframework.web.bind.annotation.*;
 
-import java.text.DateFormat;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
-import java.util.*;
+import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
 
 @RestController
 public class MeasureController {
     private MeasureService measureService;
     private MeasureRepository measureRepository;
     private RuleParamRepository ruleParamRepository;
+    private VersionRepository versionRepository;
 
-    public MeasureController(MeasureService measureService
+    MeasureController(MeasureService measureService
             , MeasureRepository measureRepository
-            , RuleParamRepository ruleParamRepository) {
+            , RuleParamRepository ruleParamRepository
+            , VersionRepository versionRepository) {
         this.measureService = measureService;
         this.measureRepository = measureRepository;
         this.ruleParamRepository = ruleParamRepository;
+        this.versionRepository = versionRepository;
     }
 
     @GetMapping("/measure")
     public Measure getMeasure(@RequestParam(value = "measureId") Long measureId) {
         Optional<Measure> optionalMeasure = measureRepository.findById(measureId);
-        if (optionalMeasure.isPresent()) {
-            return optionalMeasure.get();
-        }
-        return null;
+        return optionalMeasure.orElse(null);
     }
 
     @DeleteMapping("/measure")
@@ -36,14 +38,30 @@ public class MeasureController {
     }
 
     @PutMapping("/measure")
-    public Measure putMeasure(@RequestBody Measure measure) {
-
-        //TODO: Update timestamp only when core measure logic changes
-
+    public Measure putMeasure(@RequestBody Measure newMeasure) {
         ZonedDateTime now = ZonedDateTime.now(ZoneId.of("America/New_York"));
-        measure.setMeasureJson(measure.getMeasureLogic());
-        measure.setLastUpdated(now);
-        return measureRepository.saveAndFlush(measure);
+        String systemVersion = versionRepository.findAll().get(0).getVersionId();
+        Optional<Measure> measure = measureRepository.findById(newMeasure.getMeasureId());
+
+        if (measure.isPresent()) {
+            Measure existingMeasure = measure.get();
+
+            if (existingMeasure.getMeasureLogic().equals(newMeasure.getMeasureLogic())) {
+                existingMeasure.setMeasureName(newMeasure.getMeasureName());
+
+                MeasureLogic existingMeasureLogic = existingMeasure.getMeasureLogic();
+                existingMeasureLogic.setDescription(newMeasure.getMeasureLogic().getDescription());
+                existingMeasureLogic.setMinimumSystemVersion(systemVersion);
+                existingMeasure.setMeasureLogic(existingMeasureLogic);
+                existingMeasure.setMeasureJson(existingMeasure.getMeasureLogic());
+                return measureRepository.saveAndFlush(existingMeasure);
+            }
+        }
+
+        newMeasure.getMeasureLogic().setMinimumSystemVersion(systemVersion);
+        newMeasure.setMeasureJson(newMeasure.getMeasureLogic());
+        newMeasure.setLastUpdated(now);
+        return measureRepository.saveAndFlush(newMeasure);
     }
 
     @GetMapping("/measure_list")

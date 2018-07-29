@@ -26,8 +26,7 @@ public class Measure {
 	@Transient
 	private MeasureLogic measureLogic;
 
-	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy hh:mm:ss", timezone = "America/New_York")
-	@Column(updatable=false,insertable=false)
+	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy hh:mm:ssa z", timezone = "America/New_York")
 	private ZonedDateTime lastUpdated;
 
 	@JsonProperty("measureLogic")

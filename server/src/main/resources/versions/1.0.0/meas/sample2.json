@@ -2,7 +2,6 @@
   "description": "Patients that are between the ages of 25 and 65 on the 12th day of the reporting year with an occurrence of a broken arm at some time during the reporting year",
   "minimumSystemVersion": "1.0.0",
   "traceRules": true,
-  "generateSupplementalResults": true,
   "steps": [
     {
       "stepId": 100,

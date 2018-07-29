@@ -22,6 +22,7 @@ init =
             , name = ""
             , description = ""
             , steps = []
+            , minimumSystemVersion = ""
             , lastUpdated = ""
             , drag = Nothing
         }
