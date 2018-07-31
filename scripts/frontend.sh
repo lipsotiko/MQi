@@ -1,1 +1,2 @@
-cd ./elm-client && npm run client
+#!/usr/bin/env bash
+cd ./elm-client && npm run build && npm run client

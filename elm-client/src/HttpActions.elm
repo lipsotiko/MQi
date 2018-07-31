@@ -2,7 +2,7 @@ module HttpActions exposing (getMeasureList, getMeasure , getRulesParams, putMea
 
 import Array exposing (Array, fromList)
 import Http
-import Json.Decode as Decode exposing (list, int, string, Decoder)
+import Json.Decode as Decode exposing (list, int, string, bool, Decoder)
 import Json.Decode.Pipeline exposing (decode, hardcoded, optional, required, requiredAt)
 import Json.Encode as Encode
 import Model exposing (..)
@@ -80,6 +80,7 @@ measureDecoder = decode Measure
     |> requiredAt ["measureLogic","description"] string
     |> requiredAt ["measureLogic","steps"] (Decode.list stepDecoder)
     |> requiredAt ["measureLogic","minimumSystemVersion"] string
+    |> requiredAt ["measureLogic","traceRules"] bool
     |> requiredAt ["lastUpdated"] string
     |> hardcoded Nothing
 
@@ -93,6 +94,7 @@ measureEncoder measure =
             Encode.object [
                 ("description", Encode.string measure.description)
                 , ("steps", stepsEncoder measure.steps)
+                , ("traceRules", Encode.bool measure.traceRules)
             ])
           )
 

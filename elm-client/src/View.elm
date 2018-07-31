@@ -58,6 +58,7 @@ view model =
                 , button [ onClick ClearMeasure ] [ text "Clear" ]
                 , p [][text model.measure.lastUpdated]
                 , p [][text model.measure.minimumSystemVersion]
+                , p [][text (toString model.measure.traceRules)]
             ]
         ]
 

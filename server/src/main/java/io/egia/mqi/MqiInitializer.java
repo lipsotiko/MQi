@@ -106,7 +106,7 @@ public class MqiInitializer implements ApplicationListener<ContextRefreshedEvent
 			// This was done so when the standalone configuration creates an
 			// hsql db, a version is inserted.
 			Version v = new Version("0.0.0");
-			versionRepository.save(v);
+			versionRepository.saveAndFlush(v);
 			return v.getVersionId();
 		}
 	}
@@ -128,7 +128,8 @@ public class MqiInitializer implements ApplicationListener<ContextRefreshedEvent
 					// if the version is newer than the current version, apply
 					// the update
 					if (v.compareTo(currDbVer) > 0) {
-						versionRepository.save(dbManager.applyVersion(v));
+						versionRepository.deleteAll();
+						versionRepository.saveAndFlush(dbManager.applyVersion(v));
 					}
 				}
 			} else {
@@ -160,12 +161,9 @@ public class MqiInitializer implements ApplicationListener<ContextRefreshedEvent
 				if (thisServer != null) {
 					log.info("This server already exists in the server table, updating entry.");
                     serverService.updateServerTypeAndVersion(thisServer, serverType, serverVersion);
-				} else if (thisServer == null) {
+				} else {
 					log.info("Secondary server does not exist in the server table, adding entry.");
                     serverService.saveServer(buildNewServer(ServerService.thisServersHostName()));
-				} else {
-					throw new MqiExceptions("There is more than one entry for this server in the server table. " +
-                            "Please remove one of the entries.");
 				}
 			}
 		} catch (UnknownHostException e) {

@@ -42,14 +42,8 @@ public class MeasureController {
         String systemVersion = versionRepository.findAll().get(0).getVersionId();
         Optional<Measure> measure = measureRepository.findById(newMeasure.getMeasureId());
         MeasureLogic measureLogic;
-
         if (measure.isPresent()) {
             Measure existingMeasure = measure.get();
-
-            measureLogic = existingMeasure.getMeasureLogic();
-            measureLogic.setMinimumSystemVersion(null);
-            existingMeasure.setMeasureJson(measureLogic);
-
             if (existingMeasure.getMeasureLogic().equals(newMeasure.getMeasureLogic())) {
                 existingMeasure.setMeasureName(newMeasure.getMeasureName());
                 measureLogic = existingMeasure.getMeasureLogic();

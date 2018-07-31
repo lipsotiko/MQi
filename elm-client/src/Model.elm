@@ -15,6 +15,7 @@ type alias Measure = {
     , description : String
     , steps : List Step
     , minimumSystemVersion : String
+    , traceRules : Bool
     , lastUpdated : String
     , drag : Maybe Drag
     }

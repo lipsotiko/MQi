@@ -23,6 +23,7 @@ init =
             , description = ""
             , steps = []
             , minimumSystemVersion = ""
+            , traceRules = False
             , lastUpdated = ""
             , drag = Nothing
         }

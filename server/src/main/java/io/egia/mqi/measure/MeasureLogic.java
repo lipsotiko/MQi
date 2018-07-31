@@ -12,6 +12,7 @@ public class MeasureLogic {
     private String description;
     private String minimumSystemVersion;
     private List<Step> steps;
+    private boolean traceRules;
 
     @Override
     public boolean equals(Object o) {
@@ -19,8 +20,8 @@ public class MeasureLogic {
         if (o == null || getClass() != o.getClass()) return false;
 //        if (!super.equals(o)) return false;
         MeasureLogic that = (MeasureLogic) o;
-        return Objects.equals(minimumSystemVersion, that.minimumSystemVersion) &&
-                Objects.equals(steps, that.steps);
+        return Objects.equals(steps, that.steps)
+                && Objects.equals(traceRules, that.traceRules);
     }
 
     @Override
