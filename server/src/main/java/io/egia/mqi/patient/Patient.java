@@ -1,6 +1,7 @@
 package io.egia.mqi.patient;
 
 import io.egia.mqi.chunk.Chunk;
+import lombok.Builder;
 import lombok.Data;
 
 import javax.persistence.*;
@@ -19,7 +20,7 @@ public class Patient implements PatientRecordInterface {
 	private Date dateOfBirth;
 	private char gender;
 	@Column(updatable=false,insertable=false) private Date lastUpdated;
-	
+
 	@MapsId
 	@OneToOne(optional = false, fetch = FetchType.LAZY)
 	private Chunk chunk;

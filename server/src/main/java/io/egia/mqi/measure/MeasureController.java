@@ -1,6 +1,7 @@
 package io.egia.mqi.measure;
 
 import io.egia.mqi.version.VersionRepository;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.ZoneId;
@@ -13,16 +14,16 @@ public class MeasureController {
     private MeasureService measureService;
     private MeasureRepository measureRepository;
     private RuleParamRepository ruleParamRepository;
-    private VersionRepository versionRepository;
+
+    @Value("${mqi.properties.system.version}")
+    private String systemVersion;
 
     MeasureController(MeasureService measureService
             , MeasureRepository measureRepository
-            , RuleParamRepository ruleParamRepository
-            , VersionRepository versionRepository) {
+            , RuleParamRepository ruleParamRepository) {
         this.measureService = measureService;
         this.measureRepository = measureRepository;
         this.ruleParamRepository = ruleParamRepository;
-        this.versionRepository = versionRepository;
     }
 
     @GetMapping("/measure")
@@ -39,7 +40,6 @@ public class MeasureController {
     @PutMapping("/measure")
     public Measure putMeasure(@RequestBody Measure newMeasure) {
         ZonedDateTime now = ZonedDateTime.now(ZoneId.of("America/New_York"));
-        String systemVersion = versionRepository.findAll().get(0).getVersionId();
         Optional<Measure> measure = measureRepository.findById(newMeasure.getMeasureId());
         MeasureLogic measureLogic;
         if (measure.isPresent()) {

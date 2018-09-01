@@ -1,0 +1,32 @@
+spring:
+  profiles:
+    active: production
+  jpa:
+    show-sql: false
+    format_sql: true
+  datasource:
+    url: jdbc:postgresql://localhost:5432/mqi
+    username: mqi
+    password: mqi
+    driver-class-name: org.postgresql.Driver
+  devtools:
+    restart:
+      enabled: true
+
+mqi:
+  properties:
+    system:
+      type: primary
+      version: 1.0.0
+
+logging:
+  level:
+    org:
+      springframework:
+        web: INFO
+    io:
+      egia:
+        mqi: INFO
+
+server:
+  port: 8080

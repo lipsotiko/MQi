@@ -1,2 +1,0 @@
-patient.sql
-visit.sql

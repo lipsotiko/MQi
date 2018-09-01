@@ -1,0 +1,25 @@
+spring:
+  profiles:
+    active: test
+  jpa:
+    show-sql: false
+    format_sql: true
+    properties:
+      hibernate:
+        hbm2ddl:
+          auto: update
+        temp:
+          use_jdbc_metadata_defaults: false
+  datasource:
+    url: jdbc:hsqldb:mem:mqi
+    username: SA
+    password:
+    driver-class-name: org.hsqldb.jdbc.JDBCDriver
+  flyway:
+    enabled: false
+
+mqi:
+  properties:
+    system:
+      type: primary
+      version: 1.0.0
