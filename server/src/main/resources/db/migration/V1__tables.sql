@@ -53,16 +53,7 @@ create table if not exists visit (
     cpt_mod2 varchar(255),
     date_of_service timestamp,
     denied boolean,
-    diag1 varchar(255),
-    diag10 varchar(255),
-    diag2 varchar(255),
-    diag3 varchar(255),
-    diag4 varchar(255),
-    diag5 varchar(255),
-    diag6 varchar(255),
-    diag7 varchar(255),
-    diag8 varchar(255),
-    diag9 varchar(255),
+    primaryDxCode varchar(255),
     discharge_dt timestamp,
     discharge_status integer,
     drg varchar(255),
@@ -85,6 +76,13 @@ create table if not exists visit (
     type_of_bill varchar(255),
     ubrev varchar(255),
     units varchar(255)
+);
+
+drop table if exists visit_dx_code;
+create table if not exists visit_dx_code (
+    visit_dx_code_id serial primary key,
+    visit_id bigint,
+    dx_code varchar(15)
 );
 
 drop table if exists measure;
