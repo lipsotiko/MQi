@@ -25,7 +25,7 @@ public class MqiInitializer implements ApplicationListener<ContextRefreshedEvent
 	private String systemType;
 
 	@Value("${mqi.properties.system.version}")
-	private String serverVersion;
+	private String systemVersion;
 
 	MqiInitializer(ServerService serverService, RuleParamUtility ruleParamUtility) {
 		this.serverService = serverService;
@@ -42,7 +42,7 @@ public class MqiInitializer implements ApplicationListener<ContextRefreshedEvent
 			log.info("--------------------------------------------------");
 			log.info("Egia Software Solutions, Inc");
 			log.info("Medical Quality Informatics ");
-			log.info(String.format("v%s", this.serverVersion));
+			log.info(String.format("v%s", this.systemVersion));
 			log.info(String.format("server Type: %s", this.systemType));
 			log.info("--------------------------------------------------");
 		} catch (ClassNotFoundException | MqiExceptions e) {
@@ -61,7 +61,7 @@ public class MqiInitializer implements ApplicationListener<ContextRefreshedEvent
 			if (systemType.equals("primary")) {
 				if (thisServer != null && primaryServer != null) {
 					log.info("This server already exists in the server table, updating entry.");
-					serverService.updateServerTypeAndVersion(thisServer, systemType, serverVersion);
+					serverService.updateSystemTypeAndVersion(thisServer, systemType, systemVersion);
 				} else if (thisServer == null && primaryServer == null) {
 					log.info("Primary server does not exist in the server table, adding entry.");
 					serverService.saveServer(buildServer(ServerService.thisServersHostName()));
@@ -69,7 +69,7 @@ public class MqiInitializer implements ApplicationListener<ContextRefreshedEvent
 			} else if (systemType.equals("secondary")) {
 				if (thisServer != null) {
 					log.info("This server already exists in the server table, updating entry.");
-                    serverService.updateServerTypeAndVersion(thisServer, systemType, serverVersion);
+                    serverService.updateSystemTypeAndVersion(thisServer, systemType, systemVersion);
 				} else {
 					log.info("Secondary server does not exist in the server table, adding entry.");
                     serverService.saveServer(buildServer(ServerService.thisServersHostName()));
@@ -81,12 +81,12 @@ public class MqiInitializer implements ApplicationListener<ContextRefreshedEvent
 	}
 
 	private Server buildServer(String hostName) {
-        Server server = new Server();
-        server.setServerName(hostName);
-        server.setServerPort(serverPort);
-        server.setServerType(systemType);
-        server.setServerVersion(serverVersion);
-        return server;
+        return Server.builder()
+				.serverName(hostName)
+				.serverPort(serverPort)
+				.systemType(systemType)
+				.systemVersion(systemVersion)
+				.build();
     }
 
 }

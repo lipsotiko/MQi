@@ -1,6 +1,5 @@
 package io.egia.mqi.measure;
 
-import io.egia.mqi.version.VersionRepository;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.*;
 

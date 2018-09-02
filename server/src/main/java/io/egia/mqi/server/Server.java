@@ -1,12 +1,18 @@
 package io.egia.mqi.server;
 
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 import java.util.Date;
 
-@Data
 @Entity
+@Builder
+@Data
+@AllArgsConstructor
+@NoArgsConstructor
 public class Server {
 
 	@Id
@@ -14,8 +20,8 @@ public class Server {
 	private Long serverId;
 	private String serverName;
 	private String serverPort;
-	private String serverType;
-	private String serverVersion;
+	private String systemType;
+	private String systemVersion;
 	private int chunkSize;
 	@Column(insertable = false)
 	private Date lastUpdated;

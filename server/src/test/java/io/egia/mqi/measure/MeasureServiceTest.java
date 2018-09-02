@@ -82,8 +82,7 @@ public class MeasureServiceTest {
         visits.add(v);
         Mockito.when(visitRepository.findByServerIdAndChunkId(11L, 22L)).thenReturn(visits);
 
-        Server server = new Server();
-        server.setServerId(11L);
+        Server server = Server.builder().serverId(11L).build();
         Mockito.when(serverService.getServerFromHostNameAndPort(serverPort)).thenReturn(server);
 
         List<Chunk> chunks = new ArrayList<>();
