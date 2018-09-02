@@ -1,8 +1,6 @@
 package io.egia.mqi.measure;
 
 import io.egia.mqi.helpers.Helpers;
-import io.egia.mqi.version.Version;
-import io.egia.mqi.version.VersionRepository;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -12,7 +10,6 @@ import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 
 import java.io.IOException;
-import java.util.Collections;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -23,9 +20,6 @@ public class MeasureControllerTest {
 
     @Mock
     private MeasureRepository measureRepository;
-
-    @Mock
-    private VersionRepository versionRepository;
 
     private Measure existingMeasure;
 
@@ -46,12 +40,11 @@ public class MeasureControllerTest {
         updatedMeasureLogic = Helpers.getMeasureFromResource("fixtures", "updatedMeasure.json");
         updatedMeasureLogic.setMeasureId(1L);
         when(measureRepository.findById(1L)).thenReturn(Optional.of(existingMeasure));
-        when(versionRepository.findAll()).thenReturn(Collections.singletonList(new Version("1.0.0")));
     }
 
     @Test
     public void putMeasureWithUpdatedMeasureDescriptionTest() {
-        MeasureController measureController = new MeasureController(null, measureRepository, null, versionRepository);
+        MeasureController measureController = new MeasureController(null, measureRepository, null);
         measureController.putMeasure(updatedMeasureDescription);
         verify(measureRepository, times(1)).saveAndFlush(captor.capture());
         assertThat(captor.getValue().getMeasureLogic()).isEqualTo(updatedMeasureDescription.getMeasureLogic());
@@ -60,7 +53,7 @@ public class MeasureControllerTest {
 
     @Test
     public void putMeasureWithUpdatedMeasureLogicTest() {
-        MeasureController measureController = new MeasureController(null, measureRepository, null, versionRepository);
+        MeasureController measureController = new MeasureController(null, measureRepository, null);
         measureController.putMeasure(updatedMeasureLogic);
         verify(measureRepository, times(1)).saveAndFlush(captor.capture());
         assertThat(captor.getValue().getMeasureLogic().getDescription()).isEqualTo(

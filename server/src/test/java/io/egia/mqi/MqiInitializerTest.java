@@ -29,7 +29,7 @@ public class MqiInitializerTest {
     public void setUp() {
         subject = new MqiInitializer(serverService, ruleParamUtility);
         ReflectionTestUtils.setField(subject, "serverPort", "8080");
-        ReflectionTestUtils.setField(subject, "serverType", "primary");
+        ReflectionTestUtils.setField(subject, "systemType", "primary");
     }
 
     @Test

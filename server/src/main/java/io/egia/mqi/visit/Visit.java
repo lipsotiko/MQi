@@ -7,6 +7,7 @@ import lombok.Data;
 
 import javax.persistence.*;
 import java.util.Date;
+import java.util.List;
 
 @Data
 @Entity
@@ -25,16 +26,6 @@ public class Visit implements PatientRecordInterface {
 	private String cptMod1;
 	private String cptMod2;
 	private String hcpcs;
-	private String diag2;
-	private String diag1;
-	private String diag3;
-	private String diag4;
-	private String diag5;
-	private String diag6;
-	private String diag7;
-	private String diag8;
-	private String diag9;
-	private String diag10;
 	private String proc1;
 	private String proc2;
 	private String proc3;
