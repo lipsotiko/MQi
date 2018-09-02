@@ -16,6 +16,8 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
+import java.util.List;
+
 @ActiveProfiles("test")
 @RunWith(SpringJUnit4ClassRunner.class)
 @SpringBootTest
@@ -28,13 +30,7 @@ public class PatientAndVisitRepositoriesIntegrationTest {
 
     @Before
     public void setUp() {
-        Server server = Server.builder()
-                .serverId(1L)
-                .serverName("vango")
-                .serverPort("8080")
-                .systemType("primary")
-                .systemVersion("1.0.0")
-                .chunkSize(1000).build();
+        Server server = Server.builder().serverId(1L).build();
         serverRepository.save(server);
 
         Chunk chunk = new Chunk();
@@ -62,7 +58,12 @@ public class PatientAndVisitRepositoriesIntegrationTest {
 
     @Test
     public void visitRepository_findByServerIdAndChunkId() {
-        visitRepository.findByServerIdAndChunkId(1L, 1L);
+        List<Visit> byServerIdAndChunkId = visitRepository.findByServerIdAndChunkId(1L, 1L);
+//        Visit visit = byServerIdAndChunkId.get(0);
+//        List<VisitCode> visitCodes = visit.getCodes();
+//        VisitCode visitCode = visitCodes.get(0);
+//        visitCode.getCodeType();
+//        visitCode.getCode();
     }
 
 }

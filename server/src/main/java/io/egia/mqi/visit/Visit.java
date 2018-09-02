@@ -7,7 +7,6 @@ import lombok.Data;
 
 import javax.persistence.*;
 import java.util.Date;
-import java.util.List;
 
 @Data
 @Entity
@@ -16,7 +15,7 @@ public class Visit implements PatientRecordInterface {
 	@Id
 	@GeneratedValue(strategy=GenerationType.IDENTITY)
 	private Long visitId;
-	@Column(name="patient_id") private Long patientId;
+	private Long patientId;
 	private Date dateOfService;
 	private Date admitDt;
 	private Date dischargeDt;
@@ -26,6 +25,16 @@ public class Visit implements PatientRecordInterface {
 	private String cptMod1;
 	private String cptMod2;
 	private String hcpcs;
+	private String diag1;
+	private String diag2;
+	private String diag3;
+	private String diag4;
+	private String diag5;
+	private String diag6;
+	private String diag7;
+	private String diag8;
+	private String diag9;
+	private String diag10;
 	private String proc1;
 	private String proc2;
 	private String proc3;
@@ -49,7 +58,7 @@ public class Visit implements PatientRecordInterface {
 	private Boolean supplemental;
 	
 	@OneToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name="patient_id",updatable=false,insertable=false)
+	@JoinColumn(updatable=false,insertable=false)
 	private Chunk chunk;
 
 	@Override

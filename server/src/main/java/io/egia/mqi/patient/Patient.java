@@ -1,7 +1,6 @@
 package io.egia.mqi.patient;
 
 import io.egia.mqi.chunk.Chunk;
-import lombok.Builder;
 import lombok.Data;
 
 import javax.persistence.*;
