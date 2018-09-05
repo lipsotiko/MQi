@@ -9,6 +9,6 @@ import java.util.List;
 
 @Repository
 public interface PatientRepository extends JpaRepository<Patient, Long> {
-	@Query(value="select p from Patient p join p.chunk c where c.serverId = :s and c.chunkId = :c order by p.patientId")
-	List<Patient> findByServerIdAndChunkId(@Param("s") Long serverId, @Param("c") Long chunkId);
+	@Query(value="select p from Patient p join p.chunk c where c.serverId = :s and c.chunkId = :c")
+	List<Patient> findByChunkServerIdAndChunkChunkId(@Param("s") Long serverId, @Param("c") Long chunkId);
 }

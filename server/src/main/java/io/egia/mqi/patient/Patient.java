@@ -18,16 +18,14 @@ public class Patient implements PatientRecordInterface {
 	private String lastName;
 	private Date dateOfBirth;
 	private char gender;
-	@Column(updatable=false,insertable=false) private Date lastUpdated;
 
-	@MapsId
-	@OneToOne(optional = false, fetch = FetchType.LAZY)
+	@OneToOne(fetch = FetchType.LAZY, optional = false)
+	@JoinColumns({
+			@JoinColumn(name = "patientId", referencedColumnName = "patientId")
+	})
 	private Chunk chunk;
 
-	public void setPatientId(Long patientId) {
-		this.patientId = patientId;
-		chunk.setPatientId(patientId);
-	}
+	@Column(updatable=false,insertable=false) private Date lastUpdated;
 
 	@Override
 	public void updatePatientData(PatientData patientData) {

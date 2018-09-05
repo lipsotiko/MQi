@@ -16,46 +16,54 @@ public class Visit implements PatientRecordInterface {
 	@Id
 	@GeneratedValue(strategy=GenerationType.IDENTITY)
 	private Long visitId;
+
+	@Column(insertable= false, updatable=false)
 	private Long patientId;
 	private Date dateOfService;
 	private Date admitDt;
 	private Date dischargeDt;
-	private Integer coveredDays;
-	private String cpt;
-	private String cpt2;
-	private String cptMod1;
-	private String cptMod2;
-	private String hcpcs;
-
-	private String primaryDxCode;
-
-	@OneToMany
-	private List<VisitDxCode> visitDxCodes;
-
-	private String proc1;
-	private String proc2;
-	private String proc3;
-	private String proc4;
-	private String proc5;
-	private String proc6;
-	private String proc7;
-	private String proc8;
-	private String proc9;
-	private String proc10;
-	private Integer icdVersion;
-	private String drg;
-	private Integer drgVersion;
 	private Integer dischargeStatus;
-	private String ubRev;
-	private String typeOfBill;
+	private Integer coveredDays;
 	private String units;
-	private String placeOfService;
 	private Boolean denied;
 	private String providerId;
 	private Boolean supplemental;
-	
-	@OneToOne(fetch = FetchType.LAZY)
-	@JoinColumn(updatable=false,insertable=false)
+
+	private String primaryDxCode;
+	private Integer primaryDxCodeVersion;
+
+	@OneToMany(fetch = FetchType.EAGER)
+	@JoinColumns({
+			@JoinColumn(name = "visitId", referencedColumnName = "visitId")
+	})
+	private List<VisitCode> visitCodes;
+
+	private String drg;
+	private Integer drgVersion;
+
+//	private String proc1;
+//	private String proc2;
+//	private String proc3;
+//	private String proc4;
+//	private String proc5;
+//	private String proc6;
+//	private String proc7;
+//	private String proc8;
+//	private String proc9;
+//	private String proc10;
+//	private String ubRev;
+//	private String typeOfBill;
+//	private String placeOfService;
+// 	private String cpt;
+//	private String cpt2;
+//	private String cptMod1;
+//	private String cptMod2;
+//	private String hcpcs;
+
+	@OneToOne(fetch = FetchType.LAZY, optional = false)
+	@JoinColumns({
+			@JoinColumn(name = "patientId", referencedColumnName = "patientId")
+	})
 	private Chunk chunk;
 
 	@Override

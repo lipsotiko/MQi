@@ -13,7 +13,6 @@ import javax.persistence.*;
 public class Chunk {
 	
 	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long patientId;
 	private Long recordCnt;
 	private Long serverId;

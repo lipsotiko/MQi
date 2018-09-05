@@ -11,10 +11,13 @@ spring:
         temp:
           use_jdbc_metadata_defaults: false
   datasource:
-    url: jdbc:hsqldb:mem:mqi
+    url: jdbc:h2:mem:mqi
     username: SA
     password:
-    driver-class-name: org.hsqldb.jdbc.JDBCDriver
+    driver-class-name: org.h2.Driver
+  h2:
+    console:
+      enabled: true
   flyway:
     enabled: false
 

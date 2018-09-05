@@ -85,8 +85,8 @@ public class MeasureService {
 
     private void getPatientData(Long chunkId, Long thisServerId) {
         log.info(String.format("Populating chunk id: %s into measure processor.", chunkId));
-        patients = patientRepository.findByServerIdAndChunkId(thisServerId, chunkId);
-        visits = visitRepository.findByServerIdAndChunkId(thisServerId, chunkId);
+        patients = patientRepository.findByChunkServerIdAndChunkChunkId(thisServerId, chunkId);
+        visits = visitRepository.findByChunkServerIdAndChunkChunkId(thisServerId, chunkId);
     }
 
     private void setJobStatus(Long jobId, Long serverId, String status) {

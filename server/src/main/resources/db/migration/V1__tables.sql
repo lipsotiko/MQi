@@ -47,42 +47,22 @@ create table if not exists visit (
     patient_id bigint not null,
     admit_dt timestamp,
     covered_days integer,
-    cpt varchar(255),
-    cpt2 varchar(255),
-    cpt_mod1 varchar(255),
-    cpt_mod2 varchar(255),
     date_of_service timestamp,
     denied boolean,
-    primaryDxCode varchar(255),
+    primary_dx_code varchar(255),
+    primary_dx_code_version integer,
     discharge_dt timestamp,
     discharge_status integer,
-    drg varchar(255),
-    drg_version integer,
-    hcpcs varchar(255),
-    icd_version integer,
-    place_of_service varchar(255),
-    proc1 varchar(255),
-    proc10 varchar(255),
-    proc2 varchar(255),
-    proc3 varchar(255),
-    proc4 varchar(255),
-    proc5 varchar(255),
-    proc6 varchar(255),
-    proc7 varchar(255),
-    proc8 varchar(255),
-    proc9 varchar(255),
     provider_id varchar(255),
     supplemental boolean,
-    type_of_bill varchar(255),
-    ubrev varchar(255),
     units varchar(255)
 );
 
-drop table if exists visit_dx_code;
-create table if not exists visit_dx_code (
-    visit_dx_code_id serial primary key,
-    visit_id bigint,
-    dx_code varchar(15)
+drop table if exists visit_code;
+create table if not exists visit_code (
+    visit_id bigint primary key,
+    code_system varchar(15),
+    code_value varchar(15)
 );
 
 drop table if exists measure;
