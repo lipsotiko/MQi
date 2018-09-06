@@ -90,8 +90,8 @@ create table if not exists server (
 	server_id serial primary key,
 	server_name varchar(100),
 	server_port varchar(5),
-	server_type varchar(50),
-	server_version varchar(8),
+	system_type varchar(50),
+	system_version varchar(8),
 	chunk_size integer default 100,
 	last_updated timestamp default current_timestamp
 );
