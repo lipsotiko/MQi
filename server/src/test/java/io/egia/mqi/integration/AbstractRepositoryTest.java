@@ -4,10 +4,7 @@ import io.egia.mqi.chunk.Chunk;
 import io.egia.mqi.chunk.ChunkRepository;
 import io.egia.mqi.patient.Patient;
 import io.egia.mqi.patient.PatientRepository;
-import io.egia.mqi.visit.Visit;
-import io.egia.mqi.visit.VisitCode;
-import io.egia.mqi.visit.VisitCodeRepository;
-import io.egia.mqi.visit.VisitRepository;
+import io.egia.mqi.visit.*;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.runner.RunWith;
@@ -65,7 +62,6 @@ abstract class AbstractRepositoryTest {
             visitRepository.saveAndFlush(savedVisit);
         }
     }
-
 
     @After
     public void tearDown() {

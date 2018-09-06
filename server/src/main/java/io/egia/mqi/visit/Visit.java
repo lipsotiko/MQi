@@ -38,28 +38,6 @@ public class Visit implements PatientRecordInterface {
 	})
 	private List<VisitCode> visitCodes;
 
-	private String drg;
-	private Integer drgVersion;
-
-//	private String proc1;
-//	private String proc2;
-//	private String proc3;
-//	private String proc4;
-//	private String proc5;
-//	private String proc6;
-//	private String proc7;
-//	private String proc8;
-//	private String proc9;
-//	private String proc10;
-//	private String ubRev;
-//	private String typeOfBill;
-//	private String placeOfService;
-// 	private String cpt;
-//	private String cpt2;
-//	private String cptMod1;
-//	private String cptMod2;
-//	private String hcpcs;
-
 	@OneToOne(fetch = FetchType.LAZY, optional = false)
 	@JoinColumns({
 			@JoinColumn(name = "patientId", referencedColumnName = "patientId")
