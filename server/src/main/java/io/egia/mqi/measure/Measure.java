@@ -20,7 +20,6 @@ public class Measure {
 	private String measureName;
 
 	@JsonIgnore
-	@Column(columnDefinition = "LONGVARCHAR")
 	private String measureJson;
 
 	@Transient

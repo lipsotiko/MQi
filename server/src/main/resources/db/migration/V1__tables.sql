@@ -60,14 +60,15 @@ create table if not exists visit (
 
 drop table if exists visit_code;
 create table if not exists visit_code (
-    visit_id bigint primary key,
+    visit_code_id bigserial primary key,
+    visit_id bigint,
     code_system varchar(15),
     code_value varchar(15)
 );
 
 drop table if exists measure;
 create table if not exists measure (
-	measure_id serial primary key,
+	measure_id bigserial primary key,
 	measure_name varchar(100) not null,
 	measure_json text,
 	last_updated timestamp not null
@@ -87,7 +88,7 @@ create unique index ux_chunk_patient_server on chunk (patient_id, server_id);
 
 drop table if exists server;
 create table if not exists server (
-	server_id serial primary key,
+	server_id bigserial primary key,
 	server_name varchar(100),
 	server_port varchar(5),
 	system_type varchar(50),
@@ -104,7 +105,7 @@ execute procedure fn_update_timestamp();
 
 drop table if exists job;
 create table if not exists job (
-	job_id serial primary key,
+	job_id bigserial primary key,
 	job_name varchar(255),
 	process_type varchar(25) not null,
 	order_id integer default 0,
@@ -123,7 +124,7 @@ execute procedure fn_update_timestamp();
 
 drop table if exists job_measure;
 create table if not exists job_measure (
-	job_measure_id serial primary key,
+	job_measure_id bigserial primary key,
 	job_id bigint,
 	measure_id bigint
 );
@@ -132,7 +133,7 @@ create unique index ux_job_measure on job_measure (job_id, measure_id);
 
 drop table if exists rule_param;
 create table if not exists rule_param (
-	rule_param_id serial primary key,
+	rule_param_id bigserial primary key,
 	rule_name varchar(255),
 	param_name varchar(50),
 	param_type varchar(50)

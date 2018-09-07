@@ -4,6 +4,12 @@ spring:
   jpa:
     show-sql: false
     format_sql: true
+    properties:
+      hibernate:
+        hbm2ddl:
+          auto: validate
+        temp:
+          use_jdbc_metadata_defaults: false
   datasource:
     url: jdbc:postgresql://localhost:5432/mqi
     username: mqi

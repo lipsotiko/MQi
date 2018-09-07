@@ -74,7 +74,7 @@ public class MeasureServiceTest {
         p.setChunk(c);
         p.setPatientId(99L);
         List<Patient> patients = new ArrayList<>(Collections.singletonList(p));
-        Mockito.when(patientRepository.findByChunkServerIdAndChunkChunkId(11L, 22L)).thenReturn(patients);
+        Mockito.when(patientRepository.findByChunkServerIdAndChunkId(11L, 22L)).thenReturn(patients);
 
         Visit v = new Visit();
         v.setPatientId(99L);
@@ -95,7 +95,7 @@ public class MeasureServiceTest {
     public void verifyMethodsWereCalled() throws UnknownHostException {
         measureService.process();
         verify(jobRepository, times(1)).findByStatusOrderByOrderIdAsc("pending");
-        verify(patientRepository, times(1)).findByChunkServerIdAndChunkChunkId(11L,22L);
+        verify(patientRepository, times(1)).findByChunkServerIdAndChunkId(11L,22L);
         verify(visitRepository, times(1)).findByChunkServerIdAndChunkChunkId(11L,22L);
         verify(serverService, times(1)).getServerFromHostNameAndPort(serverPort);
         verify(chunkRepository,times(1)).findByServerIdOrderByChunkIdAsc(11L);

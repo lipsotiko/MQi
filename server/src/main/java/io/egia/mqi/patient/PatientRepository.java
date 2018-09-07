@@ -10,5 +10,5 @@ import java.util.List;
 @Repository
 public interface PatientRepository extends JpaRepository<Patient, Long> {
 	@Query(value="select p from Patient p join p.chunk c where c.serverId = :s and c.chunkId = :c")
-	List<Patient> findByChunkServerIdAndChunkChunkId(@Param("s") Long serverId, @Param("c") Long chunkId);
+	List<Patient> findByChunkServerIdAndChunkId(@Param("s") Long serverId, @Param("c") Long chunkId);
 }

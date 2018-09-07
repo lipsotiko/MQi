@@ -53,6 +53,7 @@ abstract class AbstractRepositoryTest {
             Visit savedVisit = visitRepository.saveAndFlush(visit);
 
             VisitCode code = new VisitCode();
+            code.setVisitCodeId(i);
             code.setVisitId(i);
             code.setCodeValue("abc");
             code.setCodeSystem("ICD_9");

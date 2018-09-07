@@ -34,13 +34,13 @@ public class Visit implements PatientRecordInterface {
 
 	@OneToMany(fetch = FetchType.EAGER)
 	@JoinColumns({
-			@JoinColumn(name = "visitId", referencedColumnName = "visitId")
+			@JoinColumn(name = "visitId")
 	})
 	private List<VisitCode> visitCodes;
 
 	@OneToOne(fetch = FetchType.LAZY, optional = false)
 	@JoinColumns({
-			@JoinColumn(name = "patientId", referencedColumnName = "patientId")
+			@JoinColumn(name = "patientId")
 	})
 	private Chunk chunk;
 

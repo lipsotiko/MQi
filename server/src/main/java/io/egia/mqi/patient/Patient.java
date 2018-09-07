@@ -20,6 +20,9 @@ public class Patient implements PatientRecordInterface {
 	private char gender;
 
 	@OneToOne(fetch = FetchType.LAZY, optional = false)
+	@JoinColumns({
+			@JoinColumn(name = "patientId")
+	})
 	private Chunk chunk;
 
 	@Column(updatable=false,insertable=false) private Date lastUpdated;
