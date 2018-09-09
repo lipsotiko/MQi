@@ -38,7 +38,6 @@ public class MeasureServiceTest {
     @Mock private ServerService serverService;
     private MeasureProcessorSpy measureProcessor;
     private MeasureService measureService;
-    private static final String J_UNIT_MEASURE_SERVICE_TEST = "jUnit measure Service Test";
     @Value("${server.port}") private String serverPort;
 
     @Before
@@ -62,11 +61,9 @@ public class MeasureServiceTest {
 
         Job job = new Job();
         job.setJobId(44L);
-        job.setJobName(J_UNIT_MEASURE_SERVICE_TEST);
-        job.setProcessType("measure");
-        job.setStatus("pending");
+        job.setStatus(Job.Status.PENDING);
         List<Job> jobs = new ArrayList<>(Collections.singletonList(job));
-        Mockito.when(jobRepository.findByStatusOrderByOrderIdAsc("pending")).thenReturn(jobs);
+        Mockito.when(jobRepository.findByStatusOrderByJobIdAsc(Job.Status.PENDING)).thenReturn(jobs);
 
         Chunk c = new Chunk();
         c.setPatientId(99L);
@@ -94,7 +91,7 @@ public class MeasureServiceTest {
     @Test
     public void verifyMethodsWereCalled() throws UnknownHostException {
         measureService.process();
-        verify(jobRepository, times(1)).findByStatusOrderByOrderIdAsc("pending");
+        verify(jobRepository, times(1)).findByStatusOrderByJobIdAsc(Job.Status.PENDING);
         verify(patientRepository, times(1)).findByChunkServerIdAndChunkId(11L,22L);
         verify(visitRepository, times(1)).findByChunkServerIdAndChunkChunkId(11L,22L);
         verify(serverService, times(1)).getServerFromHostNameAndPort(serverPort);

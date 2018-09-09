@@ -44,7 +44,7 @@ public class MeasureControllerTest {
 
     @Test
     public void putMeasureWithUpdatedMeasureDescriptionTest() {
-        MeasureController measureController = new MeasureController(null, measureRepository, null);
+        MeasureController measureController = new MeasureController(measureRepository, null);
         measureController.putMeasure(updatedMeasureDescription);
         verify(measureRepository, times(1)).saveAndFlush(captor.capture());
         assertThat(captor.getValue().getMeasureLogic()).isEqualTo(updatedMeasureDescription.getMeasureLogic());
@@ -53,7 +53,7 @@ public class MeasureControllerTest {
 
     @Test
     public void putMeasureWithUpdatedMeasureLogicTest() {
-        MeasureController measureController = new MeasureController(null, measureRepository, null);
+        MeasureController measureController = new MeasureController( measureRepository, null);
         measureController.putMeasure(updatedMeasureLogic);
         verify(measureRepository, times(1)).saveAndFlush(captor.capture());
         assertThat(captor.getValue().getMeasureLogic().getDescription()).isEqualTo(

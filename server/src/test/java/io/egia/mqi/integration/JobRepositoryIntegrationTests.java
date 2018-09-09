@@ -28,25 +28,16 @@ public class JobRepositoryIntegrationTests {
         for(int i = 5; i > 0; i--) {
             Job job = new Job();
             String job1Name = String.format("jUnit Test Job %s", i);
-            job.setJobName(job1Name);
-            job.setProcessType("measure");
-            job.setStatus("pending");
-            job.setOrderId(i);
+            job.setStatus(Job.Status.PENDING);
             jobRepository.save(job);
         }
     }
 
     @Test
-    public void findByJobName() {
-        assertThat(jobRepository.findByJobName("jUnit Test Job 1")).isNotNull();
-    }
-
-    @Test
-    public void findByStatusOrderByOrderIdAsc() {
-        List<Job> jobs = jobRepository.findByStatusOrderByOrderIdAsc("pending");
-        Job job = jobs.get(0);
-        assertThat(job.getOrderId()).isEqualTo(1L);
-        assertThat(job.getJobId()).isEqualTo(5L);
+    public void findByStatusOrderByJobIdAsc() {
+        List<Job> jobs = jobRepository.findByStatusOrderByJobIdAsc(Job.Status.PENDING);
+        assertThat(jobs.get(0).getJobId()).isEqualTo(1L);
+        assertThat(jobs.get(4).getJobId()).isEqualTo(5L);
     }
 
     @After

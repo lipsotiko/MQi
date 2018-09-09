@@ -1,9 +1,12 @@
 package io.egia.mqi.measure;
 
+import io.egia.mqi.chunk.Chunk;
 import io.egia.mqi.chunk.ChunkRepository;
+import io.egia.mqi.job.Job;
 import io.egia.mqi.job.JobRepository;
 import io.egia.mqi.patient.Patient;
 import io.egia.mqi.patient.PatientRepository;
+import io.egia.mqi.server.Server;
 import io.egia.mqi.server.ServerService;
 import io.egia.mqi.visit.Visit;
 import io.egia.mqi.visit.VisitRepository;
@@ -26,7 +29,7 @@ public class MeasureService {
     private VisitRepository visitRepository;
     private MeasureProcessor measureProcessor;
 
-    public MeasureService(MeasureRepository measureRepository
+    MeasureService(MeasureRepository measureRepository
             , ChunkRepository chunkRepository
             , JobRepository jobRepository
             , ServerService serverService
@@ -45,53 +48,16 @@ public class MeasureService {
     @Value("${server.port}")
     private String serverPort;
 
-    private List<Patient> patients;
-    private List<Visit> visits;
-    private Long thisServerId;
-
-    public void process() {
-        thisServerId = getThisServerId();
-        Long jobId = getPendingJobId();
-        setJobStatus(jobId, thisServerId, "running");
-
-        Long chunkId = getChunkIdToProcess();
-        getPatientData(chunkId, thisServerId);
-        List<Measure> measuresToBeProcessed = getMeasuresToBeProcessed(jobId, chunkId);
+    public void process() throws UnknownHostException {
+        Server thisServer = serverService.getServerFromHostNameAndPort(serverPort);
+        Job pendingJob = jobRepository.findByStatusOrderByJobIdAsc(Job.Status.PENDING).get(0);
+        jobRepository.updateJobStatus(pendingJob.getJobId(), Job.Status.RUNNING);
+        Chunk chunk = chunkRepository.findByServerIdOrderByChunkIdAsc(thisServer.getServerId()).get(0);
+        List<Patient> patients = patientRepository.findByChunkServerIdAndChunkId(thisServer.getServerId(), chunk.getChunkId());
+        List<Visit> visits = visitRepository.findByChunkServerIdAndChunkChunkId(thisServer.getServerId(), chunk.getChunkId());
+        List<Measure> measuresToBeProcessed = measureRepository.findAllByJobId(pendingJob.getJobId());
         measureProcessor.initProcessor(measuresToBeProcessed, patients, visits);
         measureProcessor.process();
-    }
-
-    private Long getChunkIdToProcess() {
-        return chunkRepository.findByServerIdOrderByChunkIdAsc(thisServerId).get(0).getChunkId();
-    }
-
-    private Long getPendingJobId() {
-        return jobRepository.findByStatusOrderByOrderIdAsc("pending").get(0).getJobId();
-    }
-
-    private Long getThisServerId() {
-        try {
-            return serverService.getServerFromHostNameAndPort(serverPort).getServerId();
-        } catch (UnknownHostException e) {
-            e.printStackTrace();
-        }
-        return -1L;
-    }
-
-    private List<Measure> getMeasuresToBeProcessed(Long jobId, Long chunkId) {
-        log.info(String.format("Get measures to be processed.", chunkId));
-        return measureRepository.findAllByJobId(jobId);
-    }
-
-    private void getPatientData(Long chunkId, Long thisServerId) {
-        log.info(String.format("Populating chunk id: %s into measure processor.", chunkId));
-        patients = patientRepository.findByChunkServerIdAndChunkId(thisServerId, chunkId);
-        visits = visitRepository.findByChunkServerIdAndChunkChunkId(thisServerId, chunkId);
-    }
-
-    private void setJobStatus(Long jobId, Long serverId, String status) {
-        log.info(String.format("Processing job(Id): %s, on server(Id):%s", jobId, serverId));
-        jobRepository.updateJobStatus(jobId, status);
     }
 
 }

@@ -10,13 +10,12 @@ import java.util.List;
 
 @Repository
 public interface JobRepository extends JpaRepository<Job, Long> {
-	Job findByJobName(String jobName);
-	
-	List<Job> findByStatusOrderByOrderIdAsc(String status);
+
+	List<Job> findByStatusOrderByJobIdAsc(Job.Status status);
 
 	@Modifying
 	@Transactional
 	@Query(value="update Job j set j.status = ?2 where j.jobId = ?1")
-	void updateJobStatus(Long jobId, String status);
+	void updateJobStatus(Long jobId, Job.Status status);
 
 }

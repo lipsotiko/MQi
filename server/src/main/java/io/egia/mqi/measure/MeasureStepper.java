@@ -31,10 +31,10 @@ public class MeasureStepper {
 
         while (measureResult.getContinueProcessing()) {
             String rule = currentStep.getRuleName();
+            log.debug(String.format("Evaluating rule %s", rule));
+
             Method ruleMethod;
             try {
-                assert rule != null;
-                log.debug(String.format("Evaluating rule %s", rule));
                 ruleClass = Class.forName("io.egia.mqi.rules." + rule);
                 ruleMethod = ruleClass.getMethod("evaluate", PatientData.class, MeasureResult.class);
             } catch (NoSuchMethodException | ClassNotFoundException e) {
@@ -42,7 +42,6 @@ public class MeasureStepper {
             }
 
             try {
-                assert ruleMethod != null;
                 measureResult = (MeasureResult) ruleMethod.invoke(ruleClass.newInstance(), patientData, measureResult);
             } catch (IllegalAccessException | InvocationTargetException | InstantiationException e) {
                 throw new MeasureProcessorException(String.format("Could not invoke method %s",rule), e);

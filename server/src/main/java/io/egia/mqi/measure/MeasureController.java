@@ -10,17 +10,14 @@ import java.util.Optional;
 
 @RestController
 public class MeasureController {
-    private MeasureService measureService;
     private MeasureRepository measureRepository;
     private RuleParamRepository ruleParamRepository;
 
     @Value("${mqi.properties.system.version}")
     private String systemVersion;
 
-    MeasureController(MeasureService measureService
-            , MeasureRepository measureRepository
+    MeasureController(MeasureRepository measureRepository
             , RuleParamRepository ruleParamRepository) {
-        this.measureService = measureService;
         this.measureRepository = measureRepository;
         this.ruleParamRepository = ruleParamRepository;
     }
@@ -70,10 +67,5 @@ public class MeasureController {
         return ruleParamRepository.findAll();
     }
 
-    @GetMapping("/process")
-    public String process() {
-        measureService.process();
-        return "measure Process";
-    }
 
 }

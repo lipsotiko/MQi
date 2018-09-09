@@ -5,5 +5,4 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface JobMeasureRepository extends JpaRepository<JobMeasure, Long> {
-	//List<JobMeasure> findByJobId(Long jobId);
 }
