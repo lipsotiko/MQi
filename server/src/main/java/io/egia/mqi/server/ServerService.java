@@ -30,7 +30,7 @@ public class ServerService {
     }
 
     public void saveServer(Server server) {
-        serverRepository.save(server);
+        serverRepository.saveAndFlush(server);
     }
 
     public void updateSystemTypeAndVersion(Server server, String type, String verstion) {

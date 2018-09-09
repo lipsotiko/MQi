@@ -2,7 +2,7 @@ spring:
   profiles:
     active: production
   jpa:
-    show-sql: false
+    show-sql: true
     format_sql: true
     properties:
       hibernate:
@@ -32,7 +32,7 @@ logging:
         web: INFO
     io:
       egia:
-        mqi: INFO
+        mqi: DEBUG
 
 server:
   port: 8080

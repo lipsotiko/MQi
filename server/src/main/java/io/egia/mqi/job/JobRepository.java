@@ -7,13 +7,14 @@ import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface JobRepository extends JpaRepository<Job, Long> {
 
-	List<Job> findByStatusOrderByJobIdAsc(Job.Status status);
+	Optional<List<Job>> findByStatusOrderByJobIdAsc(Job.Status status);
 
-	@Modifying
+	@Modifying()
 	@Transactional
 	@Query(value="update Job j set j.status = ?2 where j.jobId = ?1")
 	void updateJobStatus(Long jobId, Job.Status status);

@@ -2,6 +2,7 @@ package io.egia.mqi.measure;
 
 import io.egia.mqi.chunk.Chunk;
 import io.egia.mqi.chunk.ChunkRepository;
+import io.egia.mqi.chunk.ChunkService;
 import io.egia.mqi.job.Job;
 import io.egia.mqi.job.JobRepository;
 import io.egia.mqi.patient.Patient;
@@ -23,6 +24,7 @@ import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.times;
@@ -33,6 +35,7 @@ public class MeasureServiceTest {
     @Mock private JobRepository jobRepository;
     @Mock private MeasureRepository measureRepository;
     @Mock private ChunkRepository chunkRepository;
+    @Mock private ChunkService chunkService;
     @Mock private PatientRepository patientRepository;
     @Mock private VisitRepository visitRepository;
     @Mock private ServerService serverService;
@@ -46,6 +49,7 @@ public class MeasureServiceTest {
         measureService = new MeasureService(
                 measureRepository
                 , chunkRepository
+                , chunkService
                 , jobRepository
                 , serverService
                 , patientRepository
@@ -59,11 +63,18 @@ public class MeasureServiceTest {
         measures.add(measure);
         Mockito.when(measureRepository.findAllByJobId(44L)).thenReturn(measures);
 
+        Job pendingJob = new Job();
+        pendingJob.setJobId(44L);
+        pendingJob.setStatus(Job.Status.PENDING);
+        List<Job> pendingJobs = new ArrayList<>(Collections.singletonList(pendingJob));
+
         Job job = new Job();
         job.setJobId(44L);
         job.setStatus(Job.Status.PENDING);
         List<Job> jobs = new ArrayList<>(Collections.singletonList(job));
-        Mockito.when(jobRepository.findByStatusOrderByJobIdAsc(Job.Status.PENDING)).thenReturn(jobs);
+        Mockito.when(jobRepository.findByStatusOrderByJobIdAsc(Job.Status.PENDING))
+                .thenReturn(Optional.of(pendingJobs))
+                .thenReturn(Optional.of(Collections.singletonList(null)));
 
         Chunk c = new Chunk();
         c.setPatientId(99L);
@@ -85,17 +96,18 @@ public class MeasureServiceTest {
         List<Chunk> chunks = new ArrayList<>();
         c.setChunkId(22L);
         chunks.add(c);
-        Mockito.when(chunkRepository.findByServerIdOrderByChunkIdAsc(11L)).thenReturn(chunks);
+        Mockito.when(chunkRepository.findOneByServerIdOrderByChunkIdAsc(11L)).thenReturn(chunks);
     }
 
     @Test
     public void verifyMethodsWereCalled() throws UnknownHostException {
         measureService.process();
-        verify(jobRepository, times(1)).findByStatusOrderByJobIdAsc(Job.Status.PENDING);
+        verify(jobRepository, times(2)).findByStatusOrderByJobIdAsc(Job.Status.PENDING);
         verify(patientRepository, times(1)).findByChunkServerIdAndChunkId(11L,22L);
         verify(visitRepository, times(1)).findByChunkServerIdAndChunkChunkId(11L,22L);
         verify(serverService, times(1)).getServerFromHostNameAndPort(serverPort);
-        verify(chunkRepository,times(1)).findByServerIdOrderByChunkIdAsc(11L);
+        verify(chunkService,times(1)).chunkData();
+        verify(chunkRepository,times(1)).findOneByServerIdOrderByChunkIdAsc(11L);
         assertThat(measureProcessor.getSetMeasuresWasCalledWith().get(0).getMeasureName()).isEqualTo("Fake Measure");
         assertThat(measureProcessor.getSetPatientDataWasCalledWithPatients().get(0).getPatientId()).isEqualTo(99L);
         assertThat(measureProcessor.getSetPatientDataWasCalledWithVisits().get(0).getPatientId()).isEqualTo(99L);

@@ -12,6 +12,7 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import java.util.List;
+import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -29,15 +30,15 @@ public class JobRepositoryIntegrationTests {
             Job job = new Job();
             String job1Name = String.format("jUnit Test Job %s", i);
             job.setStatus(Job.Status.PENDING);
-            jobRepository.save(job);
+            jobRepository.saveAndFlush(job);
         }
     }
 
     @Test
     public void findByStatusOrderByJobIdAsc() {
-        List<Job> jobs = jobRepository.findByStatusOrderByJobIdAsc(Job.Status.PENDING);
-        assertThat(jobs.get(0).getJobId()).isEqualTo(1L);
-        assertThat(jobs.get(4).getJobId()).isEqualTo(5L);
+        Optional<List<Job>> jobs = jobRepository.findByStatusOrderByJobIdAsc(Job.Status.PENDING);
+        assertThat(jobs.get().get(0).getJobId()).isEqualTo(1L);
+        assertThat(jobs.get().get(4).getJobId()).isEqualTo(5L);
     }
 
     @After

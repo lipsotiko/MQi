@@ -18,7 +18,7 @@ public class ChunkService {
         this.chunkRepository = chunkRepository;
     }
 
-    void chunkData() {
+    public void chunkData() {
         log.info("Executing chunking process");
         Query query = entityManager.createNamedQuery("ChunkData");
 
@@ -28,6 +28,6 @@ public class ChunkService {
     }
 
     Long getChunkId(Long serverId) {
-        return chunkRepository.findByServerIdOrderByChunkIdAsc(serverId).get(0).getChunkId();
+        return chunkRepository.findOneByServerIdOrderByChunkIdAsc(serverId).get(0).getChunkId();
     }
 }

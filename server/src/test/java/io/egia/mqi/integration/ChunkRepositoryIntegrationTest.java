@@ -31,13 +31,13 @@ public class ChunkRepositoryIntegrationTest {
             chunk.setRecordCnt(i);
             chunk.setServerId(1L);
             chunk.setChunkId(i);
-            chunkRepository.save(chunk);
+            chunkRepository.saveAndFlush(chunk);
         }
     }
 
     @Test
     public void findOneByServerIdOrderByChunkIdAsc() {
-        List<Chunk> chunks =  chunkRepository.findByServerIdOrderByChunkIdAsc(1L);
+        List<Chunk> chunks =  chunkRepository.findOneByServerIdOrderByChunkIdAsc(1L);
         assertThat(chunks.get(0).getChunkId()).isEqualTo(1L);
     }
 

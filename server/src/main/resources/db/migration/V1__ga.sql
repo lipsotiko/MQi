@@ -93,7 +93,7 @@ create table if not exists server (
 	server_port varchar(5),
 	system_type varchar(50),
 	system_version varchar(8),
-	chunk_size integer default 100,
+	chunk_size integer default 1000,
 	last_updated timestamp default current_timestamp
 );
 create unique index ux_server_name_port on server (server_name, server_port);
@@ -134,6 +134,18 @@ create table if not exists rule_param (
 	param_type varchar(50)
 );
 
+drop table if exists job_status;
+create table if not exists job_status (
+	job_status_id serial primary key,
+	status varchar(255)
+);
+
+insert into job_status (job_status_id, status)
+values(0, 'PENDING'),
+    (1, 'RUNNING'),
+    (2, 'SUCCESS'),
+    (3, 'FAILURE');
+
 create or replace function fn_chunk_data()
 returns Integer as $$
 declare patient_cnt_desc bigint;
@@ -156,7 +168,9 @@ begin
         on jm.measure_id = m.measure_id
         inner join job j
         on j.job_id = jm.job_id
-        and j.status = 'running'
+        and j.status = (    select job_status_id
+                            from job_status
+                            where status = 'RUNNING')
         left join log_patient_measure lpm
         on p.patient_id = lpm.patient_id
         and lpm.measure_id = m.measure_id
