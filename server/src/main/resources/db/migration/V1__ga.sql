@@ -81,7 +81,8 @@ create table if not exists chunk (
 	patient_id bigint primary key,
 	record_cnt bigint,
 	server_id bigint,
-	chunk_id bigint
+	chunk_id bigint,
+	chunk_status int
 );
 
 create unique index ux_chunk_patient_server on chunk (patient_id, server_id);
@@ -106,7 +107,7 @@ execute procedure fn_update_timestamp();
 drop table if exists job;
 create table if not exists job (
 	job_id bigserial primary key,
-	status int,
+	job_status int,
 	start_time timestamp,
 	end_time timestamp,
 	last_updated timestamp default current_timestamp
@@ -137,10 +138,10 @@ create table if not exists rule_param (
 drop table if exists job_status;
 create table if not exists job_status (
 	job_status_id serial primary key,
-	status varchar(255)
+	job_status varchar(255)
 );
 
-insert into job_status (job_status_id, status)
+insert into job_status (job_status_id, job_status)
 values(0, 'PENDING'),
     (1, 'RUNNING'),
     (2, 'SUCCESS'),
@@ -168,9 +169,9 @@ begin
         on jm.measure_id = m.measure_id
         inner join job j
         on j.job_id = jm.job_id
-        and j.status = (    select job_status_id
+        and j.job_status = ( select job_status_id
                             from job_status
-                            where status = 'RUNNING')
+                            where job_status = 'RUNNING')
         left join log_patient_measure lpm
         on p.patient_id = lpm.patient_id
         and lpm.measure_id = m.measure_id

@@ -2,6 +2,7 @@ package io.egia.mqi.integration;
 
 import io.egia.mqi.job.Job;
 import io.egia.mqi.job.JobRepository;
+import io.egia.mqi.job.JobStatus;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -29,14 +30,14 @@ public class JobRepositoryIntegrationTests {
         for(int i = 5; i > 0; i--) {
             Job job = new Job();
             String job1Name = String.format("jUnit Test Job %s", i);
-            job.setStatus(Job.Status.PENDING);
+            job.setJobStatus(JobStatus.PENDING);
             jobRepository.saveAndFlush(job);
         }
     }
 
     @Test
     public void findByStatusOrderByJobIdAsc() {
-        Optional<List<Job>> jobs = jobRepository.findByStatusOrderByJobIdAsc(Job.Status.PENDING);
+        Optional<List<Job>> jobs = jobRepository.findByJobStatusOrderByJobIdAsc(JobStatus.PENDING);
         assertThat(jobs.get().get(0).getJobId()).isEqualTo(1L);
         assertThat(jobs.get().get(4).getJobId()).isEqualTo(5L);
     }

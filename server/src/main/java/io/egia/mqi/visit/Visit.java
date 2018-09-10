@@ -38,7 +38,7 @@ public class Visit implements PatientRecordInterface {
 	})
 	private List<VisitCode> visitCodes;
 
-	@OneToOne(fetch = FetchType.LAZY, optional = false)
+	@OneToOne(fetch = FetchType.LAZY)
 	@JoinColumns({
 			@JoinColumn(name = "patientId")
 	})

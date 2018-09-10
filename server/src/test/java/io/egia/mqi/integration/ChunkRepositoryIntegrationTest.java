@@ -2,6 +2,7 @@ package io.egia.mqi.integration;
 
 import io.egia.mqi.chunk.Chunk;
 import io.egia.mqi.chunk.ChunkRepository;
+import io.egia.mqi.chunk.ChunkStatus;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -12,6 +13,7 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import java.util.List;
+import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -21,7 +23,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 public class ChunkRepositoryIntegrationTest {
 
     @Autowired
-    ChunkRepository chunkRepository;
+    private ChunkRepository chunkRepository;
 
     @Before
     public void setUp() {
@@ -31,14 +33,15 @@ public class ChunkRepositoryIntegrationTest {
             chunk.setRecordCnt(i);
             chunk.setServerId(1L);
             chunk.setChunkId(i);
+            chunk.setChunkStatus(ChunkStatus.PENDING);
             chunkRepository.saveAndFlush(chunk);
         }
     }
 
     @Test
     public void findOneByServerIdOrderByChunkIdAsc() {
-        List<Chunk> chunks =  chunkRepository.findOneByServerIdOrderByChunkIdAsc(1L);
-        assertThat(chunks.get(0).getChunkId()).isEqualTo(1L);
+        Optional<Chunk> chunk =  chunkRepository.findFirstByServerIdAndChunkStatus(1L, ChunkStatus.PENDING);
+        assertThat(chunk.get().getChunkId()).isEqualTo(1L);
     }
 
     @After

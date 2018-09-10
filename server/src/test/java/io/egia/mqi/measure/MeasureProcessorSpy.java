@@ -4,22 +4,30 @@ import io.egia.mqi.patient.Patient;
 import io.egia.mqi.visit.Visit;
 import lombok.Data;
 
+import java.util.ArrayList;
 import java.util.List;
 
-@Data
 public class MeasureProcessorSpy implements MeasureProcessor {
 
-    private List<Measure> setMeasuresWasCalledWith;
-    private boolean processWasCalled = false;
-    private boolean clearWasCalled = false;
-    private List<Patient> setPatientDataWasCalledWithPatients;
-    private List<Visit> setPatientDataWasCalledWithVisits;
+    List<Measure> setMeasuresWasCalledWith = new ArrayList<>();
+    boolean processWasCalled = false;
+    boolean clearWasCalled = false;
+    List<Patient> setPatientDataWasCalledWithPatients = new ArrayList<>();
+    List<Visit> setPatientDataWasCalledWithVisits = new ArrayList<>();
 
     @Override
     public void initProcessor(List<Measure> measures, List<Patient> patients, List<Visit> visits) {
-        setMeasuresWasCalledWith = measures;
-        setPatientDataWasCalledWithPatients = patients;
-        setPatientDataWasCalledWithVisits = visits;
+        if(measures != null) {
+            setMeasuresWasCalledWith = measures;
+        }
+
+        if (patients != null){
+            setPatientDataWasCalledWithPatients.addAll(patients);
+        }
+
+        if (visits != null) {
+            setPatientDataWasCalledWithVisits.addAll(visits);
+        }
     }
 
     @Override

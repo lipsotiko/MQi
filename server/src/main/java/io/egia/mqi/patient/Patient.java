@@ -19,7 +19,7 @@ public class Patient implements PatientRecordInterface {
 	private Date dateOfBirth;
 	private char gender;
 
-	@OneToOne(fetch = FetchType.LAZY, optional = false)
+	@OneToOne(fetch = FetchType.LAZY)
 	@JoinColumns({
 			@JoinColumn(name = "patientId")
 	})

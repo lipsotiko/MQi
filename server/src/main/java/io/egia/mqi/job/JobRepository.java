@@ -12,11 +12,11 @@ import java.util.Optional;
 @Repository
 public interface JobRepository extends JpaRepository<Job, Long> {
 
-	Optional<List<Job>> findByStatusOrderByJobIdAsc(Job.Status status);
+	Optional<List<Job>> findByJobStatusOrderByJobIdAsc(JobStatus jobStatus);
 
-	@Modifying()
+	@Modifying
 	@Transactional
-	@Query(value="update Job j set j.status = ?2 where j.jobId = ?1")
-	void updateJobStatus(Long jobId, Job.Status status);
+	@Query(value="update Job j set j.jobStatus = ?2 where j.jobId = ?1")
+	void updateJobStatus(Long jobId, JobStatus jobStatus);
 
 }

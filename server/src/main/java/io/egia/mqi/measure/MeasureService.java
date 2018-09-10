@@ -1,9 +1,8 @@
 package io.egia.mqi.measure;
 
-import io.egia.mqi.chunk.Chunk;
-import io.egia.mqi.chunk.ChunkRepository;
-import io.egia.mqi.chunk.ChunkService;
-import io.egia.mqi.job.Job;
+import io.egia.mqi.chunk.*;
+import io.egia.mqi.job.*;
+import io.egia.mqi.job.JobStatus;
 import io.egia.mqi.job.JobRepository;
 import io.egia.mqi.patient.Patient;
 import io.egia.mqi.patient.PatientRepository;
@@ -23,7 +22,7 @@ import java.util.Optional;
 @Service
 public class MeasureService {
     private Logger log = LoggerFactory.getLogger(MeasureService.class);
-    private MeasureRepository measureRepository;
+
     private ChunkRepository chunkRepository;
     private ChunkService chunkService;
     private JobRepository jobRepository;
@@ -32,15 +31,13 @@ public class MeasureService {
     private VisitRepository visitRepository;
     private MeasureProcessor measureProcessor;
 
-    MeasureService(MeasureRepository measureRepository
-            , ChunkRepository chunkRepository
+    MeasureService(ChunkRepository chunkRepository
             , ChunkService chunkService
             , JobRepository jobRepository
             , ServerService serverService
             , PatientRepository patientRepository
             , VisitRepository visitRepository
             , MeasureProcessor measureProcessor) {
-        this.measureRepository = measureRepository;
         this.chunkRepository = chunkRepository;
         this.chunkService = chunkService;
         this.jobRepository = jobRepository;
@@ -53,32 +50,27 @@ public class MeasureService {
     @Value("${server.port}")
     private String serverPort;
 
-    public void process() throws UnknownHostException {
+    public void process(Job job, List<Measure> measures) throws UnknownHostException {
+        Server server = serverService.getServerFromHostNameAndPort(serverPort);
+        chunkService.chunkData();
 
-        Optional<List<Job>> jobsToProcess = jobRepository.findByStatusOrderByJobIdAsc(Job.Status.PENDING);
-        if(!jobsToProcess.isPresent()) {
-            return;
-        }
+        Optional<Chunk> currentChunk = chunkRepository.findFirstByServerIdAndChunkStatus(
+                server.getServerId(), ChunkStatus.PENDING);
 
-        Job currentJob = jobsToProcess.get().get(0);
-        while (currentJob != null) {
-            Server thisServer = serverService.getServerFromHostNameAndPort(serverPort);
-            jobRepository.updateJobStatus(currentJob.getJobId(), Job.Status.RUNNING);
-            chunkService.chunkData();
-            Chunk chunk = chunkRepository.findOneByServerIdOrderByChunkIdAsc(thisServer.getServerId()).get(0);
-            List<Patient> patients = patientRepository.findByChunkServerIdAndChunkId(thisServer.getServerId(), chunk.getChunkId());
-            List<Visit> visits = visitRepository.findByChunkServerIdAndChunkChunkId(thisServer.getServerId(), chunk.getChunkId());
-            List<Measure> measuresToBeProcessed = measureRepository.findAllByJobId(currentJob.getJobId());
-            measureProcessor.initProcessor(measuresToBeProcessed, patients, visits);
-            measureProcessor.process();
-            jobRepository.updateJobStatus(currentJob.getJobId(), Job.Status.SUCCESS);
-
-            jobsToProcess = jobRepository.findByStatusOrderByJobIdAsc(Job.Status.PENDING);
-            if (!jobsToProcess.isPresent()) {
-                return;
+        if (currentChunk.isPresent()) {
+            while (currentChunk.isPresent()) {
+                Long chunkId = currentChunk.get().getChunkId();
+                List<Patient> patients = patientRepository.findByServerIdAndChunkId(server.getServerId(), chunkId);
+                List<Visit> visits = visitRepository.findByServerIdAndChunkChunkId(server.getServerId(), chunkId);
+                measureProcessor.initProcessor(measures, patients, visits);
+                measureProcessor.process();
+                measureProcessor.clear();
+                chunkRepository.updateChunkStatus(chunkId, ChunkStatus.DONE);
+                currentChunk = chunkRepository.findFirstByServerIdAndChunkStatus(
+                        server.getServerId(), ChunkStatus.PENDING);
             }
-
-            currentJob = jobsToProcess.get().get(0);
         }
+
+        jobRepository.updateJobStatus(job.getJobId(), JobStatus.SUCCESS);
     }
 }

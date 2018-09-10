@@ -6,12 +6,14 @@ import org.springframework.stereotype.Service;
 
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
+import java.util.List;
+import java.util.Optional;
 
 @Service
 public class ChunkService {
     private Logger log = LoggerFactory.getLogger(ChunkService.class);
-    EntityManager entityManager;
-    ChunkRepository chunkRepository;
+    private EntityManager entityManager;
+    private ChunkRepository chunkRepository;
 
     public ChunkService(EntityManager entityManager, ChunkRepository chunkRepository) {
         this.entityManager = entityManager;
@@ -27,7 +29,4 @@ public class ChunkService {
         }
     }
 
-    Long getChunkId(Long serverId) {
-        return chunkRepository.findOneByServerIdOrderByChunkIdAsc(serverId).get(0).getChunkId();
-    }
 }

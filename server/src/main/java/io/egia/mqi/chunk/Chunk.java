@@ -1,6 +1,9 @@
 package io.egia.mqi.chunk;
 
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 
@@ -10,6 +13,9 @@ import javax.persistence.*;
 
 @Data
 @Entity
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor
 public class Chunk {
 	
 	@Id
@@ -17,4 +23,5 @@ public class Chunk {
 	private Long recordCnt;
 	private Long serverId;
 	private Long chunkId;
+	private ChunkStatus chunkStatus;
 }
