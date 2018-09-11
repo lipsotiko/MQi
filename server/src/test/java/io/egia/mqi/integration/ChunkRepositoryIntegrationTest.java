@@ -39,9 +39,9 @@ public class ChunkRepositoryIntegrationTest {
     }
 
     @Test
-    public void findOneByServerIdOrderByChunkIdAsc() {
+    public void findFirstByServerIdAndChunkStatus() {
         Optional<Chunk> chunk =  chunkRepository.findFirstByServerIdAndChunkStatus(1L, ChunkStatus.PENDING);
-        assertThat(chunk.get().getChunkId()).isEqualTo(1L);
+        assertThat(chunk.get().getServerId()).isEqualTo(1L);
     }
 
     @After

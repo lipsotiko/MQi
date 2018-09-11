@@ -9,6 +9,7 @@ import javax.persistence.*;
 public class VisitCode {
 
     @Id
+    @GeneratedValue(strategy=GenerationType.IDENTITY)
     private Long visitCodeId;
     private Long visitId;
     private String codeSystem;

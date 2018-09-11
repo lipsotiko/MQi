@@ -18,6 +18,7 @@ public class Job {
 	@Id
 	@GeneratedValue(strategy=GenerationType.IDENTITY)
 	private Long jobId;
+	@Enumerated(EnumType.ORDINAL)
 	private JobStatus jobStatus;
 	private Date startTime;
 	private Date endTime;

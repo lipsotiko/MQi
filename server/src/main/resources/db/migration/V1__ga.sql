@@ -11,9 +11,10 @@ create table if not exists patient (
     patient_id bigserial primary key,
     date_of_birth timestamp,
     first_name varchar(255),
-    gender char(1) not null,
+    gender char(1),
     last_name varchar(255),
     middle_name varchar(255),
+    chunk_id bigint,
     last_updated timestamp default current_timestamp
 );
 
@@ -28,23 +29,23 @@ create table if not exists patient_exclude (
 	reason varchar(250)
 );
 
-drop table if exists log_patient_measure;
-create table if not exists log_patient_measure (
+drop table if exists patient_measure_log;
+create table if not exists patient_measure_log (
 	patient_id bigint,
 	measure_id bigint,
 	last_updated timestamp default current_timestamp
 );
-create unique index ux_log_patient_measure on log_patient_measure (patient_id, measure_id);
+create unique index ux_patient_measure_log on patient_measure_log (patient_id, measure_id);
 
-create trigger tr_update_log_patient_measure_last_updated
-before update on log_patient_measure
+create trigger tr_update_patient_measure_log_last_updated
+before update on patient_measure_log
 for each row
 execute procedure fn_update_timestamp();
 
 drop table if exists visit;
 create table if not exists visit (
     visit_id bigserial primary key,
-    patient_id bigint not null,
+    patient_id bigint ,
     admit_dt timestamp,
     covered_days integer,
     date_of_service timestamp,
@@ -55,7 +56,8 @@ create table if not exists visit (
     discharge_status integer,
     provider_id varchar(255),
     supplemental boolean,
-    units varchar(255)
+    units varchar(255),
+    chunk_id bigint
 );
 
 drop table if exists visit_code;
@@ -78,7 +80,8 @@ create unique index ux_measure on measure (LOWER(measure_name));
 
 drop table if exists chunk;
 create table if not exists chunk (
-	patient_id bigint primary key,
+    id bigserial primary key,
+	patient_id bigint,
 	record_cnt bigint,
 	server_id bigint,
 	chunk_id bigint,
@@ -172,7 +175,7 @@ begin
         and j.job_status = ( select job_status_id
                             from job_status
                             where job_status = 'RUNNING')
-        left join log_patient_measure lpm
+        left join patient_measure_log lpm
         on p.patient_id = lpm.patient_id
         and lpm.measure_id = m.measure_id
         where m.last_updated > coalesce(lpm.last_updated, '1900-01-01') --if the measure was updated since it was last executed
@@ -234,8 +237,9 @@ begin
 		and record_cnt < server_rec.chunk_size
 		order by id asc;
 
-		insert into chunk (patient_id, record_cnt, server_id, chunk_id)
-		select patient_id, record_cnt, server_rec.server_id, chunk_id from tmp_chunk;
+		insert into chunk (patient_id, record_cnt, server_id, chunk_id, chunk_status)
+		select patient_id, record_cnt, server_rec.server_id, chunk_id, 0 --PENDING
+		from tmp_chunk;
 
 		delete from tmp_patient_record_cnt where patient_id in (select patient_id from tmp_chunk);
 
@@ -251,11 +255,12 @@ begin
 	v_chunk_size := (select max(chunk_size) from server);
 	v_server_id := (select server_id from server where chunk_size = v_chunk_size limit 1);
 
-	insert into chunk (patient_id, record_cnt, server_id, chunk_id)
+	insert into chunk (patient_id, record_cnt, server_id, chunk_id, chunk_status)
 	select patient_id
 		, record_cnt
 		, v_server_id
 		, ROW_NUMBER() over (order by id) + (select max(coalesce(chunk_id,0)) from chunk where server_id = v_server_id) as chunk_id
+	    , 0 --PENDING
 	from tmp_patient_record_cnt
 	where record_cnt <= v_chunk_size;
 

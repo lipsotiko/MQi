@@ -1,9 +1,12 @@
 package io.egia.mqi.measure;
 
-import io.egia.mqi.chunk.*;
-import io.egia.mqi.job.*;
-import io.egia.mqi.job.JobStatus;
+import io.egia.mqi.chunk.Chunk;
+import io.egia.mqi.chunk.ChunkRepository;
+import io.egia.mqi.chunk.ChunkService;
+import io.egia.mqi.chunk.ChunkStatus;
+import io.egia.mqi.job.Job;
 import io.egia.mqi.job.JobRepository;
+import io.egia.mqi.job.JobStatus;
 import io.egia.mqi.patient.Patient;
 import io.egia.mqi.patient.PatientRepository;
 import io.egia.mqi.server.Server;
@@ -12,7 +15,6 @@ import io.egia.mqi.visit.Visit;
 import io.egia.mqi.visit.VisitRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.net.UnknownHostException;
@@ -26,32 +28,27 @@ public class MeasureService {
     private ChunkRepository chunkRepository;
     private ChunkService chunkService;
     private JobRepository jobRepository;
-    private ServerService serverService;
     private PatientRepository patientRepository;
     private VisitRepository visitRepository;
     private MeasureProcessor measureProcessor;
 
-    MeasureService(ChunkRepository chunkRepository
-            , ChunkService chunkService
-            , JobRepository jobRepository
-            , ServerService serverService
-            , PatientRepository patientRepository
-            , VisitRepository visitRepository
-            , MeasureProcessor measureProcessor) {
+    MeasureService(ChunkRepository chunkRepository,
+                   ChunkService chunkService,
+                   JobRepository jobRepository,
+                   PatientRepository patientRepository,
+                   VisitRepository visitRepository,
+                   MeasureProcessor measureProcessor) {
         this.chunkRepository = chunkRepository;
         this.chunkService = chunkService;
         this.jobRepository = jobRepository;
-        this.serverService = serverService;
         this.patientRepository = patientRepository;
         this.visitRepository = visitRepository;
         this.measureProcessor = measureProcessor;
     }
 
-    @Value("${server.port}")
-    private String serverPort;
+    //TODO: Make process async
+    public void process(Server server, Job job, List<Measure> measures) {
 
-    public void process(Job job, List<Measure> measures) throws UnknownHostException {
-        Server server = serverService.getServerFromHostNameAndPort(serverPort);
         chunkService.chunkData();
 
         Optional<Chunk> currentChunk = chunkRepository.findFirstByServerIdAndChunkStatus(
@@ -62,8 +59,7 @@ public class MeasureService {
                 Long chunkId = currentChunk.get().getChunkId();
                 List<Patient> patients = patientRepository.findByServerIdAndChunkId(server.getServerId(), chunkId);
                 List<Visit> visits = visitRepository.findByServerIdAndChunkChunkId(server.getServerId(), chunkId);
-                measureProcessor.initProcessor(measures, patients, visits);
-                measureProcessor.process();
+                measureProcessor.process(measures, patients, visits);
                 measureProcessor.clear();
                 chunkRepository.updateChunkStatus(chunkId, ChunkStatus.DONE);
                 currentChunk = chunkRepository.findFirstByServerIdAndChunkStatus(

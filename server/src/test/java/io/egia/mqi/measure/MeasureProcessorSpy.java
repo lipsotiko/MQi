@@ -16,7 +16,10 @@ public class MeasureProcessorSpy implements MeasureProcessor {
     List<Visit> setPatientDataWasCalledWithVisits = new ArrayList<>();
 
     @Override
-    public void initProcessor(List<Measure> measures, List<Patient> patients, List<Visit> visits) {
+    public void process(List<Measure> measures, List<Patient> patients, List<Visit> visits) {
+
+        processWasCalled = true;
+
         if(measures != null) {
             setMeasuresWasCalledWith = measures;
         }
@@ -28,11 +31,6 @@ public class MeasureProcessorSpy implements MeasureProcessor {
         if (visits != null) {
             setPatientDataWasCalledWithVisits.addAll(visits);
         }
-    }
-
-    @Override
-    public void process() {
-        processWasCalled = true;
     }
 
     @Override

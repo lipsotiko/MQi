@@ -1,8 +1,6 @@
 package io.egia.mqi.measure;
 
-import io.egia.mqi.patient.Patient;
-import io.egia.mqi.patient.PatientData;
-import io.egia.mqi.patient.PatientRecordInterface;
+import io.egia.mqi.patient.*;
 import io.egia.mqi.visit.Visit;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -19,16 +17,17 @@ public class MeasureProcessorImpl implements MeasureProcessor {
     private Hashtable<Long, PatientData> patientDataHash = new Hashtable<>();
     private int rulesEvaluatedCount;
     private List<MeasureResult> measureResults = new ArrayList<>();
+    private PatientMeasureLogRepository patientMeasureLogRepository;
 
-    @Override
-    public void initProcessor(List<Measure> measures, List<Patient> patients, List<Visit> visits) {
-        this.measures = measures;
-        appendToPatientDataHash(patients);
-        appendToPatientDataHash(visits);
+    MeasureProcessorImpl(PatientMeasureLogRepository patientMeasureLogRepository) {
+        this.patientMeasureLogRepository = patientMeasureLogRepository;
     }
 
     @Override
-    public void process() {
+    public void process (List<Measure> measures, List<Patient> patients, List<Visit> visits) {
+        this.measures = measures;
+        appendToPatientDataHash(patients);
+        appendToPatientDataHash(visits);
         this.patientDataHash.forEach((patientId, patientData) ->
                 this.measures.forEach((measure) -> {
                     log.debug(String.format("Processing patient id: %s, measure: %s",
@@ -36,6 +35,12 @@ public class MeasureProcessorImpl implements MeasureProcessor {
                             measure.getMeasureName()));
                     try {
                         evaluatePatientDataByMeasure(patientData, measure);
+                        patientMeasureLogRepository.save(
+                                PatientMeasureLog.builder()
+                                        .patientId(patientId)
+                                        .measureId(measure.getMeasureId())
+                                        .build()
+                        );
                     } catch (MeasureProcessorException e) {
                         e.printStackTrace();
                     }

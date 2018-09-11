@@ -17,11 +17,15 @@ import javax.persistence.*;
 @AllArgsConstructor
 @NoArgsConstructor
 public class Chunk {
-	
+
 	@Id
+	@GeneratedValue(strategy=GenerationType.IDENTITY)
+	private Long id;
 	private Long patientId;
 	private Long recordCnt;
 	private Long serverId;
 	private Long chunkId;
+
+	@Enumerated(EnumType.ORDINAL)
 	private ChunkStatus chunkStatus;
 }

@@ -42,8 +42,8 @@ public class MeasureServiceTest {
     @Mock private ServerService serverService;
     private MeasureProcessorSpy measureProcessor;
     private MeasureService measureService;
-    @Value("${server.port}") private String serverPort;
 
+    private Server server;
     private Job job;
     private List<Measure> measures;
 
@@ -54,7 +54,6 @@ public class MeasureServiceTest {
                 chunkRepository
                 , chunkService
                 , jobRepository
-                , serverService
                 , patientRepository
                 , visitRepository
                 , measureProcessor
@@ -64,6 +63,8 @@ public class MeasureServiceTest {
         Measure measure = new Measure();
         measure.setMeasureName("Fake Measure");
         measures.add(measure);
+
+        server = Server.builder().serverId(11L).systemType("primary").build();
 
         job = new Job();
         job.setJobId(44L);
@@ -83,10 +84,6 @@ public class MeasureServiceTest {
         visits.add(v);
         Mockito.when(visitRepository.findByServerIdAndChunkChunkId(11L, 22L)).thenReturn(visits);
 
-        Server server = Server.builder().serverId(11L).build();
-        Mockito.when(serverService.getServerFromHostNameAndPort(serverPort)).thenReturn(server);
-
-
         Chunk firstChunk = Chunk.builder().chunkId(22L).build();
         Chunk secondChunk = Chunk.builder().chunkId(23L).build();
         Chunk thirdChunk = Chunk.builder().chunkId(24L).build();
@@ -100,9 +97,8 @@ public class MeasureServiceTest {
 
     @Test
     public void verifyMethodsWereCalled() throws UnknownHostException {
-        measureService.process(job, measures);
+        measureService.process(server, job, measures);
 
-        verify(serverService, times(1)).getServerFromHostNameAndPort(serverPort);
         verify(chunkService,times(1)).chunkData();
         verify(chunkRepository,times(4)).findFirstByServerIdAndChunkStatus(11L, ChunkStatus.PENDING);
 
@@ -121,6 +117,7 @@ public class MeasureServiceTest {
         verify(chunkRepository,times(1)).updateChunkStatus(22L, ChunkStatus.DONE);
         verify(chunkRepository,times(1)).updateChunkStatus(23L, ChunkStatus.DONE);
         verify(chunkRepository,times(1)).updateChunkStatus(24L, ChunkStatus.DONE);
+        assertThat(measureProcessor.processWasCalled).isEqualTo(true);
         assertThat(measureProcessor.clearWasCalled).isEqualTo(true);
 
         verify(jobRepository, times(1)).updateJobStatus(job.getJobId(), JobStatus.SUCCESS);

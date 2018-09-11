@@ -16,8 +16,7 @@ public class MeasureController {
     @Value("${mqi.properties.system.version}")
     private String systemVersion;
 
-    MeasureController(MeasureRepository measureRepository
-            , RuleParamRepository ruleParamRepository) {
+    MeasureController(MeasureRepository measureRepository, RuleParamRepository ruleParamRepository) {
         this.measureRepository = measureRepository;
         this.ruleParamRepository = ruleParamRepository;
     }
@@ -66,6 +65,5 @@ public class MeasureController {
     public Iterable<RuleParam> rulesParams() {
         return ruleParamRepository.findAll();
     }
-
 
 }

@@ -16,7 +16,7 @@ public interface ChunkRepository extends JpaRepository<Chunk, Long> {
 
     @Modifying
     @Transactional
-    @Query(value = "update Chunk c set c.chunkStatus = :chunkStatus where c.id = :id")
-    void updateChunkStatus(@Param("id") Long id, @Param("chunkStatus") ChunkStatus chunkStatus);
+    @Query(value = "update Chunk c set c.chunkStatus = :chunkStatus where c.chunkId = :chunkId")
+    void updateChunkStatus(@Param("chunkId") Long chunkId, @Param("chunkStatus") ChunkStatus chunkStatus);
 
 }

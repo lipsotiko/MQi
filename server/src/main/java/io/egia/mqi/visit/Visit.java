@@ -16,8 +16,6 @@ public class Visit implements PatientRecordInterface {
 	@Id
 	@GeneratedValue(strategy=GenerationType.IDENTITY)
 	private Long visitId;
-
-	@Column(insertable= false, updatable=false)
 	private Long patientId;
 	private Date dateOfService;
 	private Date admitDt;
@@ -39,9 +37,6 @@ public class Visit implements PatientRecordInterface {
 	private List<VisitCode> visitCodes;
 
 	@OneToOne(fetch = FetchType.LAZY)
-	@JoinColumns({
-			@JoinColumn(name = "patientId")
-	})
 	private Chunk chunk;
 
 	@Override
