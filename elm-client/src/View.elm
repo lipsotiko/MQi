@@ -14,7 +14,10 @@ view model =
         [ class "container" ]
         [
             div [ class "measure-list" ] [
-                h3 [ ] [text "Measures:"]
+                h3 [ ] [
+                    text "Measures:"
+                    , button [ onClick ProcessMeasures ] [ text "Process"]
+                    ]
                 , ul
                   [ class "list-container" ]
                   <| List.indexedMap measureItemView model.measures
@@ -62,11 +65,17 @@ view model =
             ]
         ]
 
+checkbox : msg -> String -> Html msg
+checkbox msg name =
+  label []
+    [ text name
+    , input [ type_ "checkbox", onClick msg ] []
+    ]
+
 measureItemView: Int -> MeasureItem -> Html Msg
 measureItemView idx measureItem =
-    li [ class "list-item", onClick (SelectMeasure measureItem.id)][
-       text measureItem.name
-    ]
+    li [ class "list-item", onClick (SelectMeasure measureItem.id)]
+       [ checkbox (SelectMeasureForBatch measureItem.id) measureItem.name ]
 
 stepView : Model -> Int -> Step -> Html Msg
 stepView model idx step =

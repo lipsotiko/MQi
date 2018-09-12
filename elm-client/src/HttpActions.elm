@@ -1,4 +1,4 @@
-module HttpActions exposing (getMeasureList, getMeasure , getRulesParams, putMeasure, deleteMeasure)
+module HttpActions exposing (processMeasures, getMeasureList, getMeasure , getRulesParams, putMeasure, deleteMeasure)
 
 import Array exposing (Array, fromList)
 import Http
@@ -59,6 +59,26 @@ delete url =
     , withCredentials = False
     }
 
+post : String -> Http.Body -> Http.Request (String)
+post url body =
+  Http.request {
+    method = "POST"
+    , headers = []
+    , url = url
+    , body = body
+    , expect = Http.expectString
+    , timeout = Nothing
+    , withCredentials = False
+    }
+
+processMeasures : List Int -> Cmd Msg
+processMeasures ids =
+    let
+        body = Http.jsonBody (processEncoder ids)
+        request = post "/process" body
+    in
+        Http.send ProcessMeasuresResponse request
+
 getMeasureList : Cmd Msg
 getMeasureList =
     let
@@ -71,6 +91,7 @@ measureListItemDecoder: Decoder MeasureItem
 measureListItemDecoder = decode MeasureItem
     |> required "measureId" int
     |> required "measureName" string
+    |> hardcoded False
 
 
 measureDecoder : Decoder Measure
@@ -99,6 +120,10 @@ measureEncoder measure =
           )
 
     ]
+
+processEncoder : List Int -> Encode.Value
+processEncoder ids =
+    Encode.list (List.map (\s -> Encode.int s) ids)
 
 
 stepsEncoder : List Step -> Encode.Value

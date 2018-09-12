@@ -7,6 +7,7 @@ type alias Model = {
     , measures : List MeasureItem
     , rules : List String
     , ruleParameters : List RuleParameter
+    , selectedMeasureIds : List Int
     }
 
 type alias Measure = {
@@ -40,6 +41,7 @@ type alias RuleParameter = {
 type alias MeasureItem = {
     id : Int
     , name : String
+    , selected: Bool
     }
 
 type alias Drag = {
@@ -70,3 +72,6 @@ type Msg
     | DeleteMeasureResponse (Result Http.Error String)
     | NewMeasureResponse (Result Http.Error Measure)
     | SelectRule Int String
+    | SelectMeasureForBatch Int
+    | ProcessMeasures
+    | ProcessMeasuresResponse (Result Http.Error (String))

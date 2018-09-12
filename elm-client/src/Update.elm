@@ -1,6 +1,6 @@
 module Update exposing (..)
 
-import HttpActions exposing (deleteMeasure, getMeasure, getMeasureList, putMeasure)
+import HttpActions exposing (deleteMeasure, getMeasure, getMeasureList, processMeasures, putMeasure)
 import List.Extra exposing (unique)
 import Model exposing (..)
 
@@ -206,6 +206,27 @@ update msg model =
             in
                 { model | measure = newMeasure } ! []
 
+        SelectMeasureForBatch id ->
+            let
+                oldMeasures = model.measures
+                newMeasures = List.map (\m -> if (m.id == id) then
+                                                  { m | selected = not m.selected}
+                                                else m) oldMeasures
+            in
+                { model | measures = newMeasures } ! []
+        ProcessMeasures ->
+            let
+                selectedMeasures = List.filter (\m -> m.selected) model.measures
+                ids = List.map (\m -> m.id) selectedMeasures
+            in
+                model ! [ processMeasures ids ]
+        ProcessMeasuresResponse (Ok _) ->
+            model ! []
+        ProcessMeasuresResponse (Err message) ->
+            let
+                d = Debug.log "Error" (toString message)
+            in
+                model ! []
 
 updateStepAtIndex : Measure -> Int -> (Step -> Step) -> Measure
 updateStepAtIndex measure idx updateFunction =

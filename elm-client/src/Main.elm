@@ -7,6 +7,8 @@ import Mouse exposing (Position)
 import Update exposing (..)
 import View exposing (view)
 
+--https://exercism.io/tracks/kotlin
+
 main : Program Never Model Msg
 main =
     Html.program
@@ -30,6 +32,7 @@ init =
     , measures = []
     , rules = []
     , ruleParameters = []
+    , selectedMeasureIds = []
     } ! [getMeasureList, getRulesParams]
 
 
