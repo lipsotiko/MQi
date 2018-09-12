@@ -11,6 +11,7 @@ import io.egia.mqi.patient.PatientRepository;
 import io.egia.mqi.server.Server;
 import io.egia.mqi.server.ServerService;
 import io.egia.mqi.job.JobStatus;
+import io.egia.mqi.server.SystemType;
 import io.egia.mqi.visit.Visit;
 import io.egia.mqi.visit.VisitRepository;
 import org.junit.Before;
@@ -19,7 +20,6 @@ import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.MockitoJUnitRunner;
-import org.springframework.beans.factory.annotation.Value;
 
 import java.io.IOException;
 import java.net.UnknownHostException;
@@ -64,7 +64,7 @@ public class MeasureServiceTest {
         measure.setMeasureName("Fake Measure");
         measures.add(measure);
 
-        server = Server.builder().serverId(11L).systemType("primary").build();
+        server = Server.builder().serverId(11L).systemType(SystemType.PRIMARY).build();
 
         job = new Job();
         job.setJobId(44L);
@@ -73,20 +73,19 @@ public class MeasureServiceTest {
         Chunk c = new Chunk();
         c.setPatientId(99L);
         Patient p = new Patient();
-        p.setChunk(c);
         p.setPatientId(99L);
         List<Patient> patients = new ArrayList<>(Collections.singletonList(p));
-        Mockito.when(patientRepository.findByServerIdAndChunkId(11L, 22L)).thenReturn(patients);
+        Mockito.when(patientRepository.findByServerIdAndChunkGroup(11L, 22L)).thenReturn(patients);
 
         Visit v = new Visit();
         v.setPatientId(99L);
         List<Visit> visits = new ArrayList<>(Collections.singletonList(v));
         visits.add(v);
-        Mockito.when(visitRepository.findByServerIdAndChunkChunkId(11L, 22L)).thenReturn(visits);
+        Mockito.when(visitRepository.findByServerIdAndChunkChunkGroup(11L, 22L)).thenReturn(visits);
 
-        Chunk firstChunk = Chunk.builder().chunkId(22L).build();
-        Chunk secondChunk = Chunk.builder().chunkId(23L).build();
-        Chunk thirdChunk = Chunk.builder().chunkId(24L).build();
+        Chunk firstChunk = Chunk.builder().chunkGroup(22L).build();
+        Chunk secondChunk = Chunk.builder().chunkGroup(23L).build();
+        Chunk thirdChunk = Chunk.builder().chunkGroup(24L).build();
 
         Mockito.when(chunkRepository.findFirstByServerIdAndChunkStatus(11L, ChunkStatus.PENDING))
                 .thenReturn(Optional.of(firstChunk))
@@ -102,13 +101,13 @@ public class MeasureServiceTest {
         verify(chunkService,times(1)).chunkData();
         verify(chunkRepository,times(4)).findFirstByServerIdAndChunkStatus(11L, ChunkStatus.PENDING);
 
-        verify(patientRepository, times(1)).findByServerIdAndChunkId(11L,22L);
-        verify(patientRepository, times(1)).findByServerIdAndChunkId(11L,23L);
-        verify(patientRepository, times(1)).findByServerIdAndChunkId(11L,24L);
+        verify(patientRepository, times(1)).findByServerIdAndChunkGroup(11L,22L);
+        verify(patientRepository, times(1)).findByServerIdAndChunkGroup(11L,23L);
+        verify(patientRepository, times(1)).findByServerIdAndChunkGroup(11L,24L);
 
-        verify(visitRepository, times(1)).findByServerIdAndChunkChunkId(11L,22L);
-        verify(visitRepository, times(1)).findByServerIdAndChunkChunkId(11L,23L);
-        verify(visitRepository, times(1)).findByServerIdAndChunkChunkId(11L,24L);
+        verify(visitRepository, times(1)).findByServerIdAndChunkChunkGroup(11L,22L);
+        verify(visitRepository, times(1)).findByServerIdAndChunkChunkGroup(11L,23L);
+        verify(visitRepository, times(1)).findByServerIdAndChunkChunkGroup(11L,24L);
 
         assertThat(measureProcessor.setMeasuresWasCalledWith.get(0).getMeasureName()).isEqualTo("Fake Measure");
         assertThat(measureProcessor.setPatientDataWasCalledWithPatients.get(0).getPatientId()).isEqualTo(99L);

@@ -29,7 +29,6 @@ public class JobRepositoryIntegrationTests {
     public void setUp() {
         for(int i = 5; i > 0; i--) {
             Job job = new Job();
-            String job1Name = String.format("jUnit Test Job %s", i);
             job.setJobStatus(JobStatus.PENDING);
             jobRepository.saveAndFlush(job);
         }

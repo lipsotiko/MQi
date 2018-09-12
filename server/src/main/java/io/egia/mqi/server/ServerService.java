@@ -26,14 +26,14 @@ public class ServerService {
     }
 
     public Server getPrimaryServer(){
-        return serverRepository.findOneBySystemType("primary");
+        return serverRepository.findOneBySystemType(SystemType.PRIMARY);
     }
 
     public void saveServer(Server server) {
         serverRepository.saveAndFlush(server);
     }
 
-    public void updateSystemTypeAndVersion(Server server, String type, String verstion) {
+    public void updateSystemTypeAndVersion(Server server, SystemType type, String verstion) {
         serverRepository.updateServer(server.getServerId(), type, verstion);
     }
 }

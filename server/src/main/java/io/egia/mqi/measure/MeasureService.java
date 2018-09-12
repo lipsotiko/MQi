@@ -10,14 +10,12 @@ import io.egia.mqi.job.JobStatus;
 import io.egia.mqi.patient.Patient;
 import io.egia.mqi.patient.PatientRepository;
 import io.egia.mqi.server.Server;
-import io.egia.mqi.server.ServerService;
 import io.egia.mqi.visit.Visit;
 import io.egia.mqi.visit.VisitRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
-import java.net.UnknownHostException;
 import java.util.List;
 import java.util.Optional;
 
@@ -56,12 +54,12 @@ public class MeasureService {
 
         if (currentChunk.isPresent()) {
             while (currentChunk.isPresent()) {
-                Long chunkId = currentChunk.get().getChunkId();
-                List<Patient> patients = patientRepository.findByServerIdAndChunkId(server.getServerId(), chunkId);
-                List<Visit> visits = visitRepository.findByServerIdAndChunkChunkId(server.getServerId(), chunkId);
+                Long chunkGroup = currentChunk.get().getChunkGroup();
+                List<Patient> patients = patientRepository.findByServerIdAndChunkGroup(server.getServerId(), chunkGroup);
+                List<Visit> visits = visitRepository.findByServerIdAndChunkChunkGroup(server.getServerId(), chunkGroup);
                 measureProcessor.process(measures, patients, visits);
                 measureProcessor.clear();
-                chunkRepository.updateChunkStatus(chunkId, ChunkStatus.DONE);
+                chunkRepository.updateChunkStatus(chunkGroup, ChunkStatus.DONE);
                 currentChunk = chunkRepository.findFirstByServerIdAndChunkStatus(
                         server.getServerId(), ChunkStatus.PENDING);
             }

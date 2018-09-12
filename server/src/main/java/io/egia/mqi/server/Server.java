@@ -20,10 +20,9 @@ public class Server {
 	private Long serverId;
 	private String serverName;
 	private String serverPort;
-	private String systemType;
+	private SystemType systemType;
 	private String systemVersion;
 	private int chunkSize;
 	@Column(insertable = false)
 	private Date lastUpdated;
-
 }

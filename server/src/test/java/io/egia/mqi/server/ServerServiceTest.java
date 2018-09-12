@@ -23,7 +23,7 @@ public class ServerServiceTest {
 
     private static Server server;
     static {
-        server = Server.builder().serverName("Fake Server").systemType("primary").build();
+        server = Server.builder().serverName("Fake Server").systemType(SystemType.PRIMARY).build();
     }
 
     @Before
@@ -45,7 +45,7 @@ public class ServerServiceTest {
 
     @Test
     public void returnsPrimaryServer() {
-        Mockito.when(serverRepository.findOneBySystemType(anyString())).thenReturn(server);
+        Mockito.when(serverRepository.findOneBySystemType(SystemType.PRIMARY)).thenReturn(server);
         assertThat(serverService.getPrimaryServer()).isEqualTo(server);
     }
 }

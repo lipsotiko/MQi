@@ -4,6 +4,7 @@ import io.egia.mqi.measure.MeasureRepository;
 import io.egia.mqi.measure.MeasureService;
 import io.egia.mqi.server.Server;
 import io.egia.mqi.server.ServerService;
+import io.egia.mqi.server.SystemType;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -40,7 +41,7 @@ public class JobController {
     public void process(@RequestBody List<Long> measureIds) throws UnknownHostException {
 
         Server server = serverService.getServerFromHostNameAndPort(serverPort);
-        if (server.getSystemType().equals("primary")) {
+        if (server.getSystemType().equals(SystemType.PRIMARY)) {
             Job job = jobRepository.saveAndFlush(Job.builder().jobStatus(JobStatus.RUNNING).build());
             for (Long measureId : measureIds) {
                 jobMeasureRepository.saveAndFlush(

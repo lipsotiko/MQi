@@ -20,12 +20,10 @@ public class Chunk {
 
 	@Id
 	@GeneratedValue(strategy=GenerationType.IDENTITY)
-	private Long id;
-	private Long patientId;
-	private Long recordCnt;
-	private Long serverId;
 	private Long chunkId;
-
-	@Enumerated(EnumType.ORDINAL)
+	private Long patientId;
+	private Long recordCount;
+	private Long serverId;
+	private Long chunkGroup;
 	private ChunkStatus chunkStatus;
 }

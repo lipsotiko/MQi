@@ -36,20 +36,18 @@ abstract class AbstractRepositoryTest {
         for (Long i = 1L; i <= 10; i++) {
             Chunk chunk = new Chunk();
             chunk.setPatientId(i);
-            chunk.setRecordCnt(100L);
+            chunk.setRecordCount(100L);
             chunk.setServerId(i);
-            chunk.setChunkId(i);
+            chunk.setChunkGroup(i);
             chunkRepository.saveAndFlush(chunk);
 
             Patient patient = new Patient();
             patient.setPatientId(i);
-            patient.setChunk(chunk);
             patientRepository.saveAndFlush(patient);
 
             Visit visit = new Visit();
             visit.setVisitId(i);
             visit.setPatientId(i);
-            visit.setChunk(chunk);
             Visit savedVisit = visitRepository.saveAndFlush(visit);
 
             VisitCode code = new VisitCode();

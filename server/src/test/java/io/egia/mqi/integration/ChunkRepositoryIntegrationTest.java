@@ -30,9 +30,9 @@ public class ChunkRepositoryIntegrationTest {
         for(Long i = 25L; i > 0; i--) {
             Chunk chunk = new Chunk();
             chunk.setPatientId(i);
-            chunk.setRecordCnt(i);
+            chunk.setRecordCount(i);
             chunk.setServerId(1L);
-            chunk.setChunkId(i);
+            chunk.setChunkGroup(i);
             chunk.setChunkStatus(ChunkStatus.PENDING);
             chunkRepository.saveAndFlush(chunk);
         }

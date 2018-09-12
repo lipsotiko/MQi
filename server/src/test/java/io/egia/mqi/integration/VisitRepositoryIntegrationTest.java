@@ -15,11 +15,10 @@ public class VisitRepositoryIntegrationTest extends AbstractRepositoryTest {
     private VisitRepository visitRepository;
 
     @Test
-    public void visitRepository_findByServerIdAndChunkId() {
-        List<Visit> subject = visitRepository.findByServerIdAndChunkChunkId(1L, 1L);
+    public void visitRepository_findByServerIdAndChunkGroup() {
+        List<Visit> subject = visitRepository.findByServerIdAndChunkChunkGroup(1L, 1L);
         assertThat(subject.size()).isEqualTo(1);
         assertThat(subject.get(0).getVisitCodes().get(0).getCodeSystem()).isEqualTo("ICD_9");
         assertThat(subject.get(0).getVisitCodes().get(0).getCodeValue()).isEqualTo("abc");
     }
-
 }

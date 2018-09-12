@@ -1,6 +1,5 @@
 package io.egia.mqi.visit;
 
-import io.egia.mqi.chunk.Chunk;
 import io.egia.mqi.patient.PatientData;
 import io.egia.mqi.patient.PatientRecordInterface;
 import lombok.Data;
@@ -26,7 +25,6 @@ public class Visit implements PatientRecordInterface {
 	private Boolean denied;
 	private String providerId;
 	private Boolean supplemental;
-
 	private String primaryDxCode;
 	private Integer primaryDxCodeVersion;
 
@@ -35,9 +33,6 @@ public class Visit implements PatientRecordInterface {
 			@JoinColumn(name = "visitId")
 	})
 	private List<VisitCode> visitCodes;
-
-	@OneToOne(fetch = FetchType.LAZY)
-	private Chunk chunk;
 
 	@Override
 	public void updatePatientData(PatientData patientData) {

@@ -34,8 +34,6 @@ public class MeasureProcessorImplTest {
 
         for (Long i = 1L; i <= 5; i++) {
             Patient p = new Patient();
-            Chunk c = new Chunk();
-            p.setChunk(c);
             p.setPatientId(i);
             p.setFirstName("vango");
             patients.add(p);

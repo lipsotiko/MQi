@@ -10,11 +10,11 @@ import org.springframework.transaction.annotation.Transactional;
 public interface ServerRepository extends JpaRepository<Server, Long> {
 	Server findOneByServerNameAndServerPort(String systemName, String serverPort);
 
-	Server findOneBySystemType(String systemType);
+	Server findOneBySystemType(SystemType systemType);
 
 	@Modifying
 	@Transactional
 	@Query(value="update Server s set s.systemType = ?2, s.systemVersion = ?3 where s.serverId = ?1")
-	void updateServer(Long serverId, String systemType, String systemVersion);
+	void updateServer(Long serverId, SystemType systemType, String systemVersion);
 
 }

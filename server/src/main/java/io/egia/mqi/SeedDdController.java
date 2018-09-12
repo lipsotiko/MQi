@@ -6,6 +6,7 @@ import io.egia.mqi.patient.PatientRepository;
 import io.egia.mqi.server.Server;
 import io.egia.mqi.server.ServerRepository;
 import io.egia.mqi.server.ServerService;
+import io.egia.mqi.server.SystemType;
 import io.egia.mqi.visit.Visit;
 import io.egia.mqi.visit.VisitCode;
 import io.egia.mqi.visit.VisitCodeRepository;
@@ -32,6 +33,8 @@ public class SeedDdController {
     @GetMapping("/seed")
     public Map<String, Integer> seedDb() throws UnknownHostException {
 
+        Integer chunkSize = 50;
+
         chunkRepository.deleteAll();
         visitCodeRepository.deleteAll();
         visitRepository.deleteAll();
@@ -41,22 +44,28 @@ public class SeedDdController {
         serverRepository.saveAndFlush(
                 Server.builder().serverId(1L)
                         .serverName(InetAddress.getLocalHost().getHostName())
-                        .systemType("primary")
-                        .systemVersion("1.0.0").chunkSize(20).serverPort("8080").build());
+                        .systemType(SystemType.PRIMARY)
+                        .systemVersion("1.0.0")
+                        .chunkSize(chunkSize)
+                        .serverPort("8080").build());
 
         serverRepository.saveAndFlush(
                 Server.builder().serverId(2L)
                         .serverName("Test Server 2")
-                        .systemType("secondary")
-                        .systemVersion("1.0.0").chunkSize(20).serverPort("8081").build());
+                        .systemType(SystemType.SECONDARY)
+                        .systemVersion("1.0.0")
+                        .chunkSize(chunkSize)
+                        .serverPort("8081").build());
 
         serverRepository.saveAndFlush(
                 Server.builder().serverId(3L)
                         .serverName("Test Server 3")
-                        .systemType("secondary")
-                        .systemVersion("1.0.0").chunkSize(20).serverPort("8082").build());
+                        .systemType(SystemType.SECONDARY)
+                        .systemVersion("1.0.0")
+                        .chunkSize(chunkSize)
+                        .serverPort("8082").build());
 
-        for (Long i = 1L; i <= 60; i++) {
+        for (Long i = 1L; i <= 150; i++) {
             Patient patient = new Patient();
             patient.setFirstName("Vango");
             patient.setLastName("Laouto");
@@ -67,7 +76,7 @@ public class SeedDdController {
             visit.setPatientId(savedPatient.getPatientId());
             Visit savedVisit = visitRepository.saveAndFlush(visit);
 
-            for(Long j = 1L; j < 10L; j++) {
+            for(Long j = 1L; j < 9L; j++) {
                 VisitCode code = new VisitCode();
                 code.setVisitId(savedVisit.getVisitId());
                 code.setCodeValue("abc");
