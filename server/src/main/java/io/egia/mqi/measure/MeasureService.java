@@ -12,17 +12,17 @@ import io.egia.mqi.patient.PatientRepository;
 import io.egia.mqi.server.Server;
 import io.egia.mqi.visit.Visit;
 import io.egia.mqi.visit.VisitRepository;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collector;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @Service
 public class MeasureService {
-    private Logger log = LoggerFactory.getLogger(MeasureService.class);
-
     private ChunkRepository chunkRepository;
     private ChunkService chunkService;
     private JobRepository jobRepository;
@@ -47,22 +47,22 @@ public class MeasureService {
     //TODO: Make process async
     public void process(Server server, Job job, List<Measure> measures) {
 
-        chunkService.chunkData();
+        chunkService.chunkData(measures);
 
-        Optional<Chunk> currentChunk = chunkRepository.findFirstByServerIdAndChunkStatus(
+        Optional<List<Chunk>> currentChunk = chunkRepository.findTop5000ByServerIdAndChunkStatus(
                 server.getServerId(), ChunkStatus.PENDING);
 
-        if (currentChunk.isPresent()) {
-            while (currentChunk.isPresent()) {
-                Long chunkGroup = currentChunk.get().getChunkGroup();
-                List<Patient> patients = patientRepository.findByServerIdAndChunkGroup(server.getServerId(), chunkGroup);
-                List<Visit> visits = visitRepository.findByServerIdAndChunkChunkGroup(server.getServerId(), chunkGroup);
-                measureProcessor.process(measures, patients, visits);
-                measureProcessor.clear();
-                chunkRepository.updateChunkStatus(chunkGroup, ChunkStatus.DONE);
-                currentChunk = chunkRepository.findFirstByServerIdAndChunkStatus(
-                        server.getServerId(), ChunkStatus.PENDING);
-            }
+        while (currentChunk.isPresent()) {
+            List<Chunk> chunks = currentChunk.get();
+            List<Long> patientIds = chunks.stream().map(Chunk::getPatientId).collect(Collectors.toList());
+            List<Patient> patients = patientRepository.findAllById(patientIds);
+            List<Visit> visits = visitRepository.findAllById(patientIds);
+            measureProcessor.process(measures, patients, visits);
+            measureProcessor.clear();
+            chunks.forEach(c -> c.setChunkStatus(ChunkStatus.DONE));
+            chunkRepository.saveAll(chunks);
+            currentChunk = chunkRepository.findTop5000ByServerIdAndChunkStatus(
+                    server.getServerId(), ChunkStatus.PENDING);
         }
 
         jobRepository.updateJobStatus(job.getJobId(), JobStatus.SUCCESS);

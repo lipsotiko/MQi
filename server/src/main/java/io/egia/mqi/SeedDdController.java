@@ -33,8 +33,6 @@ public class SeedDdController {
     @GetMapping("/seed")
     public Map<String, Integer> seedDb() throws UnknownHostException {
 
-        Integer chunkSize = 50;
-
         chunkRepository.deleteAll();
         visitCodeRepository.deleteAll();
         visitRepository.deleteAll();
@@ -46,7 +44,6 @@ public class SeedDdController {
                         .serverName(InetAddress.getLocalHost().getHostName())
                         .systemType(SystemType.PRIMARY)
                         .systemVersion("1.0.0")
-                        .chunkSize(chunkSize)
                         .serverPort("8080").build());
 
         serverRepository.saveAndFlush(
@@ -54,7 +51,6 @@ public class SeedDdController {
                         .serverName("Test Server 2")
                         .systemType(SystemType.SECONDARY)
                         .systemVersion("1.0.0")
-                        .chunkSize(chunkSize)
                         .serverPort("8081").build());
 
         serverRepository.saveAndFlush(
@@ -62,7 +58,6 @@ public class SeedDdController {
                         .serverName("Test Server 3")
                         .systemType(SystemType.SECONDARY)
                         .systemVersion("1.0.0")
-                        .chunkSize(chunkSize)
                         .serverPort("8082").build());
 
         for (Long i = 1L; i <= 150; i++) {

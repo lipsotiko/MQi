@@ -101,7 +101,6 @@ measureDecoder = decode Measure
     |> requiredAt ["measureLogic","description"] string
     |> requiredAt ["measureLogic","steps"] (Decode.list stepDecoder)
     |> requiredAt ["measureLogic","minimumSystemVersion"] string
-    |> requiredAt ["measureLogic","traceRules"] bool
     |> requiredAt ["lastUpdated"] string
     |> hardcoded Nothing
 
@@ -115,11 +114,10 @@ measureEncoder measure =
             Encode.object [
                 ("description", Encode.string measure.description)
                 , ("steps", stepsEncoder measure.steps)
-                , ("traceRules", Encode.bool measure.traceRules)
             ])
           )
-
     ]
+
 
 processEncoder : List Int -> Encode.Value
 processEncoder ids =

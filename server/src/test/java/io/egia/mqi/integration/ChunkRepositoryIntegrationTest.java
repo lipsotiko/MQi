@@ -32,7 +32,6 @@ public class ChunkRepositoryIntegrationTest {
             chunk.setPatientId(i);
             chunk.setRecordCount(i);
             chunk.setServerId(1L);
-            chunk.setChunkGroup(i);
             chunk.setChunkStatus(ChunkStatus.PENDING);
             chunkRepository.saveAndFlush(chunk);
         }
@@ -40,8 +39,8 @@ public class ChunkRepositoryIntegrationTest {
 
     @Test
     public void findFirstByServerIdAndChunkStatus() {
-        Optional<Chunk> chunk =  chunkRepository.findFirstByServerIdAndChunkStatus(1L, ChunkStatus.PENDING);
-        assertThat(chunk.get().getServerId()).isEqualTo(1L);
+        Optional<List<Chunk>> chunk =  chunkRepository.findTop5000ByServerIdAndChunkStatus(1L, ChunkStatus.PENDING);
+        assertThat(chunk.get().get(0).getServerId()).isEqualTo(1L);
     }
 
     @After

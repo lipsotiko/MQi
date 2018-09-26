@@ -82,7 +82,6 @@ create table if not exists chunk (
 	patient_id bigint,
 	record_count bigint,
 	server_id bigint,
-	chunk_group bigint,
 	chunk_status integer
 );
 
@@ -95,7 +94,6 @@ create table if not exists server (
 	server_port varchar(5),
 	system_type integer,
 	system_version varchar(8),
-	chunk_size integer default 1000,
 	last_updated timestamp default current_timestamp
 );
 create unique index ux_server_name_port on server (server_name, server_port);
@@ -148,136 +146,21 @@ values(0, 'PENDING'),
     (2, 'SUCCESS'),
     (3, 'FAILURE');
 
-create or replace function fn_chunk_data()
-returns Integer as $$
-declare patient_cnt_desc bigint;
-declare patient_cnt_asc bigint;
-declare chunk_size_sum bigint;
-declare total_record_cnt bigint;
-declare server_cursor refcursor;
-declare server_rec record;
-declare v_server_id bigint;
-declare v_chunk_size bigint;
-begin
-        --Retrieve patients that need to be processed based on the measures in the job
-        drop table if exists tmp_patient;
-        create local temporary table tmp_patient as
-        select p.patient_id
-        from patient p
-        join measure m
-        on 1=1
-        inner join job_measure jm
-        on jm.measure_id = m.measure_id
-        inner join job j
-        on j.job_id = jm.job_id
-        and j.job_status = ( select job_status_id
-                            from job_status
-                            where job_status = 'RUNNING')
-        left join patient_measure_log lpm
-        on p.patient_id = lpm.patient_id
-        and lpm.measure_id = m.measure_id
-        where m.last_updated > coalesce(lpm.last_updated, '1900-01-01') --if the measure was updated since it was last executed
-        or p.last_updated > coalesce(lpm.last_updated, '1900-01-01'); --if the patient was updated since they were last processed
-
-        --temp table to hold each patients total record count
-        drop table if exists tmp_patient_record_cnt;
-        create local temporary table tmp_patient_record_cnt as
-        select patient_id, count(*) as record_count, row_number() over(order by count(*) asc) as id
-        from (
-                select patient_id from patient where patient_id in (select patient_id from tmp_patient)
-                union all
-                select patient_id from visit where patient_id in (select patient_id from tmp_patient)
-                union all
-                select patient_id from visit v inner join visit_code vc
-			on v.visit_id = vc.visit_id where v.patient_id in (select patient_id from tmp_patient)
-        ) p
-        group by patient_id;
-
-	--divide patients among all available MQi application servers; larger chunk sizes means the server has more resources
-	total_record_cnt := (select sum(record_count) from tmp_patient_record_cnt);
-	raise info 'total_record_cnt: %', total_record_cnt;
-
-	chunk_size_sum :=  (select sum(chunk_size) from server);
-	raise info 'chunk_size_sum: %', chunk_size_sum;
-
-	--use the chunk size to determin a percentage of records each server will process
-	drop table if exists tmp_server_record_allocation;
-	create local temporary table tmp_server_record_allocation as
-	select server_id, chunk_size, ceiling((round(cast(chunk_size as numeric)/chunk_size_sum,2) * total_record_cnt)) as record_count
-	from server;
-
-	--use a cursor to allocate records to each server based on their determined record count
-	--and divide the records into chunks based on their chunk_size
-	truncate table chunk;
-	open server_cursor no scroll for select server_id, chunk_size, record_count from tmp_server_record_allocation;
-	loop
-		fetch server_cursor into server_rec;
-		exit when not found;
-
-		raise notice 'server_id %', server_rec.server_id;
-		raise notice 'chunk_size %', server_rec.chunk_size;
-		raise notice 'record_count %', server_rec.record_count;
-
-		--create a running total of record counts
-		drop table if exists tmp_patient_record_cnt_running_total;
-		create local temporary table tmp_patient_record_cnt_running_total as
-		select patient_id, record_count, id, sum(record_count) over(order by id asc) as running_total
-		from tmp_patient_record_cnt
-		order by id asc;
-
-		--find records that fit within the chunk_size based on the running total
-		--this is not perfect becasue a couple extra members may end up in each chunk;
-		drop table if exists tmp_chunk;
-		create local temporary table tmp_chunk as
-		select patient_id, record_count, id, running_total, ceiling(running_total/server_rec.chunk_size) as chunk_group
-		from tmp_patient_record_cnt_running_total
-		where running_total < server_rec.chunk_size
-		and record_count < server_rec.chunk_size
-		order by id asc;
-
-		insert into chunk (patient_id, record_count, server_id, chunk_group, chunk_status)
-		select patient_id, record_count, server_rec.server_id, chunk_group, 0 --PENDING
-		from tmp_chunk;
-
-		delete from tmp_patient_record_cnt where patient_id in (select patient_id from tmp_chunk);
-
-	end loop;
-	close server_cursor;
-
-	--despite our best attempt to spread the patients evenly accross all servers, this is not a perfect process
-	--we will append any patients that did not make it on to one of the servers, each in their own chunk.
-	--Based on the ordering of patient records earlier in this process, these patients will have the highest
-	--record counts which is why they are giving individual chunk ids
-
-	--pick a server that is suitable for the remaining patients
-	v_chunk_size := (select max(chunk_size) from server);
-	v_server_id := (select server_id from server where chunk_size = v_chunk_size limit 1);
-
-	insert into chunk (patient_id, record_count, server_id, chunk_group, chunk_status)
-	select patient_id
-		, record_count
-		, v_server_id
-		, ROW_NUMBER() over (order by id) + (select max(coalesce(chunk_group,0)) from chunk where server_id = v_server_id) as chunk_group
-	    , 0 --PENDING
-	from tmp_patient_record_cnt
-	where record_count <= v_chunk_size;
-
-	--patients that had a record count which exceeded the maximum chunk size will be logged for users to review
-	delete from patient_exclude where reason = 'exceeded chunk size for MQi servers';
-	insert into patient_exclude (patient_id, reason)
-	select patient_id, 'exceeded chunk size for MQi servers' as reason
-	from tmp_patient_record_cnt
-	where patient_id not in (select patient_id from chunk);
-
-	--users may choose to exlude patients by adding records manually to t_patient_exclude
-	delete from chunk where patient_id in (select patient_id from patient_exclude);
-
-	-- return value of 0 = successStepId
-	-- return value of -1 = failureStepId
-	return 0;
-
-end;
-$$ language plpgsql;
+drop view if exists patient_record_count;
+create view patient_record_count as
+select patient_id
+    , min(last_updated) as last_updated
+    , count(*) as record_count
+from (
+	select patient_id, last_updated from patient union all
+	select patient_id, null from visit union all
+	select patient_id, null from visit v inner join visit_code vc on v.visit_id = vc.visit_id ) a
+where patient_id not in (
+	select patient_id from chunk
+)
+group by patient_id
+order by record_count desc
+limit 10000;
 
 insert into measure (measure_name, measure_json, last_updated)
 values ('sample measure 1', '

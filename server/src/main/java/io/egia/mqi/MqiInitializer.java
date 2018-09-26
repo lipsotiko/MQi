@@ -87,7 +87,6 @@ public class MqiInitializer implements ApplicationListener<ContextRefreshedEvent
 				.serverPort(serverPort)
 				.systemType(SystemType.PRIMARY)
 				.systemVersion(systemVersion)
-				.chunkSize(1000)
 				.build();
     }
 

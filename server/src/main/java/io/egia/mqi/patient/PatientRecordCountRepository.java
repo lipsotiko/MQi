@@ -1,8 +1,8 @@
-package io.egia.mqi.visit;
+package io.egia.mqi.patient;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface VisitRepository extends JpaRepository<Visit, Long> {
+public interface PatientRecordCountRepository extends JpaRepository<PatientRecordCount, Long> {
 }

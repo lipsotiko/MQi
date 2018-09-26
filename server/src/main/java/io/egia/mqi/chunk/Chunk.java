@@ -24,6 +24,5 @@ public class Chunk {
 	private Long patientId;
 	private Long recordCount;
 	private Long serverId;
-	private Long chunkGroup;
 	private ChunkStatus chunkStatus;
 }

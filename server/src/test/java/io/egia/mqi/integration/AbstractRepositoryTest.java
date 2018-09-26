@@ -38,7 +38,6 @@ abstract class AbstractRepositoryTest {
             chunk.setPatientId(i);
             chunk.setRecordCount(100L);
             chunk.setServerId(i);
-            chunk.setChunkGroup(i);
             chunkRepository.saveAndFlush(chunk);
 
             Patient patient = new Patient();

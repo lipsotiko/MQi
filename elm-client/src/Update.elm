@@ -304,4 +304,4 @@ getRuleParameters ruleParameters ruleName =
 
 emptyMeasure : Measure
 emptyMeasure =
-    Measure 0 "" "" [] "" False "" Nothing
+    Measure 0 "" "" [] "" "" Nothing

@@ -22,7 +22,6 @@ public class Server {
 	private String serverPort;
 	private SystemType systemType;
 	private String systemVersion;
-	private int chunkSize;
 	@Column(insertable = false)
 	private Date lastUpdated;
 }

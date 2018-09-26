@@ -7,16 +7,10 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
 import java.util.Optional;
 
 @Repository
 public interface ChunkRepository extends JpaRepository<Chunk, Long> {
-
-    Optional<Chunk> findFirstByServerIdAndChunkStatus(Long serverId, ChunkStatus chunkStatus);
-
-    @Modifying
-    @Transactional
-    @Query(value = "update Chunk c set c.chunkStatus = :chunkStatus where c.chunkGroup = :chunkGroup")
-    void updateChunkStatus(@Param("chunkGroup") Long chunkGroup, @Param("chunkStatus") ChunkStatus chunkStatus);
-
+    Optional<List<Chunk>> findTop5000ByServerIdAndChunkStatus(Long serverId, ChunkStatus chunkStatus);
 }
