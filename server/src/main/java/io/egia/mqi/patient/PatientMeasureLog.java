@@ -8,7 +8,7 @@ import lombok.NoArgsConstructor;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
-import java.util.Date;
+import java.time.ZonedDateTime;
 
 @Data
 @Entity
@@ -20,5 +20,5 @@ public class PatientMeasureLog {
     @Id
     Long patientId;
     Long measureId;
-    @Column(updatable=false,insertable=false) private Date lastUpdated;
+    @Column(updatable=false,insertable=false) private ZonedDateTime lastUpdated;
 }

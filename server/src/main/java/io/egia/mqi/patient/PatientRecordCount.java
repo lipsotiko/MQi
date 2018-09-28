@@ -6,7 +6,7 @@ import lombok.Data;
 
 import javax.persistence.Entity;
 import javax.persistence.Id;
-import java.time.LocalDateTime;
+import java.time.ZonedDateTime;
 
 @Data
 @Entity
@@ -14,7 +14,7 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 public class PatientRecordCount {
     @Id Long patientId;
-    LocalDateTime lastUpdated;
+    ZonedDateTime lastUpdated;
     Long recordCount;
 
     public PatientRecordCount () {
