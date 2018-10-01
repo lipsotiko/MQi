@@ -6,6 +6,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
+import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.List;
@@ -24,7 +25,7 @@ public class MeasureProcessorImpl implements MeasureProcessor {
     }
 
     @Override
-    public void process (List<Measure> measures, List<Patient> patients, List<Visit> visits) {
+    public void process (List<Measure> measures, List<Patient> patients, List<Visit> visits, ZonedDateTime timeExecuted) {
         this.measures = measures;
         appendToPatientDataHash(patients);
         appendToPatientDataHash(visits);
@@ -34,11 +35,13 @@ public class MeasureProcessorImpl implements MeasureProcessor {
                             patientId,
                             measure.getMeasureName()));
                     try {
+                        patientMeasureLogRepository.deleteByPatientIdAndMeasureId(patientId, measure.getMeasureId());
                         evaluatePatientDataByMeasure(patientData, measure);
                         patientMeasureLogRepository.save(
                                 PatientMeasureLog.builder()
                                         .patientId(patientId)
                                         .measureId(measure.getMeasureId())
+                                        .lastUpdated(timeExecuted)
                                         .build()
                         );
                     } catch (MeasureProcessorException e) {

@@ -1,9 +1,9 @@
 package io.egia.mqi.measure;
 
-import io.egia.mqi.chunk.Chunk;
 import io.egia.mqi.helpers.Helpers;
 import io.egia.mqi.patient.Patient;
 import io.egia.mqi.patient.PatientData;
+import io.egia.mqi.patient.PatientMeasureLog;
 import io.egia.mqi.patient.PatientMeasureLogRepository;
 import io.egia.mqi.visit.Visit;
 import org.junit.Before;
@@ -13,9 +13,12 @@ import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 
 import java.io.IOException;
+import java.time.ZonedDateTime;
 import java.util.*;
 
 import static org.assertj.core.api.Java6Assertions.assertThat;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 
 @RunWith(MockitoJUnitRunner.class)
 public class MeasureProcessorImplTest {
@@ -26,6 +29,8 @@ public class MeasureProcessorImplTest {
     private PatientMeasureLogRepository patientMeasureLogRepository;
     private MeasureProcessorImpl subject;
     private List<Measure> measures = new ArrayList<>();
+
+    private ZonedDateTime timeExecuted = ZonedDateTime.now();
 
     @Before
     public void setUp() throws IOException {
@@ -48,12 +53,13 @@ public class MeasureProcessorImplTest {
         }
 
         Measure measure = Helpers.getMeasureFromResource("fixtures", "sampleMeasure.json");
+        measure.setMeasureId(1L);
         measures.add(measure);
     }
 
     @Test
     public void validatePatientDataHash() {
-        subject.process(measures, patients, visits);
+        subject.process(measures, patients, visits, timeExecuted);
         Hashtable<Long, PatientData> patientDataHash = subject.getPatientDataHash();
         Set<Long> keys = patientDataHash.keySet();
         Iterator<Long> itr = keys.iterator();
@@ -70,14 +76,20 @@ public class MeasureProcessorImplTest {
 
     @Test
     public void processEvaluatesPatientData() {
-        subject.process(measures, patients, visits);
+        subject.process(measures, patients, visits, timeExecuted);
         assertThat(subject.getMeasureResults().size()).isEqualTo(5);
         assertThat(subject.getRulesEvaluatedCount()).isEqualTo(15);
+        
+        for(Long i = 1L; i <= 5L; i++) {
+            verify(patientMeasureLogRepository, times(1)).deleteByPatientIdAndMeasureId(i, 1L);
+            verify(patientMeasureLogRepository, times(1))
+                    .save(PatientMeasureLog.builder().patientId(i).measureId(1L).lastUpdated(timeExecuted).build());
+        }
     }
 
     @Test
     public void clearMeasureWorkspace() {
-        subject.process(measures, patients, visits);
+        subject.process(measures, patients, visits, timeExecuted);
         subject.clear();
         assertThat(subject.getPatientDataHash().size()).isEqualTo(0);
         assertThat(subject.getMeasures().size()).isEqualTo(0);

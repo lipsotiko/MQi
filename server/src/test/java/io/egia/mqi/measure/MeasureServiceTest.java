@@ -77,21 +77,21 @@ public class MeasureServiceTest {
         Patient p = new Patient();
         p.setPatientId(99L);
         List<Patient> patients = new ArrayList<>(Collections.singletonList(p));
-        Mockito.when(patientRepository.findAllById(Collections.singletonList(99L))).thenReturn(patients);
+        Mockito.when(patientRepository.findByServerIdAndChunkGroup(11L, 1)).thenReturn(patients);
 
         Visit v = new Visit();
         v.setPatientId(99L);
         List<Visit> visits = new ArrayList<>(Collections.singletonList(v));
         visits.add(v);
-        Mockito.when(visitRepository.findAllById(Collections.singletonList(99L))).thenReturn(visits);
+        Mockito.when(visitRepository.findByServerIdAndChunkGroup(11L, 1)).thenReturn(visits);
 
-        firstChunkPending = Chunk.builder().serverId(11L).patientId(99L).chunkStatus(ChunkStatus.PENDING).build();
-        secondChunkPending = Chunk.builder().serverId(11L).patientId(88L).chunkStatus(ChunkStatus.PENDING).build();
-        thirdChunkPending = Chunk.builder().serverId(11L).patientId(77L).chunkStatus(ChunkStatus.PENDING).build();
+        firstChunkPending = Chunk.builder().serverId(11L).patientId(99L).chunkGroup(1).chunkStatus(ChunkStatus.PENDING).build();
+        secondChunkPending = Chunk.builder().serverId(11L).patientId(88L).chunkGroup(2).chunkStatus(ChunkStatus.PENDING).build();
+        thirdChunkPending = Chunk.builder().serverId(11L).patientId(77L).chunkGroup(3).chunkStatus(ChunkStatus.PENDING).build();
 
-        firstChunkDone = Chunk.builder().serverId(11L).patientId(99L).chunkStatus(ChunkStatus.DONE).build();
-        secondChunkDone = Chunk.builder().serverId(11L).patientId(88L).chunkStatus(ChunkStatus.DONE).build();
-        thirdChunkDone = Chunk.builder().serverId(11L).patientId(77L).chunkStatus(ChunkStatus.DONE).build();
+        firstChunkDone = Chunk.builder().serverId(11L).patientId(99L).chunkGroup(1).chunkStatus(ChunkStatus.DONE).build();
+        secondChunkDone = Chunk.builder().serverId(11L).patientId(88L).chunkGroup(2).chunkStatus(ChunkStatus.DONE).build();
+        thirdChunkDone = Chunk.builder().serverId(11L).patientId(77L).chunkGroup(3).chunkStatus(ChunkStatus.DONE).build();
 
         Mockito.when(chunkRepository.findTop5000ByServerIdAndChunkStatus(11L, ChunkStatus.PENDING))
                 .thenReturn(Optional.of(Collections.singletonList(firstChunkPending)))
@@ -123,6 +123,14 @@ public class MeasureServiceTest {
         assertThat(measureProcessor.clearWasCalled).isEqualTo(true);
 
         verify(jobRepository, times(1)).updateJobStatus(job.getJobId(), JobStatus.SUCCESS);
+    }
+
+    @Test
+    public void verifyNothingIsProcessedWhenNoMeasuresAreSupplied() {
+        List<Measure> measures = Collections.emptyList();
+        measureService.process(server, job, measures);
+        verify(chunkService,times(0)).chunkData(measures);
+        assertThat(measureProcessor.processWasCalled).isEqualTo(false);
     }
 
 }

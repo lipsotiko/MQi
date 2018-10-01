@@ -82,7 +82,8 @@ create table if not exists chunk (
 	patient_id bigint,
 	record_count bigint,
 	server_id bigint,
-	chunk_status integer
+	chunk_status integer,
+	chunk_group integer
 );
 
 create unique index ux_chunk_patient_server on chunk (patient_id, server_id);
@@ -148,19 +149,23 @@ values(0, 'PENDING'),
 
 drop view if exists patient_record_count;
 create view patient_record_count as
-select patient_id
-    , min(last_updated) as last_updated
+select a.patient_id
+    , min(a.last_updated) as last_updated
     , count(*) as record_count
 from (
 	select patient_id, last_updated from patient union all
 	select patient_id, null from visit union all
 	select patient_id, null from visit v inner join visit_code vc on v.visit_id = vc.visit_id ) a
-where patient_id not in (
-	select patient_id from chunk
-)
-group by patient_id
-order by record_count desc
-limit 10000;
+join measure m
+    on 1=1
+left join patient_measure_log lpm
+    on a.patient_id = lpm.patient_id
+    and lpm.measure_id = m.measure_id
+where (m.last_updated > coalesce(lpm.last_updated, '1900-01-01') --if the measure was updated since it was last executed
+    or a.last_updated > coalesce(lpm.last_updated, '1900-01-01')) --if the patient was updated since they were last processed
+    and a.patient_id not in (select patient_id from chunk)
+group by a.patient_id
+order by record_count desc;
 
 insert into measure (measure_name, measure_json, last_updated)
 values ('sample measure 1', '

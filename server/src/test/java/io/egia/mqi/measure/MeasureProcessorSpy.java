@@ -2,8 +2,8 @@ package io.egia.mqi.measure;
 
 import io.egia.mqi.patient.Patient;
 import io.egia.mqi.visit.Visit;
-import lombok.Data;
 
+import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -16,7 +16,7 @@ public class MeasureProcessorSpy implements MeasureProcessor {
     List<Visit> setPatientDataWasCalledWithVisits = new ArrayList<>();
 
     @Override
-    public void process(List<Measure> measures, List<Patient> patients, List<Visit> visits) {
+    public void process(List<Measure> measures, List<Patient> patients, List<Visit> visits, ZonedDateTime timeExecuted) {
 
         processWasCalled = true;
 

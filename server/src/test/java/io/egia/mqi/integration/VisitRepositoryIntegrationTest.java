@@ -5,7 +5,6 @@ import io.egia.mqi.visit.VisitRepository;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import java.util.Collections;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -17,7 +16,7 @@ public class VisitRepositoryIntegrationTest extends AbstractRepositoryTest {
 
     @Test
     public void visitRepository_findByServerIdAndChunkGroup() {
-        List<Visit> subject = visitRepository.findAllById(Collections.singletonList(1L));
+        List<Visit> subject = visitRepository.findByServerIdAndChunkGroup(1L,1);
         assertThat(subject.size()).isEqualTo(1);
         assertThat(subject.get(0).getVisitCodes().get(0).getCodeSystem()).isEqualTo("ICD_9");
         assertThat(subject.get(0).getVisitCodes().get(0).getCodeValue()).isEqualTo("abc");

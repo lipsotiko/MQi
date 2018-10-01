@@ -4,7 +4,10 @@ import io.egia.mqi.chunk.Chunk;
 import io.egia.mqi.chunk.ChunkRepository;
 import io.egia.mqi.patient.Patient;
 import io.egia.mqi.patient.PatientRepository;
-import io.egia.mqi.visit.*;
+import io.egia.mqi.visit.Visit;
+import io.egia.mqi.visit.VisitCode;
+import io.egia.mqi.visit.VisitCodeRepository;
+import io.egia.mqi.visit.VisitRepository;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.runner.RunWith;
@@ -38,6 +41,7 @@ abstract class AbstractRepositoryTest {
             chunk.setPatientId(i);
             chunk.setRecordCount(100L);
             chunk.setServerId(i);
+            chunk.setChunkGroup(1);
             chunkRepository.saveAndFlush(chunk);
 
             Patient patient = new Patient();

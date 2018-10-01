@@ -14,12 +14,9 @@ import io.egia.mqi.visit.Visit;
 import io.egia.mqi.visit.VisitRepository;
 import org.springframework.stereotype.Service;
 
-import java.util.Collections;
+import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collector;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 @Service
 public class MeasureService {
@@ -47,6 +44,10 @@ public class MeasureService {
     //TODO: Make process async
     public void process(Server server, Job job, List<Measure> measures) {
 
+        if(measures.size() == 0) {
+            return;
+        }
+
         chunkService.chunkData(measures);
 
         Optional<List<Chunk>> currentChunk = chunkRepository.findTop5000ByServerIdAndChunkStatus(
@@ -54,10 +55,11 @@ public class MeasureService {
 
         while (currentChunk.isPresent()) {
             List<Chunk> chunks = currentChunk.get();
-            List<Long> patientIds = chunks.stream().map(Chunk::getPatientId).collect(Collectors.toList());
-            List<Patient> patients = patientRepository.findAllById(patientIds);
-            List<Visit> visits = visitRepository.findAllById(patientIds);
-            measureProcessor.process(measures, patients, visits);
+            Long serverId = chunks.get(0).getServerId();
+            Integer chunkGroup = chunks.get(0).getChunkGroup();
+            List<Patient> patients = patientRepository.findByServerIdAndChunkGroup(serverId, chunkGroup);
+            List<Visit> visits = visitRepository.findByServerIdAndChunkGroup(serverId, chunkGroup);
+            measureProcessor.process(measures, patients, visits, ZonedDateTime.now());
             measureProcessor.clear();
             chunks.forEach(c -> c.setChunkStatus(ChunkStatus.DONE));
             chunkRepository.saveAll(chunks);

@@ -2,6 +2,7 @@ package io.egia.mqi;
 
 import io.egia.mqi.chunk.ChunkRepository;
 import io.egia.mqi.patient.Patient;
+import io.egia.mqi.patient.PatientMeasureLogRepository;
 import io.egia.mqi.patient.PatientRepository;
 import io.egia.mqi.server.Server;
 import io.egia.mqi.server.ServerRepository;
@@ -29,6 +30,7 @@ public class SeedDdController {
     @Autowired private ChunkRepository chunkRepository;
     @Autowired private ServerRepository serverRepository;
     @Autowired private ServerService serverService;
+    @Autowired private PatientMeasureLogRepository patientMeasureLogRepository;
 
     @GetMapping("/seed")
     public Map<String, Integer> seedDb() throws UnknownHostException {
@@ -38,6 +40,7 @@ public class SeedDdController {
         visitRepository.deleteAll();
         patientRepository.deleteAll();
         serverRepository.deleteAll();
+        patientMeasureLogRepository.deleteAll();
 
         serverRepository.saveAndFlush(
                 Server.builder().serverId(1L)

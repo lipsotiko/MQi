@@ -22,7 +22,8 @@ public class Chunk {
 	@GeneratedValue(strategy=GenerationType.IDENTITY)
 	private Long chunkId;
 	private Long patientId;
-	private Long recordCount;
 	private Long serverId;
+	private Long recordCount;
 	private ChunkStatus chunkStatus;
+	private int chunkGroup;
 }
