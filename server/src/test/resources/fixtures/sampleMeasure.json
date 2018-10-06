@@ -6,7 +6,7 @@
 	"steps": [
 		{
 			"stepId": 100,
-			"ruleName": "AgesWithinDateRange",
+			"ruleName": "AgeWithinDateRange",
 			"parameters": [
 				{
 					"paramName": "FROM_AGE",
@@ -20,12 +20,12 @@
 				},
 				{
 					"paramName": "START_DATE",
-					"paramValue": "$ryBegin",
+					"paramValue": "19880428",
 					"paramType": "DATE"
 				},
 				{
 					"paramName": "END_DATE",
-					"paramValue": "$ryBegin",
+					"paramValue": "19880428",
 					"paramType": "DATE"
 				}
 			],

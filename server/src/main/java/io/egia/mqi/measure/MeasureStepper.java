@@ -31,18 +31,19 @@ public class MeasureStepper {
 
         while (measureResult.getContinueProcessing()) {
             String rule = currentStep.getRuleName();
+            List<RuleParam> parameters = currentStep.getParameters();
             log.debug(String.format("Evaluating rule %s", rule));
 
             Method ruleMethod;
             try {
                 ruleClass = Class.forName("io.egia.mqi.rules." + rule);
-                ruleMethod = ruleClass.getMethod("evaluate", PatientData.class, MeasureResult.class);
+                ruleMethod = ruleClass.getMethod("evaluate", PatientData.class, List.class, MeasureResult.class);
             } catch (NoSuchMethodException | ClassNotFoundException e) {
                 throw new MeasureProcessorException(String.format("Could not find method %s", rule), e);
             }
 
             try {
-                measureResult = (MeasureResult) ruleMethod.invoke(ruleClass.newInstance(), patientData, measureResult);
+                measureResult = (MeasureResult) ruleMethod.invoke(ruleClass.newInstance(), patientData, parameters, measureResult);
             } catch (IllegalAccessException | InvocationTargetException | InstantiationException e) {
                 throw new MeasureProcessorException(String.format("Could not invoke method %s",rule), e);
             }

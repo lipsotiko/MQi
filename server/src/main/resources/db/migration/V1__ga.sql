@@ -62,7 +62,7 @@ drop table if exists visit_code;
 create table if not exists visit_code (
     visit_code_id bigserial primary key,
     visit_id bigint,
-    code_system varchar(15),
+    code_system integer,
     code_value varchar(15)
 );
 
@@ -135,22 +135,54 @@ create table if not exists rule_param (
 	param_type varchar(50)
 );
 
+drop view if exists code_set;
+create table code_set (
+    id bigserial primary key,
+	code_set_group bigint,
+	code_system integer,
+    code_value varchar(255)
+);
+
+drop table if exists code_set_group;
+create table if not exists code_set_group (
+	id bigserial primary key,
+	group_name varchar(255)
+);
+
 drop table if exists job_status;
 create table if not exists job_status (
-	job_status_id serial primary key,
+	id serial primary key,
 	job_status varchar(255)
 );
 
-insert into job_status (job_status_id, job_status)
+insert into job_status (id, job_status)
 values(0, 'PENDING'),
     (1, 'RUNNING'),
     (2, 'SUCCESS'),
     (3, 'FAILURE');
 
+drop table if exists code_system;
+create table if not exists code_system (
+	id serial primary key,
+	code_system varchar(255)
+);
+
+insert into code_system (id, code_system)
+values (0, 'ICD_9'),
+    (1, 'ICD_10'),
+    (2, 'POS'),
+    (3, 'REV'),
+    (4, 'TOB'),
+    (5, 'DRG'),
+    (6, 'HCPCS'),
+    (7, 'LOINC'),
+    (8, 'CPT2'),
+    (9, 'SNOMED');
+
 drop view if exists patient_record_count;
 create view patient_record_count as
 select a.patient_id
-    , min(a.last_updated) as last_updated
+    , max(a.last_updated) as last_updated
     , count(*) as record_count
 from (
 	select patient_id, last_updated from patient union all
@@ -176,7 +208,7 @@ values ('sample measure 1', '
       "steps": [
         {
           "stepId": 100,
-          "ruleName": "AgesWithinDateRange",
+          "ruleName": "AgeWithinDateRange",
           "parameters": [
             {
               "paramName": "FROM_AGE",
@@ -190,12 +222,12 @@ values ('sample measure 1', '
             },
             {
               "paramName": "START_DATE",
-              "paramValue": "$ryBegin",
+              "paramValue": "19880428",
               "paramType": "DATE"
             },
             {
               "paramName": "END_DATE",
-              "paramValue": "$ryBegin",
+              "paramValue": "19880428",
               "paramType": "DATE"
             }
           ],
@@ -226,7 +258,7 @@ values ('sample measure 1', '
       "steps": [
         {
           "stepId": 100,
-          "ruleName": "AgesWithinDateRange",
+          "ruleName": "AgeWithinDateRange",
           "parameters": [
             {
               "paramName": "FROM_AGE",
@@ -240,12 +272,12 @@ values ('sample measure 1', '
             },
             {
               "paramName": "START_DATE",
-              "paramValue": "$ryBegin",
+              "paramValue": "19880428",
               "paramType": "DATE"
             },
             {
               "paramName": "END_DATE",
-              "paramValue": "$ryBegin",
+              "paramValue": "19880428",
               "paramType": "DATE"
             }
           ],

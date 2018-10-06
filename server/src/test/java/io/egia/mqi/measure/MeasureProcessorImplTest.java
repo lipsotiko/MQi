@@ -4,7 +4,7 @@ import io.egia.mqi.helpers.Helpers;
 import io.egia.mqi.patient.Patient;
 import io.egia.mqi.patient.PatientData;
 import io.egia.mqi.patient.PatientMeasureLog;
-import io.egia.mqi.patient.PatientMeasureLogRepository;
+import io.egia.mqi.patient.PatientMeasureLogRepo;
 import io.egia.mqi.visit.Visit;
 import org.junit.Before;
 import org.junit.Test;
@@ -26,7 +26,7 @@ public class MeasureProcessorImplTest {
     private List<Visit> visits = new ArrayList<>();
 
     @Mock
-    private PatientMeasureLogRepository patientMeasureLogRepository;
+    private PatientMeasureLogRepo patientMeasureLogRepo;
     private MeasureProcessorImpl subject;
     private List<Measure> measures = new ArrayList<>();
 
@@ -35,12 +35,13 @@ public class MeasureProcessorImplTest {
     @Before
     public void setUp() throws IOException {
 
-        subject = new MeasureProcessorImpl(patientMeasureLogRepository);
+        subject = new MeasureProcessorImpl(patientMeasureLogRepo);
 
         for (Long i = 1L; i <= 5; i++) {
             Patient p = new Patient();
             p.setPatientId(i);
             p.setFirstName("vango");
+            p.setDateOfBirth(new GregorianCalendar(1986, Calendar.APRIL, 28).getTime());
             patients.add(p);
         }
 
@@ -79,10 +80,10 @@ public class MeasureProcessorImplTest {
         subject.process(measures, patients, visits, timeExecuted);
         assertThat(subject.getMeasureResults().size()).isEqualTo(5);
         assertThat(subject.getRulesEvaluatedCount()).isEqualTo(15);
-        
+
         for(Long i = 1L; i <= 5L; i++) {
-            verify(patientMeasureLogRepository, times(1)).deleteByPatientIdAndMeasureId(i, 1L);
-            verify(patientMeasureLogRepository, times(1))
+            verify(patientMeasureLogRepo, times(1)).deleteByPatientIdAndMeasureId(i, 1L);
+            verify(patientMeasureLogRepo, times(1))
                     .save(PatientMeasureLog.builder().patientId(i).measureId(1L).lastUpdated(timeExecuted).build());
         }
     }

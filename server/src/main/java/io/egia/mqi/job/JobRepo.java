@@ -6,13 +6,8 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
-import java.util.Optional;
-
 @Repository
-public interface JobRepository extends JpaRepository<Job, Long> {
-
-	Optional<List<Job>> findByJobStatusOrderByJobIdAsc(JobStatus jobStatus);
+public interface JobRepo extends JpaRepository<Job, Long> {
 
 	@Modifying
 	@Transactional

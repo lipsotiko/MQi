@@ -18,10 +18,10 @@ public class MeasureProcessorImpl implements MeasureProcessor {
     private Hashtable<Long, PatientData> patientDataHash = new Hashtable<>();
     private int rulesEvaluatedCount;
     private List<MeasureResult> measureResults = new ArrayList<>();
-    private PatientMeasureLogRepository patientMeasureLogRepository;
+    private PatientMeasureLogRepo patientMeasureLogRepo;
 
-    MeasureProcessorImpl(PatientMeasureLogRepository patientMeasureLogRepository) {
-        this.patientMeasureLogRepository = patientMeasureLogRepository;
+    MeasureProcessorImpl(PatientMeasureLogRepo patientMeasureLogRepo) {
+        this.patientMeasureLogRepo = patientMeasureLogRepo;
     }
 
     @Override
@@ -35,9 +35,9 @@ public class MeasureProcessorImpl implements MeasureProcessor {
                             patientId,
                             measure.getMeasureName()));
                     try {
-                        patientMeasureLogRepository.deleteByPatientIdAndMeasureId(patientId, measure.getMeasureId());
+                        patientMeasureLogRepo.deleteByPatientIdAndMeasureId(patientId, measure.getMeasureId());
                         evaluatePatientDataByMeasure(patientData, measure);
-                        patientMeasureLogRepository.save(
+                        patientMeasureLogRepo.save(
                                 PatientMeasureLog.builder()
                                         .patientId(patientId)
                                         .measureId(measure.getMeasureId())

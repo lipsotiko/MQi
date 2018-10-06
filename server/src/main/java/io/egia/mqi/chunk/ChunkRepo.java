@@ -7,6 +7,6 @@ import java.util.List;
 import java.util.Optional;
 
 @Repository
-public interface ChunkRepository extends JpaRepository<Chunk, Long> {
+public interface ChunkRepo extends JpaRepository<Chunk, Long> {
     Optional<List<Chunk>> findTop5000ByServerIdAndChunkStatus(Long serverId, ChunkStatus chunkStatus);
 }

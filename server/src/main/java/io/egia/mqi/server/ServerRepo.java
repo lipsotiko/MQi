@@ -7,7 +7,7 @@ import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
 @Repository
-public interface ServerRepository extends JpaRepository<Server, Long> {
+public interface ServerRepo extends JpaRepository<Server, Long> {
 	Server findOneByServerNameAndServerPort(String systemName, String serverPort);
 
 	Server findOneBySystemType(SystemType systemType);

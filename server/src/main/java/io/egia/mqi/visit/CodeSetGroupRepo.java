@@ -1,9 +1,8 @@
-package io.egia.mqi.measure;
+package io.egia.mqi.visit;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface RuleParamRepository extends JpaRepository<RuleParam, Long> {
-
+public interface CodeSetGroupRepo extends JpaRepository<CodeSetGroup, Long> {
 }

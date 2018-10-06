@@ -6,7 +6,7 @@
 	"steps": [
 		{
 			"stepId": 100,
-			"ruleName": "AgesWithinDateRange",
+			"ruleName": "AgeWithinDateRange",
 			"parameters": [
 				{
 					"paramName": "FROM_AGE",

@@ -18,14 +18,14 @@ public class RuleParamUtility {
 
     private Set<Class<?>> annotated = reflections.getTypesAnnotatedWith(Rule.class);
 
-    private RuleParamRepository ruleParamRepository;
+    private RuleParamRepo ruleParamRepo;
 
-    public RuleParamUtility(RuleParamRepository ruleParamRepository) {
-        this.ruleParamRepository = ruleParamRepository;
+    public RuleParamUtility(RuleParamRepo ruleParamRepo) {
+        this.ruleParamRepo = ruleParamRepo;
     }
 
     public void saveRuleParams() throws ClassNotFoundException {
-        ruleParamRepository.deleteAll();
+        ruleParamRepo.deleteAll();
         Class<?> ruleClass;
 
         for (Class c : annotated) {
@@ -34,12 +34,12 @@ public class RuleParamUtility {
             String ruleName = c.getName().substring(packagePrefix.length()+1);
 
             if (rule.params().length == 0) {
-                ruleParamRepository.save(new RuleParam(ruleName, null, null));
+                ruleParamRepo.save(new RuleParam(ruleName, null, null));
                 continue;
             }
 
             for (Param param : rule.params()) {
-                ruleParamRepository.save(new RuleParam(ruleName,param.name(), param.type()));
+                ruleParamRepo.save(new RuleParam(ruleName,param.name(), param.type()));
             }
         }
     }

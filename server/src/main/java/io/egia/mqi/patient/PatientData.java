@@ -8,7 +8,7 @@ import java.util.List;
 public class PatientData {
     private Long patientId;
 
-    private List<Patient> patients = new ArrayList<>();
+    private Patient patient;
     private List<Visit> visits = new ArrayList<>();
 
     public PatientData(Long patientId) {
@@ -16,7 +16,7 @@ public class PatientData {
     }
 
     public void addPatientRecord(Patient p) {
-        this.patients.add(p);
+        this.patient = p;
     }
 
     public void addPatientRecord(Visit v) {
@@ -27,15 +27,11 @@ public class PatientData {
         return this.patientId;
     }
 
-    public List<Visit> getVisits() {
-        return this.visits;
-    }
-
-    public int getPatientCount(){
-        return this.patients.size();
-    }
-
     public int getVisitCount(){
         return this.visits.size();
+    }
+
+    public Patient getPatient() {
+        return patient;
     }
 }

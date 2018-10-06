@@ -1,13 +1,10 @@
 package io.egia.mqi.integration;
 
 import io.egia.mqi.chunk.Chunk;
-import io.egia.mqi.chunk.ChunkRepository;
+import io.egia.mqi.chunk.ChunkRepo;
 import io.egia.mqi.patient.Patient;
-import io.egia.mqi.patient.PatientRepository;
-import io.egia.mqi.visit.Visit;
-import io.egia.mqi.visit.VisitCode;
-import io.egia.mqi.visit.VisitCodeRepository;
-import io.egia.mqi.visit.VisitRepository;
+import io.egia.mqi.patient.PatientRepo;
+import io.egia.mqi.visit.*;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.runner.RunWith;
@@ -26,13 +23,13 @@ import java.util.Collections;
 abstract class AbstractRepositoryTest {
 
     @Autowired
-    private ChunkRepository chunkRepository;
+    private ChunkRepo chunkRepo;
     @Autowired
-    private PatientRepository patientRepository;
+    private PatientRepo patientRepo;
     @Autowired
-    private VisitRepository visitRepository;
+    private VisitRepo visitRepo;
     @Autowired
-    private VisitCodeRepository visitCodeRepository;
+    private VisitCodeRepo visitCodeRepo;
 
     @Before
     public void setUp() {
@@ -42,34 +39,34 @@ abstract class AbstractRepositoryTest {
             chunk.setRecordCount(100L);
             chunk.setServerId(i);
             chunk.setChunkGroup(1);
-            chunkRepository.saveAndFlush(chunk);
+            chunkRepo.saveAndFlush(chunk);
 
             Patient patient = new Patient();
             patient.setPatientId(i);
-            patientRepository.saveAndFlush(patient);
+            patientRepo.saveAndFlush(patient);
 
             Visit visit = new Visit();
             visit.setVisitId(i);
             visit.setPatientId(i);
-            Visit savedVisit = visitRepository.saveAndFlush(visit);
+            Visit savedVisit = visitRepo.saveAndFlush(visit);
 
             VisitCode code = new VisitCode();
             code.setVisitCodeId(i);
             code.setVisitId(i);
             code.setCodeValue("abc");
-            code.setCodeSystem("ICD_9");
-            visitCodeRepository.saveAndFlush(code);
+            code.setCodeSystem(CodeSystem.ICD_9);
+            visitCodeRepo.saveAndFlush(code);
 
             savedVisit.setVisitCodes(Collections.singletonList(code));
-            visitRepository.saveAndFlush(savedVisit);
+            visitRepo.saveAndFlush(savedVisit);
         }
     }
 
     @After
     public void tearDown() {
-        visitCodeRepository.deleteAll();
-        visitRepository.deleteAll();
-        patientRepository.deleteAll();
-        chunkRepository.deleteAll();
+        visitCodeRepo.deleteAll();
+        visitRepo.deleteAll();
+        patientRepo.deleteAll();
+        chunkRepo.deleteAll();
     }
 }

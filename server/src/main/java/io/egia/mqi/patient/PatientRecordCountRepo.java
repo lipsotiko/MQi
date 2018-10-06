@@ -6,6 +6,6 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 
 @Repository
-public interface PatientRecordCountRepository extends JpaRepository<PatientRecordCount, Long> {
+public interface PatientRecordCountRepo extends JpaRepository<PatientRecordCount, Long> {
     List<PatientRecordCount> findTop5000By();
 }

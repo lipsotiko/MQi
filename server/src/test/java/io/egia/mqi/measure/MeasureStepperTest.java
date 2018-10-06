@@ -1,30 +1,36 @@
 package io.egia.mqi.measure;
 
 import io.egia.mqi.helpers.Helpers;
+import io.egia.mqi.patient.Patient;
 import io.egia.mqi.patient.PatientData;
+import org.junit.Before;
 import org.junit.Test;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 
 public class MeasureStepperTest {
 
+
+
     @Test
     public void measureIsSteppedThrough() throws IOException, MeasureProcessorException {
         Measure measure = Helpers.getMeasureFromResource("fixtures", "sampleMeasure.json");
         List<String> testMeasureRules = new ArrayList<>();
-        measure.getMeasureLogic().getSteps().stream().forEach((step -> testMeasureRules.add(step.getRuleName())));
-        MeasureStepper subject = new MeasureStepper(
-                new PatientData(1L), measure, new MeasureResult());
+        measure.getMeasureLogic().getSteps().forEach((step -> testMeasureRules.add(step.getRuleName())));
+        PatientData patientData = new PatientData(1L);
+        Patient patient = new Patient();
+        Date dob = new GregorianCalendar(1986, Calendar.APRIL, 28).getTime();
+        patient.setDateOfBirth(dob);
+        patientData.addPatientRecord(patient);
+
+        MeasureStepper subject = new MeasureStepper(patientData, measure, new MeasureResult());
         subject.stepThroughMeasure();
 
-        testMeasureRules.stream().forEach(rule -> {
-            assertThat(subject.getMeasureResult().getRuleTrace()).contains(rule);
-        });
+        testMeasureRules.forEach(rule -> assertThat(subject.getMeasureResult().getRuleTrace()).contains(rule));
     }
 
     @Test
@@ -33,10 +39,7 @@ public class MeasureStepperTest {
         MeasureStepper subject = new MeasureStepper(
                 new PatientData(1L), measure, new MeasureResult());
 
-        assertThatExceptionOfType(MeasureProcessorException.class).isThrownBy(() -> {
-                    subject.stepThroughMeasure();
-                }
-        );
+        assertThatExceptionOfType(MeasureProcessorException.class).isThrownBy(subject::stepThroughMeasure);
     }
 
     @Test

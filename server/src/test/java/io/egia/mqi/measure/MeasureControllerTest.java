@@ -19,7 +19,7 @@ import static org.mockito.Mockito.*;
 public class MeasureControllerTest {
 
     @Mock
-    private MeasureRepository measureRepository;
+    private MeasureRepo measureRepo;
 
     private Measure existingMeasure;
 
@@ -39,23 +39,23 @@ public class MeasureControllerTest {
         updatedMeasureDescription.getMeasureLogic().setDescription("UPDATED DESCRIPTION");
         updatedMeasureLogic = Helpers.getMeasureFromResource("fixtures", "updatedMeasure.json");
         updatedMeasureLogic.setMeasureId(1L);
-        when(measureRepository.findById(1L)).thenReturn(Optional.of(existingMeasure));
+        when(measureRepo.findById(1L)).thenReturn(Optional.of(existingMeasure));
     }
 
     @Test
     public void putMeasureWithUpdatedMeasureDescriptionTest() {
-        MeasureController measureController = new MeasureController(measureRepository, null);
+        MeasureController measureController = new MeasureController(measureRepo, null);
         measureController.putMeasure(updatedMeasureDescription);
-        verify(measureRepository, times(1)).saveAndFlush(captor.capture());
+        verify(measureRepo, times(1)).saveAndFlush(captor.capture());
         assertThat(captor.getValue().getMeasureLogic()).isEqualTo(updatedMeasureDescription.getMeasureLogic());
         assertThat(captor.getValue().getLastUpdated()).isEqualTo(updatedMeasureDescription.getLastUpdated());
     }
 
     @Test
     public void putMeasureWithUpdatedMeasureLogicTest() {
-        MeasureController measureController = new MeasureController( measureRepository, null);
+        MeasureController measureController = new MeasureController(measureRepo, null);
         measureController.putMeasure(updatedMeasureLogic);
-        verify(measureRepository, times(1)).saveAndFlush(captor.capture());
+        verify(measureRepo, times(1)).saveAndFlush(captor.capture());
         assertThat(captor.getValue().getMeasureLogic().getDescription()).isEqualTo(
                 existingMeasure.getMeasureLogic().getDescription());
         assertThat(captor.getValue().getMeasureLogic()).isNotEqualTo(existingMeasure.getMeasureLogic());

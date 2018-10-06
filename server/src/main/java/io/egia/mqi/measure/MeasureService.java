@@ -1,17 +1,17 @@
 package io.egia.mqi.measure;
 
 import io.egia.mqi.chunk.Chunk;
-import io.egia.mqi.chunk.ChunkRepository;
+import io.egia.mqi.chunk.ChunkRepo;
 import io.egia.mqi.chunk.ChunkService;
 import io.egia.mqi.chunk.ChunkStatus;
 import io.egia.mqi.job.Job;
-import io.egia.mqi.job.JobRepository;
+import io.egia.mqi.job.JobRepo;
 import io.egia.mqi.job.JobStatus;
 import io.egia.mqi.patient.Patient;
-import io.egia.mqi.patient.PatientRepository;
+import io.egia.mqi.patient.PatientRepo;
 import io.egia.mqi.server.Server;
 import io.egia.mqi.visit.Visit;
-import io.egia.mqi.visit.VisitRepository;
+import io.egia.mqi.visit.VisitRepo;
 import org.springframework.stereotype.Service;
 
 import java.time.ZonedDateTime;
@@ -20,24 +20,24 @@ import java.util.Optional;
 
 @Service
 public class MeasureService {
-    private ChunkRepository chunkRepository;
+    private ChunkRepo chunkRepo;
     private ChunkService chunkService;
-    private JobRepository jobRepository;
-    private PatientRepository patientRepository;
-    private VisitRepository visitRepository;
+    private JobRepo jobRepo;
+    private PatientRepo patientRepo;
+    private VisitRepo visitRepo;
     private MeasureProcessor measureProcessor;
 
-    MeasureService(ChunkRepository chunkRepository,
+    MeasureService(ChunkRepo chunkRepo,
                    ChunkService chunkService,
-                   JobRepository jobRepository,
-                   PatientRepository patientRepository,
-                   VisitRepository visitRepository,
+                   JobRepo jobRepo,
+                   PatientRepo patientRepo,
+                   VisitRepo visitRepo,
                    MeasureProcessor measureProcessor) {
-        this.chunkRepository = chunkRepository;
+        this.chunkRepo = chunkRepo;
         this.chunkService = chunkService;
-        this.jobRepository = jobRepository;
-        this.patientRepository = patientRepository;
-        this.visitRepository = visitRepository;
+        this.jobRepo = jobRepo;
+        this.patientRepo = patientRepo;
+        this.visitRepo = visitRepo;
         this.measureProcessor = measureProcessor;
     }
 
@@ -48,25 +48,25 @@ public class MeasureService {
             return;
         }
 
-        chunkService.chunkData(measures);
+        chunkService.chunkData();
 
-        Optional<List<Chunk>> currentChunk = chunkRepository.findTop5000ByServerIdAndChunkStatus(
+        Optional<List<Chunk>> currentChunk = chunkRepo.findTop5000ByServerIdAndChunkStatus(
                 server.getServerId(), ChunkStatus.PENDING);
 
         while (currentChunk.isPresent()) {
             List<Chunk> chunks = currentChunk.get();
             Long serverId = chunks.get(0).getServerId();
             Integer chunkGroup = chunks.get(0).getChunkGroup();
-            List<Patient> patients = patientRepository.findByServerIdAndChunkGroup(serverId, chunkGroup);
-            List<Visit> visits = visitRepository.findByServerIdAndChunkGroup(serverId, chunkGroup);
+            List<Patient> patients = patientRepo.findByServerIdAndChunkGroup(serverId, chunkGroup);
+            List<Visit> visits = visitRepo.findByServerIdAndChunkGroup(serverId, chunkGroup);
             measureProcessor.process(measures, patients, visits, ZonedDateTime.now());
             measureProcessor.clear();
             chunks.forEach(c -> c.setChunkStatus(ChunkStatus.DONE));
-            chunkRepository.saveAll(chunks);
-            currentChunk = chunkRepository.findTop5000ByServerIdAndChunkStatus(
+            chunkRepo.saveAll(chunks);
+            currentChunk = chunkRepo.findTop5000ByServerIdAndChunkStatus(
                     server.getServerId(), ChunkStatus.PENDING);
         }
 
-        jobRepository.updateJobStatus(job.getJobId(), JobStatus.SUCCESS);
+        jobRepo.updateJobStatus(job.getJobId(), JobStatus.SUCCESS);
     }
 }

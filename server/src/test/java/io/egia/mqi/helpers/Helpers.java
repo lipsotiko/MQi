@@ -3,6 +3,7 @@ package io.egia.mqi.helpers;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.egia.mqi.measure.Measure;
 import io.egia.mqi.measure.MeasureLogic;
+import io.egia.mqi.visit.CodeSet;
 import org.apache.commons.io.FileUtils;
 import org.springframework.core.io.ClassPathResource;
 

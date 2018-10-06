@@ -1,7 +1,7 @@
 package io.egia.mqi.integration;
 
 import io.egia.mqi.chunk.Chunk;
-import io.egia.mqi.chunk.ChunkRepository;
+import io.egia.mqi.chunk.ChunkRepo;
 import io.egia.mqi.chunk.ChunkStatus;
 import org.junit.After;
 import org.junit.Before;
@@ -20,10 +20,10 @@ import static org.assertj.core.api.Assertions.assertThat;
 @ActiveProfiles("test")
 @RunWith(SpringJUnit4ClassRunner.class)
 @SpringBootTest
-public class ChunkRepositoryIntegrationTest {
+public class ChunkRepoIntegrationTest {
 
     @Autowired
-    private ChunkRepository chunkRepository;
+    private ChunkRepo chunkRepo;
 
     @Before
     public void setUp() {
@@ -33,21 +33,21 @@ public class ChunkRepositoryIntegrationTest {
             chunk.setRecordCount(i);
             chunk.setServerId(1L);
             chunk.setChunkStatus(ChunkStatus.PENDING);
-            chunkRepository.saveAndFlush(chunk);
+            chunkRepo.saveAndFlush(chunk);
         }
     }
 
     @Test
     public void findFirstByServerIdAndChunkStatus() {
-        Optional<List<Chunk>> chunk =  chunkRepository.findTop5000ByServerIdAndChunkStatus(1L, ChunkStatus.PENDING);
+        Optional<List<Chunk>> chunk =  chunkRepo.findTop5000ByServerIdAndChunkStatus(1L, ChunkStatus.PENDING);
         assertThat(chunk.get().get(0).getServerId()).isEqualTo(1L);
     }
 
     @After
     public void tearDown() {
-        List<Chunk> chunks = chunkRepository.findAll();
+        List<Chunk> chunks = chunkRepo.findAll();
         for(Chunk c: chunks) {
-            chunkRepository.delete(c);
+            chunkRepo.delete(c);
         }
     }
 

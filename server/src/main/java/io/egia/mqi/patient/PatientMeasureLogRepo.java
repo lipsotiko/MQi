@@ -5,7 +5,7 @@ import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
 @Repository
-public interface PatientMeasureLogRepository extends JpaRepository<PatientMeasureLog, Long> {
+public interface PatientMeasureLogRepo extends JpaRepository<PatientMeasureLog, Long> {
     @Transactional
     void deleteByPatientIdAndMeasureId(Long patientId, Long measureId);
 }

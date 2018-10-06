@@ -1,10 +1,9 @@
 package io.egia.mqi.chunk;
 
-import io.egia.mqi.measure.Measure;
 import io.egia.mqi.patient.PatientRecordCount;
-import io.egia.mqi.patient.PatientRecordCountRepository;
+import io.egia.mqi.patient.PatientRecordCountRepo;
 import io.egia.mqi.server.Server;
-import io.egia.mqi.server.ServerRepository;
+import io.egia.mqi.server.ServerRepo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -15,21 +14,21 @@ import java.util.List;
 @Service
 public class ChunkService {
     private Logger log = LoggerFactory.getLogger(ChunkService.class);
-    private ChunkRepository chunkRepository;
-    private PatientRecordCountRepository patientRecordCountRepository;
-    private ServerRepository serverRepository;
+    private ChunkRepo chunkRepo;
+    private PatientRecordCountRepo patientRecordCountRepo;
+    private ServerRepo serverRepo;
 
-    public ChunkService(ServerRepository serverRepository,
-                        ChunkRepository chunkRepository,
-                        PatientRecordCountRepository patientRecordCountRepository) {
-        this.serverRepository = serverRepository;
-        this.chunkRepository = chunkRepository;
-        this.patientRecordCountRepository = patientRecordCountRepository; }
+    public ChunkService(ServerRepo serverRepo,
+                        ChunkRepo chunkRepo,
+                        PatientRecordCountRepo patientRecordCountRepo) {
+        this.serverRepo = serverRepo;
+        this.chunkRepo = chunkRepo;
+        this.patientRecordCountRepo = patientRecordCountRepo; }
 
-    public void chunkData(List<Measure> measures) {
-        chunkRepository.deleteAllInBatch();
-        List<Server> servers = serverRepository.findAll();
-        List<PatientRecordCount> patientRecordCounts = patientRecordCountRepository.findTop5000By();
+    public void chunkData() {
+        chunkRepo.deleteAllInBatch();
+        List<Server> servers = serverRepo.findAll();
+        List<PatientRecordCount> patientRecordCounts = patientRecordCountRepo.findTop5000By();
         int chunkGroup = 1;
 
         do {
@@ -55,8 +54,8 @@ public class ChunkService {
                 }
             }
 
-            chunkRepository.saveAll(chunks);
-            patientRecordCounts = patientRecordCountRepository.findTop5000By();
+            chunkRepo.saveAll(chunks);
+            patientRecordCounts = patientRecordCountRepo.findTop5000By();
             chunkGroup++;
         } while (patientRecordCounts.size() > 0);
 

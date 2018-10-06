@@ -17,7 +17,7 @@ import static org.mockito.ArgumentMatchers.anyString;
 public class ServerServiceTest {
 
     @Mock
-    private ServerRepository serverRepository;
+    private ServerRepo serverRepo;
 
     private ServerService serverService;
 
@@ -28,7 +28,7 @@ public class ServerServiceTest {
 
     @Before
     public void setUp() {
-        serverService = new ServerService(serverRepository);
+        serverService = new ServerService(serverRepo);
     }
 
     @Test
@@ -39,13 +39,13 @@ public class ServerServiceTest {
 
     @Test
     public void returnsServerFromHostNameAndPort() throws UnknownHostException {
-        Mockito.when(serverRepository.findOneByServerNameAndServerPort(anyString(), anyString())).thenReturn(server);
+        Mockito.when(serverRepo.findOneByServerNameAndServerPort(anyString(), anyString())).thenReturn(server);
         assertThat(serverService.getServerFromHostNameAndPort("8080")).isEqualTo(server);
     }
 
     @Test
     public void returnsPrimaryServer() {
-        Mockito.when(serverRepository.findOneBySystemType(SystemType.PRIMARY)).thenReturn(server);
+        Mockito.when(serverRepo.findOneBySystemType(SystemType.PRIMARY)).thenReturn(server);
         assertThat(serverService.getPrimaryServer()).isEqualTo(server);
     }
 }

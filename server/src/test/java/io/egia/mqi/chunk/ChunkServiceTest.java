@@ -2,9 +2,9 @@ package io.egia.mqi.chunk;
 
 import io.egia.mqi.measure.Measure;
 import io.egia.mqi.patient.PatientRecordCount;
-import io.egia.mqi.patient.PatientRecordCountRepository;
+import io.egia.mqi.patient.PatientRecordCountRepo;
 import io.egia.mqi.server.Server;
-import io.egia.mqi.server.ServerRepository;
+import io.egia.mqi.server.ServerRepo;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -25,11 +25,11 @@ import static org.mockito.Mockito.*;
 public class ChunkServiceTest {
 
     @Mock
-    private ServerRepository serverRepository;
+    private ServerRepo serverRepo;
     @Mock
-    private PatientRecordCountRepository patientRecordCountRepository;
+    private PatientRecordCountRepo patientRecordCountRepo;
     @Mock
-    private ChunkRepository chunkRepository;
+    private ChunkRepo chunkRepo;
     @Captor
     private ArgumentCaptor<List<Chunk>> captor = ArgumentCaptor.forClass(List.class);
 
@@ -67,8 +67,8 @@ public class ChunkServiceTest {
         servers.add(Server.builder().serverId(22L).build());
         servers.add(Server.builder().serverId(33L).build());
 
-        when(serverRepository.findAll()).thenReturn(servers);
-        when(patientRecordCountRepository.findTop5000By())
+        when(serverRepo.findAll()).thenReturn(servers);
+        when(patientRecordCountRepo.findTop5000By())
                 .thenReturn(firstPatientRecordCounts)
                 .thenReturn(secondPatientRecordCounts)
                 .thenReturn(Collections.emptyList());
@@ -108,11 +108,11 @@ public class ChunkServiceTest {
     @Test
     public void chunkDataTest() {
         ChunkService chunkService =
-                new ChunkService(serverRepository,
-                        chunkRepository,
-                        patientRecordCountRepository);
-        chunkService.chunkData(measures);
-        verify(chunkRepository, times(2)).saveAll(captor.capture());
+                new ChunkService(serverRepo,
+                        chunkRepo,
+                        patientRecordCountRepo);
+        chunkService.chunkData();
+        verify(chunkRepo, times(2)).saveAll(captor.capture());
         assertThat(captor.getAllValues().get(0)).isEqualTo(expected_1);
         assertThat(captor.getAllValues().get(1)).isEqualTo(expected_2);
     }

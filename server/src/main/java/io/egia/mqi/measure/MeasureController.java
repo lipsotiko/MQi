@@ -10,32 +10,32 @@ import java.util.Optional;
 
 @RestController
 public class MeasureController {
-    private MeasureRepository measureRepository;
-    private RuleParamRepository ruleParamRepository;
+    private MeasureRepo measureRepo;
+    private RuleParamRepo ruleParamRepo;
 
     @Value("${mqi.properties.system.version}")
     private String systemVersion;
 
-    MeasureController(MeasureRepository measureRepository, RuleParamRepository ruleParamRepository) {
-        this.measureRepository = measureRepository;
-        this.ruleParamRepository = ruleParamRepository;
+    MeasureController(MeasureRepo measureRepo, RuleParamRepo ruleParamRepo) {
+        this.measureRepo = measureRepo;
+        this.ruleParamRepo = ruleParamRepo;
     }
 
     @GetMapping("/measure")
     public Measure getMeasure(@RequestParam(value = "measureId") Long measureId) {
-        Optional<Measure> optionalMeasure = measureRepository.findById(measureId);
+        Optional<Measure> optionalMeasure = measureRepo.findById(measureId);
         return optionalMeasure.orElse(null);
     }
 
     @DeleteMapping("/measure")
     public void deleteMeasure(@RequestParam(value = "measureId") Long measureId) {
-        measureRepository.deleteById(measureId);
+        measureRepo.deleteById(measureId);
     }
 
     @PutMapping("/measure")
     public Measure putMeasure(@RequestBody Measure newMeasure) {
         ZonedDateTime now = ZonedDateTime.now(ZoneId.of("America/New_York"));
-        Optional<Measure> measure = measureRepository.findById(newMeasure.getMeasureId());
+        Optional<Measure> measure = measureRepo.findById(newMeasure.getMeasureId());
         MeasureLogic measureLogic;
         if (measure.isPresent()) {
             Measure existingMeasure = measure.get();
@@ -45,7 +45,7 @@ public class MeasureController {
                 measureLogic.setDescription(newMeasure.getMeasureLogic().getDescription());
                 measureLogic.setMinimumSystemVersion(systemVersion);
                 existingMeasure.setMeasureJson(measureLogic);
-                return measureRepository.saveAndFlush(existingMeasure);
+                return measureRepo.saveAndFlush(existingMeasure);
             }
         }
 
@@ -53,17 +53,17 @@ public class MeasureController {
         measureLogic.setMinimumSystemVersion(systemVersion);
         newMeasure.setMeasureJson(measureLogic);
         newMeasure.setLastUpdated(now);
-        return measureRepository.saveAndFlush(newMeasure);
+        return measureRepo.saveAndFlush(newMeasure);
     }
 
     @GetMapping("/measure_list")
     public List<MeasureListItem> getMeasureList() {
-        return measureRepository.findAllMeasureListItems();
+        return measureRepo.findAllMeasureListItems();
     }
 
     @GetMapping("/rules_params")
     public Iterable<RuleParam> rulesParams() {
-        return ruleParamRepository.findAll();
+        return ruleParamRepo.findAll();
     }
 
 }
