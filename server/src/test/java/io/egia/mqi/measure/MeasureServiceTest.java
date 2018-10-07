@@ -26,6 +26,7 @@ import java.util.List;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
@@ -89,14 +90,10 @@ public class MeasureServiceTest {
         secondChunkPending = Chunk.builder().serverId(11L).patientId(88L).chunkGroup(2).chunkStatus(ChunkStatus.PENDING).build();
         thirdChunkPending = Chunk.builder().serverId(11L).patientId(77L).chunkGroup(3).chunkStatus(ChunkStatus.PENDING).build();
 
-        firstChunkDone = Chunk.builder().serverId(11L).patientId(99L).chunkGroup(1).chunkStatus(ChunkStatus.DONE).build();
-        secondChunkDone = Chunk.builder().serverId(11L).patientId(88L).chunkGroup(2).chunkStatus(ChunkStatus.DONE).build();
-        thirdChunkDone = Chunk.builder().serverId(11L).patientId(77L).chunkGroup(3).chunkStatus(ChunkStatus.DONE).build();
-
-        Mockito.when(chunkRepo.findTop5000ByServerIdAndChunkStatus(11L, ChunkStatus.PENDING))
-                .thenReturn(Optional.of(Collections.singletonList(firstChunkPending)))
-                .thenReturn(Optional.of(Collections.singletonList(secondChunkPending)))
-                .thenReturn(Optional.of(Collections.singletonList(thirdChunkPending)))
+        Mockito.when(chunkRepo.findTop1ByServerIdAndChunkStatus(11L, ChunkStatus.PENDING))
+                .thenReturn(Optional.of(firstChunkPending))
+                .thenReturn(Optional.of(secondChunkPending))
+                .thenReturn(Optional.of(thirdChunkPending))
                 .thenReturn(Optional.empty());
     }
 
@@ -105,19 +102,18 @@ public class MeasureServiceTest {
         measureService.process(server, job, measures);
 
         verify(chunkService,times(1)).chunkData();
-        verify(chunkRepo,times(4)).findTop5000ByServerIdAndChunkStatus(11L, ChunkStatus.PENDING);
+        verify(chunkRepo,times(4)).findTop1ByServerIdAndChunkStatus(11L, ChunkStatus.PENDING);
 
         assertThat(measureProcessor.setMeasuresWasCalledWith.get(0).getMeasureName()).isEqualTo("Fake Measure");
         assertThat(measureProcessor.setPatientDataWasCalledWithPatients.get(0).getPatientId()).isEqualTo(99L);
         assertThat(measureProcessor.setPatientDataWasCalledWithVisits.get(0).getPatientId()).isEqualTo(99L);
 
-        verify(chunkRepo,times(1)).saveAll(Collections.singletonList(firstChunkPending));
-        verify(chunkRepo,times(1)).saveAll(Collections.singletonList(secondChunkPending));
-        verify(chunkRepo,times(1)).saveAll(Collections.singletonList(thirdChunkPending));
-
-        verify(chunkRepo,times(1)).saveAll(Collections.singletonList(firstChunkDone));
-        verify(chunkRepo,times(1)).saveAll(Collections.singletonList(secondChunkDone));
-        verify(chunkRepo,times(1)).saveAll(Collections.singletonList(thirdChunkDone));
+        verify(chunkRepo,times(1))
+                .updateChunkStatusByServerIdAndChunkGroup(11L,1, ChunkStatus.DONE);
+        verify(chunkRepo,times(1))
+                .updateChunkStatusByServerIdAndChunkGroup(11L,2, ChunkStatus.DONE);
+        verify(chunkRepo,times(1))
+                .updateChunkStatusByServerIdAndChunkGroup(11L,3, ChunkStatus.DONE);
 
         assertThat(measureProcessor.processWasCalled).isEqualTo(true);
         assertThat(measureProcessor.clearWasCalled).isEqualTo(true);

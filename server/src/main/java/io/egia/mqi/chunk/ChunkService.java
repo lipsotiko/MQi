@@ -30,6 +30,7 @@ public class ChunkService {
     }
 
     public void chunkData() {
+        log.info("Executing chunking process");
         chunkRepo.deleteAllInBatch();
         List<Server> servers = serverRepo.findAll();
 
@@ -38,12 +39,9 @@ public class ChunkService {
         long pages = count / pageSize;
 
         for (int i = 0; i < pages; i++) {
-            int chunkGroup = 1;
             int currentPatient = 0;
-
             List<PatientRecordCount> patientRecordCounts =
                     patientRecordCountRepo.findBy(PageRequest.of(i, pageSize));
-
             List<Chunk> chunks = new ArrayList<>();
 
             while (currentPatient < patientRecordCounts.size()) {
@@ -57,18 +55,15 @@ public class ChunkService {
 
                     chunks.add(Chunk.builder().patientId(p.getPatientId())
                             .serverId(s.getServerId())
-                            .chunkGroup(chunkGroup)
+                            .chunkGroup(i)
                             .chunkStatus(ChunkStatus.PENDING)
                             .recordCount(p.getRecordCount()).build());
 
                     currentPatient++;
                 }
-                chunkGroup++;
             }
             chunkRepo.saveAll(chunks);
         }
-
-        log.info("Executing chunking process");
     }
 
     private int getPageSize(List<Server> servers) {

@@ -16,6 +16,7 @@ import java.util.List;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.ArgumentMatchers.any;
 
 @ActiveProfiles("test")
 @RunWith(SpringJUnit4ClassRunner.class)
@@ -31,7 +32,7 @@ public class ChunkRepoIntegrationTest {
             Chunk chunk = new Chunk();
             chunk.setPatientId(i);
             chunk.setRecordCount(i);
-            chunk.setServerId(1L);
+            chunk.setServerId(i);
             chunk.setChunkStatus(ChunkStatus.PENDING);
             chunkRepo.saveAndFlush(chunk);
         }
@@ -39,8 +40,15 @@ public class ChunkRepoIntegrationTest {
 
     @Test
     public void findFirstByServerIdAndChunkStatus() {
-        Optional<List<Chunk>> chunk =  chunkRepo.findTop5000ByServerIdAndChunkStatus(1L, ChunkStatus.PENDING);
-        assertThat(chunk.get().get(0).getServerId()).isEqualTo(1L);
+        Optional<Chunk> chunk =  chunkRepo.findTop1ByServerIdAndChunkStatus(1L, ChunkStatus.PENDING);
+        assertThat(chunk.get().getServerId()).isEqualTo(1L);
+    }
+
+    @Test
+    public void updateChunkStatusByServerIdAndChunkGroup() {
+        assertThat(chunkRepo.findTop1ByServerIdAndChunkStatus(1L,ChunkStatus.DONE)).isNotPresent();
+        chunkRepo.updateChunkStatusByServerIdAndChunkGroup(1L, 0, ChunkStatus.DONE);
+        assertThat(chunkRepo.findTop1ByServerIdAndChunkStatus(1L,ChunkStatus.DONE)).isPresent();
     }
 
     @After

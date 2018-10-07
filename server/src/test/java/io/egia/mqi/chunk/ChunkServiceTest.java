@@ -84,25 +84,25 @@ public class ChunkServiceTest {
         measureUpdatedToday.setLastUpdated(ZonedDateTime.now());
 
         //Expected results
-        expected_1.add(buildChunk(1L, 11L, 100, 1));
-        expected_1.add(buildChunk(2L, 22L, 200, 1));
-        expected_1.add(buildChunk(3L, 33L, 300, 1));
-        expected_1.add(buildChunk(4L, 11L, 100, 2));
-        expected_1.add(buildChunk(5L, 22L, 200, 2));
-        expected_1.add(buildChunk(6L, 33L, 300, 2));
-        expected_1.add(buildChunk(7L, 11L, 100, 3));
-        expected_1.add(buildChunk(8L, 22L, 200, 3));
-        expected_1.add(buildChunk(9L, 33L, 300, 3));
+        expected_1.add(buildChunk(1L, 11L, 100, 0));
+        expected_1.add(buildChunk(2L, 22L, 200, 0));
+        expected_1.add(buildChunk(3L, 33L, 300, 0));
+        expected_1.add(buildChunk(4L, 11L, 100, 0));
+        expected_1.add(buildChunk(5L, 22L, 200, 0));
+        expected_1.add(buildChunk(6L, 33L, 300, 0));
+        expected_1.add(buildChunk(7L, 11L, 100, 0));
+        expected_1.add(buildChunk(8L, 22L, 200, 0));
+        expected_1.add(buildChunk(9L, 33L, 300, 0));
 
         expected_2.add(buildChunk(10L, 11L, 100, 1));
         expected_2.add(buildChunk(11L, 22L, 200, 1));
         expected_2.add(buildChunk(12L, 33L, 300, 1));
-        expected_2.add(buildChunk(13L, 11L, 100, 2));
-        expected_2.add(buildChunk(14L, 22L, 200, 2));
-        expected_2.add(buildChunk(15L, 33L, 300, 2));
-        expected_2.add(buildChunk(16L, 11L, 100, 3));
-        expected_2.add(buildChunk(17L, 22L, 200, 3));
-        expected_2.add(buildChunk(18L, 33L, 300, 3));
+        expected_2.add(buildChunk(13L, 11L, 100, 1));
+        expected_2.add(buildChunk(14L, 22L, 200, 1));
+        expected_2.add(buildChunk(15L, 33L, 300, 1));
+        expected_2.add(buildChunk(16L, 11L, 100, 1));
+        expected_2.add(buildChunk(17L, 22L, 200, 1));
+        expected_2.add(buildChunk(18L, 33L, 300, 1));
     }
 
     @Test
