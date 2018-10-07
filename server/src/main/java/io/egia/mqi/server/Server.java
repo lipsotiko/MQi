@@ -22,6 +22,7 @@ public class Server {
 	private String serverPort;
 	private SystemType systemType;
 	private String systemVersion;
+	private Integer pageSize;
 	@Column(insertable = false)
 	private Date lastUpdated;
 }

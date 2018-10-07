@@ -17,6 +17,8 @@ import org.springframework.stereotype.Service;
 import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @Service
 public class MeasureService {
@@ -50,21 +52,26 @@ public class MeasureService {
 
         chunkService.chunkData();
 
+        Long serverId = server.getServerId();
+
         Optional<List<Chunk>> currentChunk = chunkRepo.findTop5000ByServerIdAndChunkStatus(
-                server.getServerId(), ChunkStatus.PENDING);
+                serverId, ChunkStatus.PENDING);
 
         while (currentChunk.isPresent()) {
             List<Chunk> chunks = currentChunk.get();
-            Long serverId = chunks.get(0).getServerId();
-            Integer chunkGroup = chunks.get(0).getChunkGroup();
-            List<Patient> patients = patientRepo.findByServerIdAndChunkGroup(serverId, chunkGroup);
-            List<Visit> visits = visitRepo.findByServerIdAndChunkGroup(serverId, chunkGroup);
-            measureProcessor.process(measures, patients, visits, ZonedDateTime.now());
-            measureProcessor.clear();
+            Set<Integer> chunkGroups = chunks.stream().map(Chunk::getChunkGroup).collect(Collectors.toSet());
+
+            chunkGroups.forEach(cg -> {
+                List<Patient> patients = patientRepo.findByServerIdAndChunkGroup(serverId, cg);
+                List<Visit> visits = visitRepo.findByServerIdAndChunkGroup(serverId, cg);
+                measureProcessor.process(measures, patients, visits, ZonedDateTime.now());
+                measureProcessor.clear();
+            });
+
             chunks.forEach(c -> c.setChunkStatus(ChunkStatus.DONE));
             chunkRepo.saveAll(chunks);
             currentChunk = chunkRepo.findTop5000ByServerIdAndChunkStatus(
-                    server.getServerId(), ChunkStatus.PENDING);
+                    serverId, ChunkStatus.PENDING);
         }
 
         jobRepo.updateJobStatus(job.getJobId(), JobStatus.SUCCESS);

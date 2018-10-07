@@ -44,17 +44,19 @@ public class SeedDdController {
         codeSetGroupRepo.deleteAllInBatch();
 
         serverRepo.saveAndFlush(
-                Server.builder().serverId(1L)
+                Server.builder()
                         .serverName(InetAddress.getLocalHost().getHostName())
                         .systemType(SystemType.PRIMARY)
                         .systemVersion("1.0.0")
+                        .pageSize(50)
                         .serverPort("8080").build());
 
         serverRepo.saveAndFlush(
-                Server.builder().serverId(2L)
+                Server.builder()
                         .serverName("Test Server 2")
                         .systemType(SystemType.SECONDARY)
                         .systemVersion("1.0.0")
+                        .pageSize(50)
                         .serverPort("8081").build());
 
         for (long i = 1L; i <= 50; i++) {

@@ -5,6 +5,7 @@ import io.egia.mqi.patient.PatientRecordCount;
 import io.egia.mqi.patient.PatientRecordCountRepo;
 import io.egia.mqi.server.Server;
 import io.egia.mqi.server.ServerRepo;
+import io.egia.mqi.server.SystemType;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -39,10 +40,11 @@ public class ChunkServiceTest {
     private List<Server> servers = new ArrayList<>();
     private List<Chunk> expected_1 = new ArrayList<>();
     private List<Chunk> expected_2 = new ArrayList<>();
-    private List<Measure> measures = new ArrayList<>();
 
     @Before
     public void setUp() {
+        when(patientRecordCountRepo.count()).thenReturn(18L);
+
         firstPatientRecordCounts.add(buildPatientRecordCount(1L, 100));
         firstPatientRecordCounts.add(buildPatientRecordCount(2L, 200));
         firstPatientRecordCounts.add(buildPatientRecordCount(3L, 300));
@@ -63,12 +65,12 @@ public class ChunkServiceTest {
         secondPatientRecordCounts.add(buildPatientRecordCount(17L, 200));
         secondPatientRecordCounts.add(buildPatientRecordCount(18L, 300));
 
-        servers.add(Server.builder().serverId(11L).build());
-        servers.add(Server.builder().serverId(22L).build());
-        servers.add(Server.builder().serverId(33L).build());
+        servers.add(Server.builder().serverId(11L).systemType(SystemType.PRIMARY).pageSize(9).build());
+        servers.add(Server.builder().serverId(22L).systemType(SystemType.SECONDARY).build());
+        servers.add(Server.builder().serverId(33L).systemType(SystemType.SECONDARY).build());
 
         when(serverRepo.findAll()).thenReturn(servers);
-        when(patientRecordCountRepo.findTop5000By())
+        when(patientRecordCountRepo.findBy(any()))
                 .thenReturn(firstPatientRecordCounts)
                 .thenReturn(secondPatientRecordCounts)
                 .thenReturn(Collections.emptyList());
@@ -76,41 +78,38 @@ public class ChunkServiceTest {
         Measure measureUpdatedYesterday = new Measure();
         measureUpdatedYesterday.setMeasureId(111L);
         measureUpdatedYesterday.setLastUpdated(ZonedDateTime.now().minusDays(1));
-        measures.add(measureUpdatedYesterday);
 
         Measure measureUpdatedToday = new Measure();
         measureUpdatedToday.setMeasureId(222L);
         measureUpdatedToday.setLastUpdated(ZonedDateTime.now());
-        measures.add(measureUpdatedToday);
 
         //Expected results
         expected_1.add(buildChunk(1L, 11L, 100, 1));
         expected_1.add(buildChunk(2L, 22L, 200, 1));
         expected_1.add(buildChunk(3L, 33L, 300, 1));
-        expected_1.add(buildChunk(4L, 11L, 100, 1));
-        expected_1.add(buildChunk(5L, 22L, 200, 1));
-        expected_1.add(buildChunk(6L, 33L, 300, 1));
-        expected_1.add(buildChunk(7L, 11L, 100, 1));
-        expected_1.add(buildChunk(8L, 22L, 200, 1));
-        expected_1.add(buildChunk(9L, 33L, 300, 1));
+        expected_1.add(buildChunk(4L, 11L, 100, 2));
+        expected_1.add(buildChunk(5L, 22L, 200, 2));
+        expected_1.add(buildChunk(6L, 33L, 300, 2));
+        expected_1.add(buildChunk(7L, 11L, 100, 3));
+        expected_1.add(buildChunk(8L, 22L, 200, 3));
+        expected_1.add(buildChunk(9L, 33L, 300, 3));
 
-        expected_2.add(buildChunk(10L, 11L, 100, 2));
-        expected_2.add(buildChunk(11L, 22L, 200, 2));
-        expected_2.add(buildChunk(12L, 33L, 300, 2));
+        expected_2.add(buildChunk(10L, 11L, 100, 1));
+        expected_2.add(buildChunk(11L, 22L, 200, 1));
+        expected_2.add(buildChunk(12L, 33L, 300, 1));
         expected_2.add(buildChunk(13L, 11L, 100, 2));
         expected_2.add(buildChunk(14L, 22L, 200, 2));
         expected_2.add(buildChunk(15L, 33L, 300, 2));
-        expected_2.add(buildChunk(16L, 11L, 100, 2));
-        expected_2.add(buildChunk(17L, 22L, 200, 2));
-        expected_2.add(buildChunk(18L, 33L, 300, 2));
+        expected_2.add(buildChunk(16L, 11L, 100, 3));
+        expected_2.add(buildChunk(17L, 22L, 200, 3));
+        expected_2.add(buildChunk(18L, 33L, 300, 3));
     }
 
     @Test
     public void chunkDataTest() {
         ChunkService chunkService =
-                new ChunkService(serverRepo,
-                        chunkRepo,
-                        patientRecordCountRepo);
+                new ChunkService(serverRepo, chunkRepo, patientRecordCountRepo);
+
         chunkService.chunkData();
         verify(chunkRepo, times(2)).saveAll(captor.capture());
         assertThat(captor.getAllValues().get(0)).isEqualTo(expected_1);

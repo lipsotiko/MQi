@@ -4,12 +4,15 @@ import io.egia.mqi.patient.PatientRecordCount;
 import io.egia.mqi.patient.PatientRecordCountRepo;
 import io.egia.mqi.server.Server;
 import io.egia.mqi.server.ServerRepo;
+import io.egia.mqi.server.SystemType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class ChunkService {
@@ -23,18 +26,26 @@ public class ChunkService {
                         PatientRecordCountRepo patientRecordCountRepo) {
         this.serverRepo = serverRepo;
         this.chunkRepo = chunkRepo;
-        this.patientRecordCountRepo = patientRecordCountRepo; }
+        this.patientRecordCountRepo = patientRecordCountRepo;
+    }
 
     public void chunkData() {
         chunkRepo.deleteAllInBatch();
         List<Server> servers = serverRepo.findAll();
-        List<PatientRecordCount> patientRecordCounts = patientRecordCountRepo.findTop5000By();
-        int chunkGroup = 1;
 
-        do {
+        long count = patientRecordCountRepo.count();
+        int pageSize = getPageSize(servers);
+        long pages = count / pageSize;
+
+        for (int i = 0; i < pages; i++) {
+            int chunkGroup = 1;
+            int currentPatient = 0;
+
+            List<PatientRecordCount> patientRecordCounts =
+                    patientRecordCountRepo.findBy(PageRequest.of(i, pageSize));
+
             List<Chunk> chunks = new ArrayList<>();
 
-            int currentPatient = 0;
             while (currentPatient < patientRecordCounts.size()) {
                 for (Server s : servers) {
 
@@ -52,14 +63,20 @@ public class ChunkService {
 
                     currentPatient++;
                 }
+                chunkGroup++;
             }
-
             chunkRepo.saveAll(chunks);
-            patientRecordCounts = patientRecordCountRepo.findTop5000By();
-            chunkGroup++;
-        } while (patientRecordCounts.size() > 0);
+        }
 
         log.info("Executing chunking process");
+    }
+
+    private int getPageSize(List<Server> servers) {
+        return servers.stream()
+                .filter(s -> s.getSystemType().equals(SystemType.PRIMARY))
+                .collect(Collectors.toList())
+                .get(0)
+                .getPageSize();
     }
 
 }

@@ -52,7 +52,6 @@ public class MeasureProcessorImpl implements MeasureProcessor {
 
     @Override
     public void clear() {
-        this.measures.clear();
         this.patientDataHash.clear();
         this.rulesEvaluatedCount = 0;
         this.measureResults.clear();

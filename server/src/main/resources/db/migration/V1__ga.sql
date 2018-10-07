@@ -94,6 +94,7 @@ create table if not exists server (
 	server_name varchar(100),
 	server_port varchar(5),
 	system_type integer,
+	page_size integer,
 	system_version varchar(8),
 	last_updated timestamp default current_timestamp
 );
@@ -190,14 +191,16 @@ from (
 	select patient_id, null from visit v inner join visit_code vc on v.visit_id = vc.visit_id ) a
 join measure m
     on 1=1
+join job_measure jm
+    on m.measure_id = jm.measure_id
+    and jm.job_measure_id = (select max(job_measure_id) from job_measure)
 left join patient_measure_log lpm
     on a.patient_id = lpm.patient_id
     and lpm.measure_id = m.measure_id
 where (m.last_updated > coalesce(lpm.last_updated, '1900-01-01') --if the measure was updated since it was last executed
     or a.last_updated > coalesce(lpm.last_updated, '1900-01-01')) --if the patient was updated since they were last processed
-    and a.patient_id not in (select patient_id from chunk)
 group by a.patient_id
-order by record_count desc;
+order by record_count desc, a.patient_id desc;
 
 insert into measure (measure_name, measure_json, last_updated)
 values ('sample measure 1', '

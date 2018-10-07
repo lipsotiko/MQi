@@ -93,7 +93,6 @@ public class MeasureProcessorImplTest {
         subject.process(measures, patients, visits, timeExecuted);
         subject.clear();
         assertThat(subject.getPatientDataHash().size()).isEqualTo(0);
-        assertThat(subject.getMeasures().size()).isEqualTo(0);
         assertThat(subject.getMeasureResults().size()).isEqualTo(0);
         assertThat(subject.getRulesEvaluatedCount()).isEqualTo(0);
     }
