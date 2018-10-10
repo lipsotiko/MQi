@@ -3,7 +3,7 @@ package io.egia.mqi.measure;
 import io.egia.mqi.helpers.Helpers;
 import io.egia.mqi.patient.Patient;
 import io.egia.mqi.patient.PatientData;
-import org.junit.Before;
+import io.egia.mqi.visit.*;
 import org.junit.Test;
 
 import java.io.IOException;
@@ -13,8 +13,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 
 public class MeasureStepperTest {
-
-
 
     @Test
     public void measureIsSteppedThrough() throws IOException, MeasureProcessorException {
@@ -27,26 +25,37 @@ public class MeasureStepperTest {
         patient.setDateOfBirth(dob);
         patientData.addPatientRecord(patient);
 
-        MeasureStepper subject = new MeasureStepper(patientData, measure, new MeasureResult());
+        VisitCode visitCode = new VisitCode();
+        visitCode.setCodeValue("123");
+        visitCode.setCodeSystem(CodeSystem.ICD_10);
+        Visit visit = new Visit();
+        visit.setVisitCodes(Collections.singletonList(visitCode));
+        patientData.addPatientRecord(visit);
+
+        CodeSetGroup codeSetGroupA = CodeSetGroup.builder().groupName("CODE_SET_A").build();
+        CodeSet codeSetA = CodeSet.builder().codeSetGroup(codeSetGroupA).codeSystem(CodeSystem.ICD_10).codeValue("123").build();
+        MeasureMetaData measureMetaData = new MeasureMetaData(Collections.singletonList(codeSetA));
+
+        MeasureStepper subject = new MeasureStepper(patientData, measure, new MeasureResult(), measureMetaData);
         subject.stepThroughMeasure();
 
         testMeasureRules.forEach(rule -> assertThat(subject.getMeasureResult().getRuleTrace()).contains(rule));
     }
 
     @Test
-    public void measureWithInfiniteLoopThrowsException() throws IOException, MeasureProcessorException {
+    public void measureWithInfiniteLoopThrowsException() throws IOException {
         Measure measure = Helpers.getMeasureFromResource("fixtures", "measureWithInfiniteLoop.json");
         MeasureStepper subject = new MeasureStepper(
-                new PatientData(1L), measure, new MeasureResult());
+                new PatientData(1L), measure, new MeasureResult(), new MeasureMetaData());
 
         assertThatExceptionOfType(MeasureProcessorException.class).isThrownBy(subject::stepThroughMeasure);
     }
 
     @Test
-    public void measureWithInvalidRuleThrowsException() throws IOException, MeasureProcessorException {
+    public void measureWithInvalidRuleThrowsException() throws IOException {
         Measure measure = Helpers.getMeasureFromResource("fixtures", "measureWithRuleThatDoesNotExist.json");
         MeasureStepper subject = new MeasureStepper(
-                new PatientData(1L), measure, new MeasureResult());
+                new PatientData(1L), measure, new MeasureResult(), new MeasureMetaData());
 
         assertThatExceptionOfType(MeasureProcessorException.class).isThrownBy(subject::stepThroughMeasure);
     }

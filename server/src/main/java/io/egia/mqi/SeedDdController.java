@@ -98,10 +98,10 @@ public class SeedDdController {
         CodeSetGroup codeSetA = codeSetGroupRepo.save(CodeSetGroup.builder().groupName("CODE_SET_A").build());
         CodeSetGroup codeSetB = codeSetGroupRepo.save(CodeSetGroup.builder().groupName("CODE_SET_B").build());
 
-        codeSetRepo.save(buildCodeSet(codeSetA.getId(), CodeSystem.POS, "99"));
-        codeSetRepo.save(buildCodeSet(codeSetA.getId(), CodeSystem.REV, "22"));
-        codeSetRepo.save(buildCodeSet(codeSetB.getId(), CodeSystem.ICD_9, "xyz"));
-        codeSetRepo.save(buildCodeSet(codeSetB.getId(), CodeSystem.ICD_10, "abc.defgh"));
+        codeSetRepo.save(buildCodeSet(codeSetA, CodeSystem.POS, "99"));
+        codeSetRepo.save(buildCodeSet(codeSetA, CodeSystem.REV, "22"));
+        codeSetRepo.save(buildCodeSet(codeSetB, CodeSystem.ICD_9, "xyz"));
+        codeSetRepo.save(buildCodeSet(codeSetB, CodeSystem.ICD_10, "abc.defgh"));
 
         Map<String, Integer> results = new HashMap<>();
         results.put("Code Set Groups:", codeSetGroupRepo.findAll().size());
@@ -113,7 +113,7 @@ public class SeedDdController {
         return results;
     }
 
-    private CodeSet buildCodeSet(Long codeSetGroup, CodeSystem codeSystem, String codeValue) {
+    private CodeSet buildCodeSet(CodeSetGroup codeSetGroup, CodeSystem codeSystem, String codeValue) {
         return CodeSet.builder().codeSetGroup(codeSetGroup).codeSystem(codeSystem).codeValue(codeValue).build();
     }
 }

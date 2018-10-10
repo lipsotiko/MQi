@@ -10,13 +10,13 @@ import java.util.Set;
 @Component
 public class RuleParamUtility {
 
-    private String packagePrefix = "io.egia.mqi.rules";
+    private String packagePrefix = "io.egia.mqi.measure.rules";
 
     private Reflections reflections = new Reflections(packagePrefix
             , new SubTypesScanner(false)
             , new TypeAnnotationsScanner());
 
-    private Set<Class<?>> annotated = reflections.getTypesAnnotatedWith(Rule.class);
+    private Set<Class<?>> annotated = reflections.getTypesAnnotatedWith(RuleParameters.class);
 
     private RuleParamRepo ruleParamRepo;
 
@@ -30,7 +30,7 @@ public class RuleParamUtility {
 
         for (Class c : annotated) {
             ruleClass = Class.forName(c.getName());
-            Rule rule = ruleClass.getAnnotation(Rule.class);
+            RuleParameters rule = ruleClass.getAnnotation(RuleParameters.class);
             String ruleName = c.getName().substring(packagePrefix.length()+1);
 
             if (rule.params().length == 0) {

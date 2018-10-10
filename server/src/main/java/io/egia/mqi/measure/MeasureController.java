@@ -33,7 +33,7 @@ public class MeasureController {
     }
 
     @PutMapping("/measure")
-    public Measure putMeasure(@RequestBody Measure newMeasure) {
+    Measure putMeasure(@RequestBody Measure newMeasure) {
         ZonedDateTime now = ZonedDateTime.now(ZoneId.of("America/New_York"));
         Optional<Measure> measure = measureRepo.findById(newMeasure.getMeasureId());
         MeasureLogic measureLogic;

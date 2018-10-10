@@ -25,7 +25,11 @@ public class MeasureProcessorImpl implements MeasureProcessor {
     }
 
     @Override
-    public void process (List<Measure> measures, List<Patient> patients, List<Visit> visits, ZonedDateTime timeExecuted) {
+    public void process (List<Measure> measures,
+                         List<Patient> patients,
+                         List<Visit> visits,
+                         MeasureMetaData measureMetaData,
+                         ZonedDateTime timeExecuted) {
         this.measures = measures;
         appendToPatientDataHash(patients);
         appendToPatientDataHash(visits);
@@ -36,7 +40,7 @@ public class MeasureProcessorImpl implements MeasureProcessor {
                             measure.getMeasureName()));
                     try {
                         patientMeasureLogRepo.deleteByPatientIdAndMeasureId(patientId, measure.getMeasureId());
-                        evaluatePatientDataByMeasure(patientData, measure);
+                        evaluatePatientDataByMeasure(patientData, measure, measureMetaData);
                         patientMeasureLogRepo.save(
                                 PatientMeasureLog.builder()
                                         .patientId(patientId)
@@ -69,28 +73,24 @@ public class MeasureProcessorImpl implements MeasureProcessor {
         }
     }
 
-    private void evaluatePatientDataByMeasure(PatientData patientData, Measure measure)
+    private void evaluatePatientDataByMeasure(PatientData patientData, Measure measure, MeasureMetaData measureMetaData)
             throws MeasureProcessorException {
-        MeasureStepper measureStepper = new MeasureStepper(patientData, measure, new MeasureResult());
+        MeasureStepper measureStepper = new MeasureStepper(patientData, measure, new MeasureResult(), measureMetaData);
         measureStepper.stepThroughMeasure();
         rulesEvaluatedCount = rulesEvaluatedCount + measureStepper.getRulesEvaluatedCount();
         this.measureResults.add(measureStepper.getMeasureResult());
     }
 
 
-    public Hashtable<Long, PatientData> getPatientDataHash() {
+    Hashtable<Long, PatientData> getPatientDataHash() {
         return this.patientDataHash;
     }
 
-    public List<Measure> getMeasures() {
-        return measures;
-    }
-
-    public int getRulesEvaluatedCount() {
+    int getRulesEvaluatedCount() {
         return rulesEvaluatedCount;
     }
 
-    public List<MeasureResult> getMeasureResults() {
+    List<MeasureResult> getMeasureResults() {
         return measureResults;
     }
 }

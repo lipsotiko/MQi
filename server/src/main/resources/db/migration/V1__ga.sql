@@ -139,7 +139,7 @@ create table if not exists rule_param (
 drop view if exists code_set;
 create table code_set (
     id bigserial primary key,
-	code_set_group bigint,
+	code_set_group_id bigint,
 	code_system integer,
     code_value varchar(255)
 );

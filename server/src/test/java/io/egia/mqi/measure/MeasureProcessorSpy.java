@@ -1,6 +1,7 @@
 package io.egia.mqi.measure;
 
 import io.egia.mqi.patient.Patient;
+import io.egia.mqi.visit.CodeSet;
 import io.egia.mqi.visit.Visit;
 
 import java.time.ZonedDateTime;
@@ -9,28 +10,39 @@ import java.util.List;
 
 public class MeasureProcessorSpy implements MeasureProcessor {
 
-    List<Measure> setMeasuresWasCalledWith = new ArrayList<>();
+    List<Measure> processWasCalledWithMeasures = new ArrayList<>();
     boolean processWasCalled = false;
     boolean clearWasCalled = false;
-    List<Patient> setPatientDataWasCalledWithPatients = new ArrayList<>();
-    List<Visit> setPatientDataWasCalledWithVisits = new ArrayList<>();
+    List<Patient> processWasCalledWithPatients = new ArrayList<>();
+    List<Visit> processWasCalledWithVisits = new ArrayList<>();
+    MeasureMetaData processWasCalledWithMeasureMetaData;
 
     @Override
-    public void process(List<Measure> measures, List<Patient> patients, List<Visit> visits, ZonedDateTime timeExecuted) {
+    public void process(List<Measure> measures,
+                        List<Patient> patients,
+                        List<Visit> visits,
+                        MeasureMetaData measureMetaData,
+                        ZonedDateTime timeExecuted) {
 
         processWasCalled = true;
 
         if(measures != null) {
-            setMeasuresWasCalledWith = measures;
+            processWasCalledWithMeasures = measures;
         }
 
         if (patients != null){
-            setPatientDataWasCalledWithPatients.addAll(patients);
+            processWasCalledWithPatients.addAll(patients);
         }
 
         if (visits != null) {
-            setPatientDataWasCalledWithVisits.addAll(visits);
+            processWasCalledWithVisits.addAll(visits);
         }
+
+        if (measureMetaData != null) {
+            processWasCalledWithMeasureMetaData = measureMetaData;
+        }
+
+
     }
 
     @Override

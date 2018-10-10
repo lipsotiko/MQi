@@ -1,5 +1,6 @@
 package io.egia.mqi.patient;
 
+import io.egia.mqi.visit.CodeSet;
 import io.egia.mqi.visit.Visit;
 
 import java.util.ArrayList;
@@ -10,6 +11,7 @@ public class PatientData {
 
     private Patient patient;
     private List<Visit> visits = new ArrayList<>();
+    private List<CodeSet> codeSets = new ArrayList<>();
 
     public PatientData(Long patientId) {
         this.patientId = patientId;
@@ -33,5 +35,9 @@ public class PatientData {
 
     public Patient getPatient() {
         return patient;
+    }
+
+    public List<Visit> getVisits() {
+        return visits;
     }
 }

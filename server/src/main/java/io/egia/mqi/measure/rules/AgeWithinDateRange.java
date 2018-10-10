@@ -1,9 +1,6 @@
-package io.egia.mqi.rules;
+package io.egia.mqi.measure.rules;
 
-import io.egia.mqi.measure.MeasureResult;
-import io.egia.mqi.measure.Param;
-import io.egia.mqi.measure.Rule;
-import io.egia.mqi.measure.RuleParam;
+import io.egia.mqi.measure.*;
 import io.egia.mqi.patient.PatientData;
 
 import java.text.ParseException;
@@ -15,15 +12,17 @@ import static java.util.Calendar.DATE;
 import static java.util.Calendar.MONTH;
 import static java.util.Calendar.YEAR;
 
-@Rule(params={
+@RuleParameters(params={
         @Param(name="FROM_AGE", type = "INTEGER")
         , @Param(name="TO_AGE", type = "INTEGER")
         , @Param(name="START_DATE", type = "DATE")
         , @Param(name="END_DATE", type = "DATE")
 })
-public class AgeWithinDateRange {
-    public MeasureResult evaluate(PatientData patientData, List<RuleParam> ruleParams, MeasureResult measureResult)
-            throws ParseException {
+public class AgeWithinDateRange implements Rule {
+    public MeasureResult evaluate(PatientData patientData,
+                                  List<RuleParam> ruleParams,
+                                  MeasureMetaData measureMetaData,
+                                  MeasureResult measureResult) {
 
         if(patientData.getPatient().getDateOfBirth() == null) {
             measureResult.setContinueProcessing(false);
@@ -32,24 +31,30 @@ public class AgeWithinDateRange {
 
         Integer fromAge = getInt(ruleParams, "FROM_AGE");
         Integer toAge = getInt(ruleParams, "TO_AGE");
-        Date startDate = getDate(ruleParams, "START_DATE");
-        Date endDate = getDate(ruleParams, "END_DATE");
+        Date startDate;
+        Date endDate;
+
+        try {
+            startDate = getDate(ruleParams, "START_DATE");
+            endDate = getDate(ruleParams, "END_DATE");
+        } catch (ParseException e) {
+            e.printStackTrace();
+            measureResult.setContinueProcessing(false);
+            return measureResult;
+        }
 
         Integer ageAtStartDate = getDiffYears(patientData.getPatient().getDateOfBirth(), startDate);
         Integer ageAtEndDate = getDiffYears(patientData.getPatient().getDateOfBirth(), endDate);
 
         if(ageAtStartDate.equals(fromAge) || toAge.equals(ageAtEndDate)) {
-            measureResult.setContinueProcessing(true);
-            return measureResult;
-        } else if (ageAtStartDate < fromAge || toAge < ageAtEndDate){
-            measureResult.setContinueProcessing(false);
             return measureResult;
         }
 
+        measureResult.setContinueProcessing(false);
         return measureResult;
     }
 
-    public static int getDiffYears(Date first, Date last) {
+    private static int getDiffYears(Date first, Date last) {
         Calendar a = getCalendar(first);
         Calendar b = getCalendar(last);
         int diff = b.get(YEAR) - a.get(YEAR);
@@ -60,7 +65,7 @@ public class AgeWithinDateRange {
         return diff;
     }
 
-    public static Calendar getCalendar(Date date) {
+    private static Calendar getCalendar(Date date) {
         Calendar cal = Calendar.getInstance(Locale.US);
         cal.setTime(date);
         return cal;

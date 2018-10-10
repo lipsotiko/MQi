@@ -29,7 +29,6 @@ public class MeasureProcessorImplTest {
     private PatientMeasureLogRepo patientMeasureLogRepo;
     private MeasureProcessorImpl subject;
     private List<Measure> measures = new ArrayList<>();
-
     private ZonedDateTime timeExecuted = ZonedDateTime.now();
 
     @Before
@@ -60,7 +59,7 @@ public class MeasureProcessorImplTest {
 
     @Test
     public void validatePatientDataHash() {
-        subject.process(measures, patients, visits, timeExecuted);
+        subject.process(measures, patients, visits, null, timeExecuted);
         Hashtable<Long, PatientData> patientDataHash = subject.getPatientDataHash();
         Set<Long> keys = patientDataHash.keySet();
         Iterator<Long> itr = keys.iterator();
@@ -77,9 +76,9 @@ public class MeasureProcessorImplTest {
 
     @Test
     public void processEvaluatesPatientData() {
-        subject.process(measures, patients, visits, timeExecuted);
+        subject.process(measures, patients, visits, null, timeExecuted);
         assertThat(subject.getMeasureResults().size()).isEqualTo(5);
-        assertThat(subject.getRulesEvaluatedCount()).isEqualTo(15);
+        assertThat(subject.getRulesEvaluatedCount()).isEqualTo(10);
 
         for(Long i = 1L; i <= 5L; i++) {
             verify(patientMeasureLogRepo, times(1)).deleteByPatientIdAndMeasureId(i, 1L);
@@ -90,7 +89,7 @@ public class MeasureProcessorImplTest {
 
     @Test
     public void clearMeasureWorkspace() {
-        subject.process(measures, patients, visits, timeExecuted);
+        subject.process(measures, patients, visits, new MeasureMetaData(), timeExecuted);
         subject.clear();
         assertThat(subject.getPatientDataHash().size()).isEqualTo(0);
         assertThat(subject.getMeasureResults().size()).isEqualTo(0);

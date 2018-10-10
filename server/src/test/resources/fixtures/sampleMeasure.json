@@ -34,6 +34,19 @@
 		},
 		{
 			"stepId": 200,
+			"ruleName": "HasCodeSet",
+			"parameters": [
+				{
+					"paramName": "CODE_SET",
+					"paramValue": "CODE_SET_A",
+					"paramType": "TEXT"
+				}
+			],
+			"successStepId": 300,
+			"failureStepId": 99999
+		},
+		{
+			"stepId": 300,
 			"ruleName": "SetResultCode",
 			"parameters": [
 				{

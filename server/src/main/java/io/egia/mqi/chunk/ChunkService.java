@@ -21,9 +21,9 @@ public class ChunkService {
     private PatientRecordCountRepo patientRecordCountRepo;
     private ServerRepo serverRepo;
 
-    public ChunkService(ServerRepo serverRepo,
-                        ChunkRepo chunkRepo,
-                        PatientRecordCountRepo patientRecordCountRepo) {
+    ChunkService(ServerRepo serverRepo,
+                 ChunkRepo chunkRepo,
+                 PatientRecordCountRepo patientRecordCountRepo) {
         this.serverRepo = serverRepo;
         this.chunkRepo = chunkRepo;
         this.patientRecordCountRepo = patientRecordCountRepo;

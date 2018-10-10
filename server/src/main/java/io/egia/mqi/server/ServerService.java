@@ -8,7 +8,7 @@ import java.net.UnknownHostException;
 @Service
 public class ServerService {
     private ServerRepo serverRepo;
-    public ServerService(ServerRepo serverRepo) {
+    ServerService(ServerRepo serverRepo) {
         this.serverRepo = serverRepo;
     }
 

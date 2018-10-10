@@ -1,13 +1,15 @@
 package io.egia.mqi.measure;
 
-import java.lang.annotation.Retention;
-import java.lang.annotation.Target;
+import io.egia.mqi.measure.MeasureMetaData;
+import io.egia.mqi.measure.MeasureResult;
+import io.egia.mqi.measure.RuleParam;
+import io.egia.mqi.patient.PatientData;
 
-import static java.lang.annotation.ElementType.TYPE;
-import static java.lang.annotation.RetentionPolicy.RUNTIME;
+import java.util.List;
 
-@Retention(RUNTIME)
-@Target(TYPE)
-public @interface Rule {
-    Param[] params();
+public interface Rule {
+    MeasureResult evaluate(PatientData patientData,
+                           List<RuleParam> ruleParams,
+                           MeasureMetaData measureMetaData,
+                           MeasureResult measureResult);
 }

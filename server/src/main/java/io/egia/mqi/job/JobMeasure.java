@@ -15,7 +15,7 @@ import javax.persistence.Id;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class JobMeasure {
+class JobMeasure {
 	@Id
 	@GeneratedValue(strategy=GenerationType.IDENTITY)
 	private Long jobMeasureId;

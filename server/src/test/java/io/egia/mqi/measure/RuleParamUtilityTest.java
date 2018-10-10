@@ -29,6 +29,7 @@ public class RuleParamUtilityTest {
             , new RuleParam("AgeWithinDateRange","END_DATE","DATE")
             , new RuleParam("ExitMeasure","","INVISIBLE")
             , new RuleParam("SetResultCode","RESULT_CODE","TEXT")
+            , new RuleParam("HasCodeSet","CODE_SET","TEXT")
     };
 
     @Mock
@@ -37,7 +38,7 @@ public class RuleParamUtilityTest {
     @Captor
     private ArgumentCaptor<RuleParam> captor = ArgumentCaptor.forClass(RuleParam.class);
 
-    private String packagePrefix = "io.egia.mqi.rules";
+    private String packagePrefix = "io.egia.mqi.measure.rules";
 
     private Reflections reflections = new Reflections(packagePrefix
             , new SubTypesScanner(false)
@@ -61,7 +62,7 @@ public class RuleParamUtilityTest {
         allClasses.removeIf(testClassFilter);
 
         String[] expected = allClasses.stream().map(String::toString).toArray(String[]::new);
-        Set<String> allAnnotatedClasses = reflections.getTypesAnnotatedWith(Rule.class).stream()
+        Set<String> allAnnotatedClasses = reflections.getTypesAnnotatedWith(RuleParameters.class).stream()
                 .map(Class::getName).collect(Collectors.toSet());
         assertThat(allAnnotatedClasses).contains(expected);
     }
