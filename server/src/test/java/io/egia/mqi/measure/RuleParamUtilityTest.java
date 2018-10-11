@@ -62,7 +62,7 @@ public class RuleParamUtilityTest {
         allClasses.removeIf(testClassFilter);
 
         String[] expected = allClasses.stream().map(String::toString).toArray(String[]::new);
-        Set<String> allAnnotatedClasses = reflections.getTypesAnnotatedWith(RuleParameters.class).stream()
+        Set<String> allAnnotatedClasses = reflections.getTypesAnnotatedWith(RuleParams.class).stream()
                 .map(Class::getName).collect(Collectors.toSet());
         assertThat(allAnnotatedClasses).contains(expected);
     }

@@ -1,0 +1,49 @@
+{
+	"description": "Patients that are two years of age on the first day of the reporting year with an occurrence of a broken leg at some time during the reporting year",
+	"minimumSystemVersion": "1.0.0",
+	"traceRules": true,
+	"generateSupplementalResults": true,
+	"steps": [
+		{
+			"stepId": 100,
+			"ruleName": "AgeWithinDateRange",
+			"parameters": [
+				{
+					"paramName": "FROM_AGE",
+					"paramValue": "2",
+					"paramType": "INTEGER"
+				},
+				{
+					"paramName": "TO_AGE",
+					"paramValue": "2",
+					"paramType": "INTEGER"
+				},
+				{
+					"paramName": "START_DATE",
+					"paramValue": "19880428",
+					"paramType": "DATE"
+				},
+				{
+					"paramName": "END_DATE",
+					"paramValue": "19880428",
+					"paramType": "DATE"
+				}
+			],
+			"successStepId": 200,
+			"failureStepId": 99999
+		},
+		{
+			"stepId": 200,
+			"ruleName": "SetResultCode",
+			"parameters": [
+				{
+					"paramName": "RESULT_CODE",
+					"paramValue": "DENOMINATOR",
+					"paramType": "TEXT"
+				}
+			],
+			"successStepId": 99999,
+			"failureStepId": 99999
+		}
+	]
+}

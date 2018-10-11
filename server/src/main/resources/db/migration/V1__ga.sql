@@ -30,6 +30,7 @@ create table if not exists patient_exclude (
 
 drop table if exists patient_measure_log;
 create table if not exists patient_measure_log (
+    id bigserial primary key,
 	patient_id bigint,
 	measure_id bigint,
 	last_updated timestamp default current_timestamp
@@ -150,6 +151,14 @@ create table if not exists code_set_group (
 	group_name varchar(255)
 );
 
+drop table if exists measure_result;
+create table if not exists measure_result (
+	id bigserial primary key,
+	patient_id bigint,
+	measure_id bigint,
+	result_code varchar(255)
+);
+
 drop table if exists job_status;
 create table if not exists job_status (
 	id serial primary key,
@@ -179,6 +188,9 @@ values (0, 'ICD_9'),
     (7, 'LOINC'),
     (8, 'CPT2'),
     (9, 'SNOMED');
+
+
+
 
 drop view if exists patient_record_count;
 create view patient_record_count as

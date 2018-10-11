@@ -2,7 +2,7 @@ package io.egia.mqi.measure.rules;
 
 import io.egia.mqi.RuleTest;
 import io.egia.mqi.measure.MeasureMetaData;
-import io.egia.mqi.measure.MeasureResult;
+import io.egia.mqi.measure.MeasureWorkspace;
 import io.egia.mqi.measure.RuleParam;
 import io.egia.mqi.patient.Patient;
 import io.egia.mqi.patient.PatientData;
@@ -20,7 +20,7 @@ public class AgeWithinDateRangeTest {
     private PatientData patientData;
     private List<RuleParam> ruleParams = new ArrayList<>();
     private MeasureMetaData measureMetaData = new MeasureMetaData();
-    private MeasureResult measureResult;
+    private MeasureWorkspace measureWorkspace;
 
     @Before
     public void setUp() {
@@ -44,7 +44,7 @@ public class AgeWithinDateRangeTest {
         ruleParam4.setParamValue("19901109");
         ruleParams.add(ruleParam4);
 
-        measureResult = new MeasureResult();
+        measureWorkspace = new MeasureWorkspace();
     }
 
     @Test
@@ -53,8 +53,8 @@ public class AgeWithinDateRangeTest {
         Date dob = new GregorianCalendar(1956, Calendar.APRIL, 28).getTime();
         patient.setDateOfBirth(dob);
         patientData.addPatientRecord(patient);
-        ageWithinDateRange.evaluate(patientData, ruleParams, measureMetaData, measureResult);
-        assertThat(measureResult.getContinueProcessing()).isEqualTo(true);
+        ageWithinDateRange.evaluate(patientData, ruleParams, measureMetaData, measureWorkspace);
+        assertThat(measureWorkspace.getContinueProcessing()).isEqualTo(true);
     }
 
     @Test
@@ -63,8 +63,8 @@ public class AgeWithinDateRangeTest {
         Date dob = new GregorianCalendar(1955, Calendar.APRIL, 28).getTime();
         patient.setDateOfBirth(dob);
         patientData.addPatientRecord(patient);
-        ageWithinDateRange.evaluate(patientData, ruleParams, measureMetaData, measureResult);
-        assertThat(measureResult.getContinueProcessing()).isEqualTo(false);
+        ageWithinDateRange.evaluate(patientData, ruleParams, measureMetaData, measureWorkspace);
+        assertThat(measureWorkspace.getContinueProcessing()).isEqualTo(false);
     }
 
     @Test
@@ -73,8 +73,8 @@ public class AgeWithinDateRangeTest {
         Date dob = new GregorianCalendar(1958, Calendar.APRIL, 28).getTime();
         patient.setDateOfBirth(dob);
         patientData.addPatientRecord(patient);
-        ageWithinDateRange.evaluate(patientData, ruleParams, measureMetaData, measureResult);
-        assertThat(measureResult.getContinueProcessing()).isEqualTo(true);
+        ageWithinDateRange.evaluate(patientData, ruleParams, measureMetaData, measureWorkspace);
+        assertThat(measureWorkspace.getContinueProcessing()).isEqualTo(true);
     }
 
     @Test
@@ -83,8 +83,8 @@ public class AgeWithinDateRangeTest {
         Date dob = new GregorianCalendar(1957, Calendar.APRIL, 28).getTime();
         patient.setDateOfBirth(dob);
         patientData.addPatientRecord(patient);
-        ageWithinDateRange.evaluate(patientData, ruleParams, measureMetaData, measureResult);
-        assertThat(measureResult.getContinueProcessing()).isEqualTo(false);
+        ageWithinDateRange.evaluate(patientData, ruleParams, measureMetaData, measureWorkspace);
+        assertThat(measureWorkspace.getContinueProcessing()).isEqualTo(false);
     }
 
     @Test
@@ -93,16 +93,16 @@ public class AgeWithinDateRangeTest {
         Date dob = new GregorianCalendar(1956, Calendar.FEBRUARY, 28).getTime();
         patient.setDateOfBirth(dob);
         patientData.addPatientRecord(patient);
-        ageWithinDateRange.evaluate(patientData, ruleParams, measureMetaData, measureResult);
-        assertThat(measureResult.getContinueProcessing()).isEqualTo(true);
+        ageWithinDateRange.evaluate(patientData, ruleParams, measureMetaData, measureWorkspace);
+        assertThat(measureWorkspace.getContinueProcessing()).isEqualTo(true);
     }
 
     @Test
     public void patientsWithNullDobShouldStopBeingProcessed() {
         Patient patient = new Patient();
         patientData.addPatientRecord(patient);
-        ageWithinDateRange.evaluate(patientData, ruleParams, measureMetaData, measureResult);
-        assertThat(measureResult.getContinueProcessing()).isEqualTo(false);
+        ageWithinDateRange.evaluate(patientData, ruleParams, measureMetaData, measureWorkspace);
+        assertThat(measureWorkspace.getContinueProcessing()).isEqualTo(false);
     }
 
     @Test
@@ -112,7 +112,7 @@ public class AgeWithinDateRangeTest {
         patient.setDateOfBirth(dob);
         patientData.addPatientRecord(patient);
         ruleParams.get(3).setParamValue("ABCDEFG");
-        ageWithinDateRange.evaluate(patientData, ruleParams, measureMetaData, measureResult);
-        assertThat(measureResult.getContinueProcessing()).isEqualTo(false);
+        ageWithinDateRange.evaluate(patientData, ruleParams, measureMetaData, measureWorkspace);
+        assertThat(measureWorkspace.getContinueProcessing()).isEqualTo(false);
     }
 }

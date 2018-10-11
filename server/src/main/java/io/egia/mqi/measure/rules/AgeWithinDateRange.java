@@ -4,29 +4,30 @@ import io.egia.mqi.measure.*;
 import io.egia.mqi.patient.PatientData;
 
 import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.*;
-import java.util.stream.Collectors;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.List;
+import java.util.Locale;
 
-import static java.util.Calendar.DATE;
-import static java.util.Calendar.MONTH;
-import static java.util.Calendar.YEAR;
+import static io.egia.mqi.measure.helpers.ParamHelper.getDate;
+import static io.egia.mqi.measure.helpers.ParamHelper.getInt;
+import static java.util.Calendar.*;
 
-@RuleParameters(params={
+@RuleParams(params={
         @Param(name="FROM_AGE", type = "INTEGER")
         , @Param(name="TO_AGE", type = "INTEGER")
         , @Param(name="START_DATE", type = "DATE")
         , @Param(name="END_DATE", type = "DATE")
 })
 public class AgeWithinDateRange implements Rule {
-    public MeasureResult evaluate(PatientData patientData,
-                                  List<RuleParam> ruleParams,
-                                  MeasureMetaData measureMetaData,
-                                  MeasureResult measureResult) {
+    public MeasureWorkspace evaluate(PatientData patientData,
+                                     List<RuleParam> ruleParams,
+                                     MeasureMetaData measureMetaData,
+                                     MeasureWorkspace measureWorkspace) {
 
         if(patientData.getPatient().getDateOfBirth() == null) {
-            measureResult.setContinueProcessing(false);
-            return measureResult;
+            measureWorkspace.setContinueProcessing(false);
+            return measureWorkspace;
         }
 
         Integer fromAge = getInt(ruleParams, "FROM_AGE");
@@ -39,19 +40,19 @@ public class AgeWithinDateRange implements Rule {
             endDate = getDate(ruleParams, "END_DATE");
         } catch (ParseException e) {
             e.printStackTrace();
-            measureResult.setContinueProcessing(false);
-            return measureResult;
+            measureWorkspace.setContinueProcessing(false);
+            return measureWorkspace;
         }
 
         Integer ageAtStartDate = getDiffYears(patientData.getPatient().getDateOfBirth(), startDate);
         Integer ageAtEndDate = getDiffYears(patientData.getPatient().getDateOfBirth(), endDate);
 
         if(ageAtStartDate.equals(fromAge) || toAge.equals(ageAtEndDate)) {
-            return measureResult;
+            return measureWorkspace;
         }
 
-        measureResult.setContinueProcessing(false);
-        return measureResult;
+        measureWorkspace.setContinueProcessing(false);
+        return measureWorkspace;
     }
 
     private static int getDiffYears(Date first, Date last) {
@@ -71,15 +72,4 @@ public class AgeWithinDateRange implements Rule {
         return cal;
     }
 
-    private Date getDate(List<RuleParam> ruleParams, String param) throws ParseException {
-        RuleParam dateParam = ruleParams.stream().filter(ruleParam ->
-                ruleParam.getParamName().equals(param)).collect(Collectors.toList()).get(0);
-        return new SimpleDateFormat("yyyyMMdd").parse(dateParam.getParamValue());
-    }
-
-    private Integer getInt(List<RuleParam> ruleParams, String param) {
-        RuleParam intParam = ruleParams.stream().filter(ruleParam ->
-                ruleParam.getParamName().equals(param)).collect(Collectors.toList()).get(0);
-        return Integer.valueOf(intParam.getParamValue());
-    }
 }

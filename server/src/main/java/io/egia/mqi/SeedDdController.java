@@ -1,6 +1,7 @@
 package io.egia.mqi;
 
 import io.egia.mqi.chunk.ChunkRepo;
+import io.egia.mqi.measure.MeasureResultRepo;
 import io.egia.mqi.patient.Patient;
 import io.egia.mqi.patient.PatientMeasureLogRepo;
 import io.egia.mqi.patient.PatientRepo;
@@ -30,6 +31,8 @@ public class SeedDdController {
     @Autowired private PatientMeasureLogRepo patientMeasureLogRepo;
     @Autowired private CodeSetRepo codeSetRepo;
     @Autowired private CodeSetGroupRepo codeSetGroupRepo;
+    @Autowired private MeasureResultRepo measureResultRepo;
+
 
     @GetMapping("/seed")
     public Map<String, Integer> seedDb() throws UnknownHostException {
@@ -39,9 +42,10 @@ public class SeedDdController {
         visitRepo.deleteAll();
         patientRepo.deleteAll();
         serverRepo.deleteAll();
-        patientMeasureLogRepo.deleteAll();
         codeSetRepo.deleteAll();
-        codeSetGroupRepo.deleteAllInBatch();
+        codeSetGroupRepo.deleteAll();
+        patientMeasureLogRepo.deleteAll();
+        measureResultRepo.deleteAll();
 
         serverRepo.saveAndFlush(
                 Server.builder()

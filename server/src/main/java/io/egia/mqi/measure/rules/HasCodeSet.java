@@ -6,23 +6,23 @@ import io.egia.mqi.visit.CodeSet;
 import io.egia.mqi.visit.Visit;
 import io.egia.mqi.visit.VisitCode;
 
-import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
-@RuleParameters(params = {
+import static io.egia.mqi.measure.helpers.ParamHelper.getText;
+
+@RuleParams(params = {
         @Param(name = "CODE_SET", type = "TEXT")
 })
 public class HasCodeSet implements Rule {
-    public MeasureResult evaluate(PatientData patientData,
-                                  List<RuleParam> ruleParams,
-                                  MeasureMetaData measureMetaData,
-                                  MeasureResult measureResult) {
+    public MeasureWorkspace evaluate(PatientData patientData,
+                                     List<RuleParam> ruleParams,
+                                     MeasureMetaData measureMetaData,
+                                     MeasureWorkspace measureWorkspace) {
 
         if (measureMetaData == null || measureMetaData.getCodeSets() == null) {
-            measureResult.setContinueProcessing(false);
-            return measureResult;
+            measureWorkspace.setContinueProcessing(false);
+            return measureWorkspace;
         }
 
         String codeSet = getText(ruleParams, "CODE_SET");
@@ -35,20 +35,14 @@ public class HasCodeSet implements Rule {
                 for(CodeSet cs: codeSets) {
                     if (vc.getCodeSystem().equals(cs.getCodeSystem()) &&
                             vc.getCodeValue().equals(cs.getCodeValue())) {
-                        return measureResult;
+                        return measureWorkspace;
                     }
                 }
             }
         }
 
-        measureResult.setContinueProcessing(false);
-        return measureResult;
-    }
-
-    private String getText(List<RuleParam> ruleParams, String param) {
-        RuleParam intParam = ruleParams.stream().filter(ruleParam ->
-                ruleParam.getParamName().equals(param)).collect(Collectors.toList()).get(0);
-        return intParam.getParamValue();
+        measureWorkspace.setContinueProcessing(false);
+        return measureWorkspace;
     }
 
 }

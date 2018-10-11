@@ -2,7 +2,7 @@ package io.egia.mqi.measure.rules;
 
 import io.egia.mqi.RuleTest;
 import io.egia.mqi.measure.MeasureMetaData;
-import io.egia.mqi.measure.MeasureResult;
+import io.egia.mqi.measure.MeasureWorkspace;
 import io.egia.mqi.measure.RuleParam;
 import io.egia.mqi.patient.PatientData;
 import io.egia.mqi.visit.*;
@@ -20,7 +20,7 @@ public class HasCodeSetTest {
 
     private HasCodeSet hasCodeSet;
     private List<RuleParam> ruleParams = new ArrayList<>();
-    private MeasureResult measureResult;
+    private MeasureWorkspace measureWorkspace;
     private List<CodeSet> codeSets = new ArrayList<>();
 
     @Before
@@ -39,21 +39,21 @@ public class HasCodeSetTest {
         CodeSet codeSetB = CodeSet.builder().codeSetGroup(codeSetGroupB).codeSystem(CodeSystem.ICD_10).codeValue("789").build();
         codeSets.add(codeSetB);
 
-        measureResult = new MeasureResult();
+        measureWorkspace = new MeasureWorkspace();
     }
 
     @Test
     public void patientHasCodeSetA() {
         PatientData patientData = getPatientData("123", CodeSystem.ICD_10);
-        hasCodeSet.evaluate(patientData, ruleParams, new MeasureMetaData(codeSets), measureResult);
-        assertThat(measureResult.getContinueProcessing()).isEqualTo(true);
+        hasCodeSet.evaluate(patientData, ruleParams, new MeasureMetaData(codeSets), measureWorkspace);
+        assertThat(measureWorkspace.getContinueProcessing()).isEqualTo(true);
     }
 
     @Test
     public void patientDoesNotHaveCodeSetA() {
         PatientData patientData = getPatientData("789", CodeSystem.ICD_10);
-        hasCodeSet.evaluate(patientData, ruleParams, new MeasureMetaData(codeSets), measureResult);
-        assertThat(measureResult.getContinueProcessing()).isEqualTo(false);
+        hasCodeSet.evaluate(patientData, ruleParams, new MeasureMetaData(codeSets), measureWorkspace);
+        assertThat(measureWorkspace.getContinueProcessing()).isEqualTo(false);
     }
 
     private PatientData getPatientData(String codeValue, CodeSystem codeSystem) {

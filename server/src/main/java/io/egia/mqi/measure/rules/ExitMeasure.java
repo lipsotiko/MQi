@@ -5,15 +5,15 @@ import io.egia.mqi.patient.PatientData;
 
 import java.util.List;
 
-@RuleParameters(params={
+@RuleParams(params={
         @Param(type = "INVISIBLE")
 })
 public class ExitMeasure implements Rule {
-    public MeasureResult evaluate(PatientData patientData,
-                                  List<RuleParam> ruleParams,
-                                  MeasureMetaData measureMetaData,
-                                  MeasureResult measureResult) {
-        measureResult.setContinueProcessing(false);
-        return measureResult;
+    public MeasureWorkspace evaluate(PatientData patientData,
+                                     List<RuleParam> ruleParams,
+                                     MeasureMetaData measureMetaData,
+                                     MeasureWorkspace measureWorkspace) {
+        measureWorkspace.setContinueProcessing(false);
+        return measureWorkspace;
     }
 }

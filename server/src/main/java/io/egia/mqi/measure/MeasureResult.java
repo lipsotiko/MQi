@@ -1,31 +1,25 @@
 package io.egia.mqi.measure;
 
-import java.util.ArrayList;
-import java.util.List;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
-public class MeasureResult {
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
 
-    private boolean continueProcessing = true;
-    private boolean denominator;
-    private List<String> ruleTrace = new ArrayList<>();
-
-    public boolean getContinueProcessing() {
-        return this.continueProcessing;
-    }
-
-    public void setContinueProcessing(boolean continueProcessing) {
-        this.continueProcessing = continueProcessing;
-    }
-
-    public void setResults(boolean denominator) {
-        this.denominator = denominator;
-    }
-
-    public void writeRuleTrace(String rule) {
-        ruleTrace.add(rule);
-    }
-
-    public List<String> getRuleTrace() {
-        return ruleTrace;
-    }
+@Data
+@Entity
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
+class MeasureResult {
+    @Id
+    @GeneratedValue(strategy= GenerationType.IDENTITY)
+    private Long id;
+    private Long patientId;
+    private Long measureId;
+    private String resultCode;
 }

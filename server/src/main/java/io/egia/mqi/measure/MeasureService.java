@@ -8,6 +8,7 @@ import io.egia.mqi.job.Job;
 import io.egia.mqi.job.JobRepo;
 import io.egia.mqi.job.JobStatus;
 import io.egia.mqi.patient.Patient;
+import io.egia.mqi.patient.PatientMeasureLogRepo;
 import io.egia.mqi.patient.PatientRepo;
 import io.egia.mqi.server.Server;
 import io.egia.mqi.visit.*;
@@ -16,10 +17,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import java.time.ZonedDateTime;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 
 @Service
 public class MeasureService {
@@ -29,26 +27,26 @@ public class MeasureService {
     private JobRepo jobRepo;
     private PatientRepo patientRepo;
     private VisitRepo visitRepo;
-    private MeasureProcessor measureProcessor;
+    private Processor processor;
     private CodeSetGroupRepo codeSetGroupRepo;
     private CodeSetRepo codeSetRepo;
+    private final PatientMeasureLogRepo patientMeasureLogRepo;
+    private final MeasureResultRepo measureResultRepo;
 
-    MeasureService(ChunkRepo chunkRepo,
-                   ChunkService chunkService,
-                   JobRepo jobRepo,
-                   PatientRepo patientRepo,
-                   VisitRepo visitRepo,
-                   MeasureProcessor measureProcessor,
-                   CodeSetGroupRepo codeSetGroupRepo,
-                   CodeSetRepo codeSetRepo) {
+    MeasureService(JobRepo jobRepo, ChunkRepo chunkRepo, PatientRepo patientRepo,
+                   VisitRepo visitRepo, ChunkService chunkService, Processor processor,
+                   CodeSetGroupRepo codeSetGroupRepo, CodeSetRepo codeSetRepo,
+                   PatientMeasureLogRepo patientMeasureLogRepo, MeasureResultRepo measureResultRepo) {
         this.chunkRepo = chunkRepo;
         this.chunkService = chunkService;
         this.jobRepo = jobRepo;
         this.patientRepo = patientRepo;
         this.visitRepo = visitRepo;
-        this.measureProcessor = measureProcessor;
+        this.processor = processor;
         this.codeSetGroupRepo = codeSetGroupRepo;
         this.codeSetRepo = codeSetRepo;
+        this.patientMeasureLogRepo = patientMeasureLogRepo;
+        this.measureResultRepo = measureResultRepo;
     }
 
     //TODO: Make process async
@@ -64,10 +62,15 @@ public class MeasureService {
             Chunk chunk = currentChunk.get();
             int chunkGroup = chunk.getChunkGroup();
             log.debug(String.format("Processing chunk %s on server %s", chunkGroup, serverId));
+
+            patientMeasureLogRepo.deleteByChunkGroupAndServerId(chunkGroup, serverId);
+            measureResultRepo.deleteByChunkGroupAndServerId(chunkGroup, serverId);
             List<Patient> patients = patientRepo.findByServerIdAndChunkGroup(serverId, chunkGroup);
             List<Visit> visits = visitRepo.findByServerIdAndChunkGroup(serverId, chunkGroup);
-            measureProcessor.process(measures, patients, visits, measureMetaData, ZonedDateTime.now());
-            measureProcessor.clear();
+            processor.process(measures, patients, visits, measureMetaData, ZonedDateTime.now());
+            patientMeasureLogRepo.saveAll(processor.getLog());
+            measureResultRepo.saveAll(processor.getResults());
+            processor.clear();
             chunkRepo.updateChunkStatusByServerIdAndChunkGroup(serverId, chunkGroup, ChunkStatus.DONE);
             currentChunk = chunkRepo.findTop1ByServerIdAndChunkStatus(serverId, ChunkStatus.PENDING);
         }

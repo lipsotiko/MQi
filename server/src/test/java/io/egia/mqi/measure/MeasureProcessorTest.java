@@ -3,7 +3,6 @@ package io.egia.mqi.measure;
 import io.egia.mqi.helpers.Helpers;
 import io.egia.mqi.patient.Patient;
 import io.egia.mqi.patient.PatientData;
-import io.egia.mqi.patient.PatientMeasureLog;
 import io.egia.mqi.patient.PatientMeasureLogRepo;
 import io.egia.mqi.visit.Visit;
 import org.junit.Before;
@@ -17,24 +16,19 @@ import java.time.ZonedDateTime;
 import java.util.*;
 
 import static org.assertj.core.api.Java6Assertions.assertThat;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
 
 @RunWith(MockitoJUnitRunner.class)
-public class MeasureProcessorImplTest {
+public class MeasureProcessorTest {
     private List<Patient> patients = new ArrayList<>();
     private List<Visit> visits = new ArrayList<>();
-
-    @Mock
-    private PatientMeasureLogRepo patientMeasureLogRepo;
-    private MeasureProcessorImpl subject;
+    private MeasureProcessor subject;
     private List<Measure> measures = new ArrayList<>();
     private ZonedDateTime timeExecuted = ZonedDateTime.now();
 
     @Before
     public void setUp() throws IOException {
 
-        subject = new MeasureProcessorImpl(patientMeasureLogRepo);
+        subject = new MeasureProcessor();
 
         for (Long i = 1L; i <= 5; i++) {
             Patient p = new Patient();
@@ -52,7 +46,7 @@ public class MeasureProcessorImplTest {
             }
         }
 
-        Measure measure = Helpers.getMeasureFromResource("fixtures", "sampleMeasure.json");
+        Measure measure = Helpers.getMeasureFromResource("fixtures", "sampleMeasure2.json");
         measure.setMeasureId(1L);
         measures.add(measure);
     }
@@ -75,24 +69,10 @@ public class MeasureProcessorImplTest {
     }
 
     @Test
-    public void processEvaluatesPatientData() {
-        subject.process(measures, patients, visits, null, timeExecuted);
-        assertThat(subject.getMeasureResults().size()).isEqualTo(5);
-        assertThat(subject.getRulesEvaluatedCount()).isEqualTo(10);
-
-        for(Long i = 1L; i <= 5L; i++) {
-            verify(patientMeasureLogRepo, times(1)).deleteByPatientIdAndMeasureId(i, 1L);
-            verify(patientMeasureLogRepo, times(1))
-                    .save(PatientMeasureLog.builder().patientId(i).measureId(1L).lastUpdated(timeExecuted).build());
-        }
-    }
-
-    @Test
     public void clearMeasureWorkspace() {
-        subject.process(measures, patients, visits, new MeasureMetaData(), timeExecuted);
+        subject.process(measures, patients, visits, null, timeExecuted);
         subject.clear();
         assertThat(subject.getPatientDataHash().size()).isEqualTo(0);
-        assertThat(subject.getMeasureResults().size()).isEqualTo(0);
         assertThat(subject.getRulesEvaluatedCount()).isEqualTo(0);
     }
 }

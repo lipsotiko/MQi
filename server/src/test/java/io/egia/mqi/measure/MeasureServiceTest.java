@@ -9,6 +9,7 @@ import io.egia.mqi.job.Job;
 import io.egia.mqi.job.JobRepo;
 import io.egia.mqi.job.JobStatus;
 import io.egia.mqi.patient.Patient;
+import io.egia.mqi.patient.PatientMeasureLogRepo;
 import io.egia.mqi.patient.PatientRepo;
 import io.egia.mqi.server.Server;
 import io.egia.mqi.server.SystemType;
@@ -27,15 +28,26 @@ import static org.mockito.Mockito.*;
 
 @RunWith(MockitoJUnitRunner.class)
 public class MeasureServiceTest {
-    @Mock private JobRepo jobRepo;
-    @Mock private ChunkRepo chunkRepo;
-    @Mock private ChunkService chunkService;
-    @Mock private PatientRepo patientRepo;
-    @Mock private VisitRepo visitRepo;
-    @Mock private CodeSetGroupRepo codeSetGroupRepo;
-    @Mock private CodeSetRepo codeSetRepo;
+    @Mock
+    private JobRepo jobRepo;
+    @Mock
+    private ChunkRepo chunkRepo;
+    @Mock
+    private PatientRepo patientRepo;
+    @Mock
+    private VisitRepo visitRepo;
+    @Mock
+    private ChunkService chunkService;
+    private ProcessorSpy spy;
+    @Mock
+    private CodeSetGroupRepo codeSetGroupRepo;
+    @Mock
+    private CodeSetRepo codeSetRepo;
+    @Mock
+    PatientMeasureLogRepo patientMeasureLogRepo;
+    @Mock
+    MeasureResultRepo measureResultRepo;
 
-    private MeasureProcessorSpy measureProcessor;
     private MeasureService measureService;
 
     private Server server = Server.builder().serverId(11L).systemType(SystemType.PRIMARY).build();
@@ -43,17 +55,10 @@ public class MeasureServiceTest {
 
     @Before
     public void setUp() {
-        measureProcessor = new MeasureProcessorSpy();
+        spy = new ProcessorSpy();
         measureService = new MeasureService(
-                chunkRepo
-                , chunkService
-                , jobRepo
-                , patientRepo
-                , visitRepo
-                , measureProcessor
-                , codeSetGroupRepo
-                , codeSetRepo
-        );
+                jobRepo, chunkRepo, patientRepo, visitRepo, chunkService, spy,
+                codeSetGroupRepo, codeSetRepo, patientMeasureLogRepo, measureResultRepo);
 
         job = new Job();
         job.setJobId(44L);
@@ -90,22 +95,22 @@ public class MeasureServiceTest {
 
         measureService.process(server, job, Collections.singletonList(measure));
 
-        verify(chunkService,times(1)).chunkData();
-        verify(chunkRepo,times(4)).findTop1ByServerIdAndChunkStatus(11L, ChunkStatus.PENDING);
+        verify(chunkService, times(1)).chunkData();
+        verify(chunkRepo, times(4)).findTop1ByServerIdAndChunkStatus(11L, ChunkStatus.PENDING);
 
-        assertThat(measureProcessor.processWasCalledWithMeasures.get(0).getMeasureName()).isEqualTo("Fake Measure");
-        assertThat(measureProcessor.processWasCalledWithPatients.get(0).getPatientId()).isEqualTo(99L);
-        assertThat(measureProcessor.processWasCalledWithVisits.get(0).getPatientId()).isEqualTo(99L);
+        assertThat(spy.processWasCalledWithMeasures.get(0).getMeasureName()).isEqualTo("Fake Measure");
+        assertThat(spy.processWasCalledWithPatients.get(0).getPatientId()).isEqualTo(99L);
+        assertThat(spy.processWasCalledWithVisits.get(0).getPatientId()).isEqualTo(99L);
 
-        verify(chunkRepo,times(1))
-                .updateChunkStatusByServerIdAndChunkGroup(11L,1, ChunkStatus.DONE);
-        verify(chunkRepo,times(1))
-                .updateChunkStatusByServerIdAndChunkGroup(11L,2, ChunkStatus.DONE);
-        verify(chunkRepo,times(1))
-                .updateChunkStatusByServerIdAndChunkGroup(11L,3, ChunkStatus.DONE);
+        verify(chunkRepo, times(1))
+                .updateChunkStatusByServerIdAndChunkGroup(11L, 1, ChunkStatus.DONE);
+        verify(chunkRepo, times(1))
+                .updateChunkStatusByServerIdAndChunkGroup(11L, 2, ChunkStatus.DONE);
+        verify(chunkRepo, times(1))
+                .updateChunkStatusByServerIdAndChunkGroup(11L, 3, ChunkStatus.DONE);
 
-        assertThat(measureProcessor.processWasCalled).isEqualTo(true);
-        assertThat(measureProcessor.clearWasCalled).isEqualTo(true);
+        assertThat(spy.processWasCalled).isEqualTo(true);
+        assertThat(spy.clearWasCalled).isEqualTo(true);
 
         verify(jobRepo, times(1)).updateJobStatus(job.getJobId(), JobStatus.SUCCESS);
     }
@@ -114,14 +119,14 @@ public class MeasureServiceTest {
     public void verifyNothingIsProcessedWhenNoMeasuresAreSupplied() {
         List<Measure> measures = Collections.emptyList();
         measureService.process(server, job, measures);
-        verify(chunkService,times(0)).chunkData();
-        assertThat(measureProcessor.processWasCalled).isEqualTo(false);
+        verify(chunkService, times(0)).chunkData();
+        assertThat(spy.processWasCalled).isEqualTo(false);
     }
 
     @Test
     public void codeSetsRelatedToAMeasureArePassedToTheProcessor() throws IOException {
         CodeSetGroup codeSetGroupA = CodeSetGroup.builder().id(1L).groupName("CODE_SET_A").build();
-        List<CodeSetGroup> codeSetGroups = new ArrayList<CodeSetGroup>(){{
+        List<CodeSetGroup> codeSetGroups = new ArrayList<CodeSetGroup>() {{
             add(codeSetGroupA);
             add(codeSetGroupA);
         }};
@@ -129,11 +134,33 @@ public class MeasureServiceTest {
         when(codeSetGroupRepo.findAll()).thenReturn(codeSetGroups);
 
         CodeSet codeSetA = CodeSet.builder().codeSetGroup(codeSetGroupA).build();
-        when(codeSetRepo.findByCodeSetGroupIdIn(new HashSet<Long>() {{add(1L);}}))
+        when(codeSetRepo.findByCodeSetGroupIdIn(new HashSet<Long>() {{
+            add(1L);
+        }}))
                 .thenReturn(Collections.singletonList(codeSetA));
         Measure measure = Helpers.getMeasureFromResource("fixtures", "sampleMeasure.json");
         measureService.process(server, job, Collections.singletonList(measure));
-        assertThat(measureProcessor.processWasCalledWithMeasureMetaData.getCodeSets())
+        assertThat(spy.processWasCalledWithMeasureMetaData.getCodeSets())
                 .isEqualTo(Collections.singletonList(codeSetA));
+    }
+
+    @Test
+    public void measureResultsAndLongAreRemovedByChunkAndSavedWhenUpdated() throws IOException {
+        List<MeasureResult> expected = new ArrayList<>();
+        expected.add(MeasureResult.builder().patientId(1L).measureId(1L).resultCode("DENOMINATOR").build());
+
+        Measure measure = Helpers.getMeasureFromResource("fixtures", "sampleMeasure2.json");
+        measure.setMeasureId(11L);
+        measureService.process(server, job, Collections.singletonList(measure));
+
+        verify(measureResultRepo, times(1)).deleteByChunkGroupAndServerId(1, server.getServerId());
+        verify(measureResultRepo, times(1)).deleteByChunkGroupAndServerId(2, server.getServerId());
+        verify(measureResultRepo, times(1)).deleteByChunkGroupAndServerId(3, server.getServerId());
+
+        verify(patientMeasureLogRepo, times(1)).deleteByChunkGroupAndServerId(1, server.getServerId());
+        verify(patientMeasureLogRepo, times(1)).deleteByChunkGroupAndServerId(2, server.getServerId());
+        verify(patientMeasureLogRepo, times(1)).deleteByChunkGroupAndServerId(3, server.getServerId());
+
+        verify(measureResultRepo, times(3)).saveAll(expected);
     }
 }

@@ -16,7 +16,7 @@ public class RuleParamUtility {
             , new SubTypesScanner(false)
             , new TypeAnnotationsScanner());
 
-    private Set<Class<?>> annotated = reflections.getTypesAnnotatedWith(RuleParameters.class);
+    private Set<Class<?>> annotated = reflections.getTypesAnnotatedWith(RuleParams.class);
 
     private RuleParamRepo ruleParamRepo;
 
@@ -30,7 +30,7 @@ public class RuleParamUtility {
 
         for (Class c : annotated) {
             ruleClass = Class.forName(c.getName());
-            RuleParameters rule = ruleClass.getAnnotation(RuleParameters.class);
+            RuleParams rule = ruleClass.getAnnotation(RuleParams.class);
             String ruleName = c.getName().substring(packagePrefix.length()+1);
 
             if (rule.params().length == 0) {

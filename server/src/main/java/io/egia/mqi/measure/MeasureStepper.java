@@ -14,17 +14,17 @@ class MeasureStepper {
 
     private final PatientData patientData;
     private List<Step> steps;
-    private MeasureResult measureResult;
+    private MeasureWorkspace measureWorkspace;
     private MeasureMetaData measureMetaData;
     private int rulesEvaluatedCount;
 
     MeasureStepper(PatientData patientData,
                    Measure measure,
-                   MeasureResult measureResult,
+                   MeasureWorkspace measureWorkspace,
                    MeasureMetaData measureMetaData) {
         this.patientData = patientData;
         this.steps = measure.getMeasureLogic().getSteps();
-        this.measureResult = measureResult;
+        this.measureWorkspace = measureWorkspace;
         this.measureMetaData = measureMetaData;
     }
 
@@ -33,7 +33,7 @@ class MeasureStepper {
         Step currentStep = getStepById(firstStepId);
         Class<?> ruleClass;
 
-        while (measureResult.getContinueProcessing()) {
+        while (measureWorkspace.getContinueProcessing()) {
             String rule = currentStep.getRuleName();
             List<RuleParam> parameters = currentStep.getParameters();
             log.debug(String.format("Evaluating rule %s", rule));
@@ -41,19 +41,19 @@ class MeasureStepper {
             Method ruleMethod;
             try {
                 ruleClass = Class.forName("io.egia.mqi.measure.rules." + rule);
-                ruleMethod = ruleClass.getMethod("evaluate", PatientData.class, List.class, MeasureMetaData.class, MeasureResult.class);
+                ruleMethod = ruleClass.getMethod("evaluate", PatientData.class, List.class, MeasureMetaData.class, MeasureWorkspace.class);
             } catch (NoSuchMethodException | ClassNotFoundException e) {
                 throw new MeasureProcessorException(String.format("Could not find method %s", rule), e);
             }
 
             try {
-                measureResult = (MeasureResult) ruleMethod.invoke(ruleClass.newInstance(), patientData, parameters, measureMetaData, measureResult);
+                measureWorkspace = (MeasureWorkspace) ruleMethod.invoke(ruleClass.newInstance(), patientData, parameters, measureMetaData, measureWorkspace);
             } catch (IllegalAccessException | InvocationTargetException | InstantiationException e) {
                 throw new MeasureProcessorException(String.format("Could not invoke method %s",rule), e);
             }
 
-            measureResult.writeRuleTrace(rule);
-            if (measureResult.getContinueProcessing()) {
+            measureWorkspace.writeRuleTrace(rule);
+            if (measureWorkspace.getContinueProcessing()) {
                 currentStep = getNextStep(currentStep.getStepId(), currentStep.getSuccessStepId());
             } else {
                 currentStep = getNextStep(currentStep.getStepId(), currentStep.getFailureStepId());
@@ -104,8 +104,8 @@ class MeasureStepper {
         return rulesEvaluatedCount;
     }
 
-    MeasureResult getMeasureResult() {
-        return measureResult;
+    MeasureWorkspace getMeasureWorkspace() {
+        return measureWorkspace;
     }
 
 }
