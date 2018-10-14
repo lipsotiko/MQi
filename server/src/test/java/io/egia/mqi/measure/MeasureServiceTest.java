@@ -145,21 +145,20 @@ public class MeasureServiceTest {
     }
 
     @Test
-    public void measureResultsAndLongAreRemovedByChunkAndSavedWhenUpdated() throws IOException {
+    public void measureResultsAndLogsAreRemovedAndSavedWhenUpdated() throws IOException {
         List<MeasureResult> expected = new ArrayList<>();
         expected.add(MeasureResult.builder().patientId(1L).measureId(1L).resultCode("DENOMINATOR").build());
 
         Measure measure = Helpers.getMeasureFromResource("fixtures", "sampleMeasure2.json");
-        measure.setMeasureId(11L);
         measureService.process(server, job, Collections.singletonList(measure));
 
-        verify(measureResultRepo, times(1)).deleteByChunkGroupAndServerId(1, server.getServerId());
-        verify(measureResultRepo, times(1)).deleteByChunkGroupAndServerId(2, server.getServerId());
-        verify(measureResultRepo, times(1)).deleteByChunkGroupAndServerId(3, server.getServerId());
+        verify(measureResultRepo, times(1)).deleteByChunkGroupAndServerIdAndMeasureId(1, server.getServerId(), 11L);
+        verify(measureResultRepo, times(1)).deleteByChunkGroupAndServerIdAndMeasureId(2, server.getServerId(), 11L);
+        verify(measureResultRepo, times(1)).deleteByChunkGroupAndServerIdAndMeasureId(3, server.getServerId(), 11L);
 
-        verify(patientMeasureLogRepo, times(1)).deleteByChunkGroupAndServerId(1, server.getServerId());
-        verify(patientMeasureLogRepo, times(1)).deleteByChunkGroupAndServerId(2, server.getServerId());
-        verify(patientMeasureLogRepo, times(1)).deleteByChunkGroupAndServerId(3, server.getServerId());
+        verify(patientMeasureLogRepo, times(1)).deleteByChunkGroupAndServerIdAndMeasureId(1, server.getServerId(), 11L);
+        verify(patientMeasureLogRepo, times(1)).deleteByChunkGroupAndServerIdAndMeasureId(2, server.getServerId(), 11L);
+        verify(patientMeasureLogRepo, times(1)).deleteByChunkGroupAndServerIdAndMeasureId(3, server.getServerId(), 11L);
 
         verify(measureResultRepo, times(3)).saveAll(expected);
     }

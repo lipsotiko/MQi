@@ -12,6 +12,7 @@ public interface PatientMeasureLogRepo extends JpaRepository<PatientMeasureLog, 
     @Modifying
     @Transactional
     @Query(value="delete from PatientMeasureLog p where p.patientId in (" +
-            " select patientId from Chunk c where c. chunkGroup = :c  and c.serverId = :s ) ")
-    void deleteByChunkGroupAndServerId(@Param("c") Integer chunkGroup, @Param("s") Long serverId);
+            "select patientId from Chunk c where c. chunkGroup = :c  and c.serverId = :s ) " +
+            "and p.measureId = :m")
+    void deleteByChunkGroupAndServerIdAndMeasureId(@Param("c") Integer chunkGroup, @Param("s") Long serverId, @Param("m") Long measureId);
 }

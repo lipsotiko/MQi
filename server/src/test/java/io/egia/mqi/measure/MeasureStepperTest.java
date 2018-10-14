@@ -36,7 +36,7 @@ public class MeasureStepperTest {
         CodeSet codeSetA = CodeSet.builder().codeSetGroup(codeSetGroupA).codeSystem(CodeSystem.ICD_10).codeValue("123").build();
         MeasureMetaData measureMetaData = new MeasureMetaData(Collections.singletonList(codeSetA));
 
-        MeasureStepper subject = new MeasureStepper(patientData, measure, new MeasureWorkspace(), measureMetaData);
+        MeasureStepper subject = new MeasureStepper(patientData, measure, new MeasureWorkspace(1L, 11L), measureMetaData);
         subject.stepThroughMeasure();
 
         testMeasureRules.forEach(rule -> assertThat(subject.getMeasureWorkspace().getRuleTrace()).contains(rule));
@@ -46,7 +46,7 @@ public class MeasureStepperTest {
     public void measureWithInfiniteLoopThrowsException() throws IOException {
         Measure measure = Helpers.getMeasureFromResource("fixtures", "measureWithInfiniteLoop.json");
         MeasureStepper subject = new MeasureStepper(
-                new PatientData(1L), measure, new MeasureWorkspace(), new MeasureMetaData());
+                new PatientData(1L), measure, new MeasureWorkspace(1L, 11L), new MeasureMetaData());
 
         assertThatExceptionOfType(MeasureProcessorException.class).isThrownBy(subject::stepThroughMeasure);
     }
@@ -55,7 +55,7 @@ public class MeasureStepperTest {
     public void measureWithInvalidRuleThrowsException() throws IOException {
         Measure measure = Helpers.getMeasureFromResource("fixtures", "measureWithRuleThatDoesNotExist.json");
         MeasureStepper subject = new MeasureStepper(
-                new PatientData(1L), measure, new MeasureWorkspace(), new MeasureMetaData());
+                new PatientData(1L), measure, new MeasureWorkspace(1L,  11L), new MeasureMetaData());
 
         assertThatExceptionOfType(MeasureProcessorException.class).isThrownBy(subject::stepThroughMeasure);
     }

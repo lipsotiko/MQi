@@ -11,7 +11,8 @@ import org.springframework.transaction.annotation.Transactional;
 public interface MeasureResultRepo extends JpaRepository<MeasureResult, Long> {
     @Modifying
     @Transactional
-    @Query(value="delete from MeasureResult p where p.patientId in (" +
-            " select patientId from Chunk c where c. chunkGroup = :c  and c.serverId = :s ) ")
-    void deleteByChunkGroupAndServerId(@Param("c") Integer chunkGroup, @Param("s") Long serverId);
+    @Query(value="delete from MeasureResult p where p.patientId in ( " +
+            "select patientId from Chunk c where c. chunkGroup = :c  and c.serverId = :s ) " +
+            "and p.measureId = :m")
+    void deleteByChunkGroupAndServerIdAndMeasureId(@Param("c") Integer chunkGroup, @Param("s") Long serverId, @Param("m") Long measureId);
 }

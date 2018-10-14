@@ -21,6 +21,7 @@ public class Helpers {
         String measureLogicString =  FileUtils.readFileToString(sampleMeasureJsonFile, "UTF-8");
         ObjectMapper mapper = new ObjectMapper();
         MeasureLogic measureLogic = mapper.readValue(measureLogicString, MeasureLogic.class);
+        measure.setMeasureId(11L);
         measure.setMeasureLogic(measureLogic);
         measure.setLastUpdated(ZonedDateTime.parse("2007-12-03T10:15:30+01:00[Europe/Paris]"));
         measure.setMeasureJson(measureLogicString);

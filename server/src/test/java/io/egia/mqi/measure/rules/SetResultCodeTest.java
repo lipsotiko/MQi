@@ -27,7 +27,7 @@ public class SetResultCodeTest {
         ruleParam1.setParamValue("DENOMINATOR");
         ruleParams.add(ruleParam1);
 
-        measureWorkspace = new MeasureWorkspace();
+        measureWorkspace = new MeasureWorkspace(1L, 11L);
     }
 
     @Test

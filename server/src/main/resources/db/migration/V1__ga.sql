@@ -227,12 +227,12 @@ values ('sample measure 1', '
           "parameters": [
             {
               "paramName": "FROM_AGE",
-              "paramValue": "2",
+              "paramValue": "28",
               "paramType": "INTEGER"
             },
             {
               "paramName": "TO_AGE",
-              "paramValue": "2",
+              "paramValue": "32",
               "paramType": "INTEGER"
             },
             {
@@ -277,12 +277,12 @@ values ('sample measure 1', '
           "parameters": [
             {
               "paramName": "FROM_AGE",
-              "paramValue": "25",
+              "paramValue": "28",
               "paramType": "INTEGER"
             },
             {
               "paramName": "TO_AGE",
-              "paramValue": "65",
+              "paramValue": "32",
               "paramType": "INTEGER"
             },
             {

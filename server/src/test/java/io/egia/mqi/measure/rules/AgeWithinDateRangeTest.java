@@ -44,7 +44,7 @@ public class AgeWithinDateRangeTest {
         ruleParam4.setParamValue("19901109");
         ruleParams.add(ruleParam4);
 
-        measureWorkspace = new MeasureWorkspace();
+        measureWorkspace = new MeasureWorkspace(1L, 11L);
     }
 
     @Test

@@ -39,7 +39,7 @@ public class HasCodeSetTest {
         CodeSet codeSetB = CodeSet.builder().codeSetGroup(codeSetGroupB).codeSystem(CodeSystem.ICD_10).codeValue("789").build();
         codeSets.add(codeSetB);
 
-        measureWorkspace = new MeasureWorkspace();
+        measureWorkspace = new MeasureWorkspace(1L, 11L);
     }
 
     @Test

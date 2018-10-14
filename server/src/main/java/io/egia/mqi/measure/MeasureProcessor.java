@@ -97,7 +97,8 @@ public class MeasureProcessor implements Processor {
 
     private void evaluatePatientDataByMeasure(PatientData patientData, Measure measure, MeasureMetaData measureMetaData)
             throws MeasureProcessorException {
-        MeasureStepper measureStepper = new MeasureStepper(patientData, measure, new MeasureWorkspace(), measureMetaData);
+        MeasureWorkspace measureWorkspace = new MeasureWorkspace(patientData.getPatientId(), measure.getMeasureId());
+        MeasureStepper measureStepper = new MeasureStepper(patientData, measure, measureWorkspace, measureMetaData);
         measureStepper.stepThroughMeasure();
         rulesEvaluatedCount = rulesEvaluatedCount + measureStepper.getRulesEvaluatedCount();
         this.measureWorkspaces.add(measureStepper.getMeasureWorkspace());

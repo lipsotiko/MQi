@@ -16,8 +16,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.net.InetAddress;
 import java.net.UnknownHostException;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 @RestController
 public class SeedDdController {
@@ -68,6 +67,7 @@ public class SeedDdController {
             patient.setFirstName("Vango");
             patient.setLastName("Laouto");
             patient.setGender('M');
+            patient.setDateOfBirth(new GregorianCalendar(1956, Calendar.APRIL, 28).getTime());
             Patient savedPatient = patientRepo.saveAndFlush(patient);
 
             Visit visit = new Visit();

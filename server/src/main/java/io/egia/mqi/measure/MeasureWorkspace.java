@@ -10,6 +10,11 @@ public class MeasureWorkspace {
     private List<String> ruleTrace = new ArrayList<>();
     private String resultCode;
 
+    public MeasureWorkspace(Long patientId, Long measureId) {
+        this.patientId = patientId;
+        this.measureId = measureId;
+    }
+
     public Long getPatientId() {
         return patientId;
     }

@@ -17,7 +17,10 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import java.time.ZonedDateTime;
-import java.util.*;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Optional;
+import java.util.Set;
 
 @Service
 public class MeasureService {
@@ -54,22 +57,17 @@ public class MeasureService {
         if (measures.size() == 0) return;
 
         MeasureMetaData measureMetaData = new MeasureMetaData(getCodesSetsForMeasures(measures));
-
         chunkService.chunkData();
         Long serverId = server.getServerId();
         Optional<Chunk> currentChunk = chunkRepo.findTop1ByServerIdAndChunkStatus(serverId, ChunkStatus.PENDING);
         while (currentChunk.isPresent()) {
-            Chunk chunk = currentChunk.get();
-            int chunkGroup = chunk.getChunkGroup();
+            int chunkGroup = currentChunk.get().getChunkGroup();
             log.debug(String.format("Processing chunk %s on server %s", chunkGroup, serverId));
-
-            patientMeasureLogRepo.deleteByChunkGroupAndServerId(chunkGroup, serverId);
-            measureResultRepo.deleteByChunkGroupAndServerId(chunkGroup, serverId);
+            deleteMeasureResults(measures, serverId, chunkGroup);
             List<Patient> patients = patientRepo.findByServerIdAndChunkGroup(serverId, chunkGroup);
             List<Visit> visits = visitRepo.findByServerIdAndChunkGroup(serverId, chunkGroup);
             processor.process(measures, patients, visits, measureMetaData, ZonedDateTime.now());
-            patientMeasureLogRepo.saveAll(processor.getLog());
-            measureResultRepo.saveAll(processor.getResults());
+            saveMeasureResults(processor);
             processor.clear();
             chunkRepo.updateChunkStatusByServerIdAndChunkGroup(serverId, chunkGroup, ChunkStatus.DONE);
             currentChunk = chunkRepo.findTop1ByServerIdAndChunkStatus(serverId, ChunkStatus.PENDING);
@@ -78,13 +76,25 @@ public class MeasureService {
         jobRepo.updateJobStatus(job.getJobId(), JobStatus.SUCCESS);
     }
 
+    private void deleteMeasureResults(List<Measure> measures, Long serverId, int chunkGroup) {
+        for (Measure m : measures) {
+            patientMeasureLogRepo.deleteByChunkGroupAndServerIdAndMeasureId(chunkGroup, serverId, m.getMeasureId());
+            measureResultRepo.deleteByChunkGroupAndServerIdAndMeasureId(chunkGroup, serverId, m.getMeasureId());
+        }
+    }
+
+    private void saveMeasureResults(Processor processor) {
+        patientMeasureLogRepo.saveAll(processor.getLog());
+        measureResultRepo.saveAll(processor.getResults());
+    }
+
     private List<CodeSet> getCodesSetsForMeasures(List<Measure> measures) {
         List<CodeSetGroup> allCodeSetGroups = codeSetGroupRepo.findAll();
         Set<Long> relaventCodeSetGroupIds = new HashSet<>();
 
-        for(Measure m: measures) {
-            for(CodeSetGroup csg: allCodeSetGroups) {
-                if(m.getMeasureJson().contains(csg.getGroupName())) {
+        for (Measure m : measures) {
+            for (CodeSetGroup csg : allCodeSetGroups) {
+                if (m.getMeasureJson().contains(csg.getGroupName())) {
                     relaventCodeSetGroupIds.add(csg.getId());
                 }
             }
