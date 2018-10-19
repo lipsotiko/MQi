@@ -31,7 +31,7 @@ public class SetResultCodeTest {
     }
 
     @Test
-    public void resultCodeIsSetToDenominator() {
+    public void result_code_is_set_to_denominator() {
         setResultCode.evaluate(null, ruleParams, null, measureWorkspace);
         assertThat(measureWorkspace.getResultCode()).isEqualTo("DENOMINATOR");
     }

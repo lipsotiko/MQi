@@ -33,7 +33,7 @@ public class MqiInitializerTest {
     }
 
     @Test
-    public void verifyMqiInitializerDoesWhatItsSupposedTo() throws ClassNotFoundException {
+    public void save_rule_params_is_called() throws ClassNotFoundException {
         subject.onApplicationEvent(contextRefreshedEvent);
         verify(ruleParamUtility, times(1)).saveRuleParams();
     }

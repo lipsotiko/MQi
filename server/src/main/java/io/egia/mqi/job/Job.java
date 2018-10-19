@@ -13,6 +13,7 @@ import java.util.Date;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
+@EntityListeners({JobListener.class})
 public class Job {
 
 	@Id

@@ -15,8 +15,8 @@ public class PatientRepoIntegrationTest extends AbstractRepositoryTest {
     private PatientRepo patientRepo;
 
     @Test
-    public void patientRepository_findByServerIdAndChunkGroup() {
-        List<Patient> subject = patientRepo.findByServerIdAndChunkGroup(1L,1);
+    public void patientRepo_findByServerIdAndChunkGroup() {
+        List<Patient> subject = patientRepo.findByServerIdAndChunkGroup(1L,0);
         assertThat(subject.size()).isEqualTo(1);
     }
 

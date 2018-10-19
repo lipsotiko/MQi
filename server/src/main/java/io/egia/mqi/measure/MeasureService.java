@@ -90,16 +90,16 @@ public class MeasureService {
 
     private List<CodeSet> getCodesSetsForMeasures(List<Measure> measures) {
         List<CodeSetGroup> allCodeSetGroups = codeSetGroupRepo.findAll();
-        Set<Long> relaventCodeSetGroupIds = new HashSet<>();
+        Set<Long> releventCodeSetGroupIds = new HashSet<>();
 
         for (Measure m : measures) {
             for (CodeSetGroup csg : allCodeSetGroups) {
                 if (m.getMeasureJson().contains(csg.getGroupName())) {
-                    relaventCodeSetGroupIds.add(csg.getId());
+                    releventCodeSetGroupIds.add(csg.getId());
                 }
             }
         }
 
-        return codeSetRepo.findByCodeSetGroupIdIn(relaventCodeSetGroupIds);
+        return codeSetRepo.findByCodeSetGroupIdIn(releventCodeSetGroupIds);
     }
 }

@@ -5,11 +5,7 @@ import io.egia.mqi.visit.CodeSetGroup;
 import io.egia.mqi.visit.CodeSetGroupRepo;
 import io.egia.mqi.visit.CodeSetRepo;
 import org.junit.Test;
-import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import java.util.HashSet;
 import java.util.List;
@@ -17,10 +13,7 @@ import java.util.Set;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-@ActiveProfiles("test")
-@RunWith(SpringJUnit4ClassRunner.class)
-@SpringBootTest
-public class CodeSetRepoTest {
+public class CodeSetRepoTest extends AbstractRepositoryTest {
 
     @Autowired
     private CodeSetGroupRepo codeSetGroupRepo;
@@ -29,7 +22,7 @@ public class CodeSetRepoTest {
     private CodeSetRepo codeSetRepo;
 
     @Test
-    public void findByCodeSetGroupId() {
+    public void codeSetRepo_findByCodeSetGroupIdIn() {
         CodeSetGroup csg1 = CodeSetGroup.builder().groupName("vango1").build();
         codeSetGroupRepo.save(csg1);
         codeSetRepo.save(CodeSet.builder().codeSetGroup(csg1).build());

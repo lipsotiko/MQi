@@ -16,8 +16,8 @@ public class VisitRepositoryIntegrationTest extends AbstractRepositoryTest {
     private VisitRepo visitRepo;
 
     @Test
-    public void visitRepository_findByServerIdAndChunkGroup() {
-        List<Visit> subject = visitRepo.findByServerIdAndChunkGroup(1L,1);
+    public void visitRepo_findByServerIdAndChunkGroup() {
+        List<Visit> subject = visitRepo.findByServerIdAndChunkGroup(1L,0);
         assertThat(subject.size()).isEqualTo(1);
         assertThat(subject.get(0).getVisitCodes().get(0).getCodeSystem()).isEqualTo(CodeSystem.ICD_9);
         assertThat(subject.get(0).getVisitCodes().get(0).getCodeValue()).isEqualTo("abc");

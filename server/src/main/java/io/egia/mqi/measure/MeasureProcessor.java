@@ -54,15 +54,15 @@ public class MeasureProcessor implements Processor {
     @Override
     public List<PatientMeasureLog> getLog() {
         List<PatientMeasureLog> log = new ArrayList<>();
-        measures.forEach(m -> {
-            patientDataHash.forEach((patientId, data) -> {
-                log.add(PatientMeasureLog.builder()
-                        .measureId(m.getMeasureId())
-                        .patientId(patientId)
-                        .lastUpdated(ZonedDateTime.now())
-                        .build());
-            });
-        });
+        measures.forEach(m ->
+                patientDataHash.forEach((patientId, data) ->
+                        log.add(PatientMeasureLog.builder()
+                                .measureId(m.getMeasureId())
+                                .patientId(patientId)
+                                .lastUpdated(ZonedDateTime.now())
+                                .build())
+                )
+        );
 
         return log;
     }
@@ -72,13 +72,12 @@ public class MeasureProcessor implements Processor {
         List<MeasureResult> results = new ArrayList<>();
         measureWorkspaces.stream()
                 .filter(mw -> mw.getResultCode() != null)
-                .forEach(mw -> {
-                    results.add(MeasureResult.builder()
-                            .patientId(mw.getPatientId())
-                            .measureId(mw.getMeasureId())
-                            .resultCode(mw.getResultCode())
-                            .build());
-                });
+                .forEach(mw -> results.add(MeasureResult.builder()
+                        .patientId(mw.getPatientId())
+                        .measureId(mw.getMeasureId())
+                        .resultCode(mw.getResultCode())
+                        .build())
+                );
 
         return results;
     }

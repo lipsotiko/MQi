@@ -2,6 +2,10 @@ package io.egia.mqi.integration;
 
 import io.egia.mqi.chunk.Chunk;
 import io.egia.mqi.chunk.ChunkRepo;
+import io.egia.mqi.chunk.ChunkStatus;
+import io.egia.mqi.job.Job;
+import io.egia.mqi.job.JobRepo;
+import io.egia.mqi.job.JobStatus;
 import io.egia.mqi.patient.Patient;
 import io.egia.mqi.patient.PatientRepo;
 import io.egia.mqi.visit.*;
@@ -19,17 +23,14 @@ import java.util.Collections;
 @ActiveProfiles("test")
 @RunWith(SpringJUnit4ClassRunner.class)
 @SpringBootTest
-@DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_EACH_TEST_METHOD)
+@DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
 abstract class AbstractRepositoryTest {
 
-    @Autowired
-    private ChunkRepo chunkRepo;
-    @Autowired
-    private PatientRepo patientRepo;
-    @Autowired
-    private VisitRepo visitRepo;
-    @Autowired
-    private VisitCodeRepo visitCodeRepo;
+    @Autowired private ChunkRepo chunkRepo;
+    @Autowired private PatientRepo patientRepo;
+    @Autowired private VisitRepo visitRepo;
+    @Autowired private VisitCodeRepo visitCodeRepo;
+    @Autowired private JobRepo jobRepo;
 
     @Before
     public void setUp() {
@@ -38,7 +39,8 @@ abstract class AbstractRepositoryTest {
             chunk.setPatientId(i);
             chunk.setRecordCount(100L);
             chunk.setServerId(i);
-            chunk.setChunkGroup(1);
+            chunk.setChunkGroup(0);
+            chunk.setChunkStatus(ChunkStatus.PENDING);
             chunkRepo.saveAndFlush(chunk);
 
             Patient patient = new Patient();
@@ -60,6 +62,12 @@ abstract class AbstractRepositoryTest {
             savedVisit.setVisitCodes(Collections.singletonList(code));
             visitRepo.saveAndFlush(savedVisit);
         }
+
+        for(int i = 5; i > 0; i--) {
+            Job job = new Job();
+            job.setJobStatus(JobStatus.PENDING);
+            jobRepo.saveAndFlush(job);
+        }
     }
 
     @After
@@ -68,5 +76,6 @@ abstract class AbstractRepositoryTest {
         visitRepo.deleteAll();
         patientRepo.deleteAll();
         chunkRepo.deleteAll();
+        jobRepo.deleteAll();
     }
 }

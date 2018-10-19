@@ -9,6 +9,7 @@ import io.egia.mqi.job.Job;
 import io.egia.mqi.job.JobRepo;
 import io.egia.mqi.job.JobStatus;
 import io.egia.mqi.patient.Patient;
+import io.egia.mqi.patient.PatientMeasureLog;
 import io.egia.mqi.patient.PatientMeasureLogRepo;
 import io.egia.mqi.patient.PatientRepo;
 import io.egia.mqi.server.Server;
@@ -44,12 +45,11 @@ public class MeasureServiceTest {
     @Mock
     private CodeSetRepo codeSetRepo;
     @Mock
-    PatientMeasureLogRepo patientMeasureLogRepo;
+    private PatientMeasureLogRepo patientMeasureLogRepo;
     @Mock
-    MeasureResultRepo measureResultRepo;
-
+    private MeasureResultRepo measureResultRepo;
+    private Measure measure;
     private MeasureService measureService;
-
     private Server server = Server.builder().serverId(11L).systemType(SystemType.PRIMARY).build();
     private Job job;
 
@@ -64,12 +64,20 @@ public class MeasureServiceTest {
         job.setJobId(44L);
         job.setJobStatus(JobStatus.RUNNING);
 
-        Chunk c = new Chunk();
-        c.setPatientId(99L);
-        Patient p = new Patient();
-        p.setPatientId(99L);
-        List<Patient> patients = new ArrayList<>(Collections.singletonList(p));
-        when(patientRepo.findByServerIdAndChunkGroup(11L, 1)).thenReturn(patients);
+        Patient p77 = new Patient();
+        p77.setPatientId(77L);
+        when(patientRepo.findByServerIdAndChunkGroup(11L, 1)).thenReturn(
+                new ArrayList<>(Collections.singletonList(p77)));
+
+        Patient p88 = new Patient();
+        p88.setPatientId(88L);
+        when(patientRepo.findByServerIdAndChunkGroup(11L, 2)).thenReturn(
+                new ArrayList<>(Collections.singletonList(p88)));
+
+        Patient p99 = new Patient();
+        p99.setPatientId(99L);
+        when(patientRepo.findByServerIdAndChunkGroup(11L, 3)).thenReturn(
+                new ArrayList<>(Collections.singletonList(p99)));
 
         Visit v = new Visit();
         v.setPatientId(99L);
@@ -86,21 +94,23 @@ public class MeasureServiceTest {
                 .thenReturn(Optional.of(secondChunkPending))
                 .thenReturn(Optional.of(thirdChunkPending))
                 .thenReturn(Optional.empty());
+
+        measure = new Measure();
+        measure.setMeasureName("Fake Measure");
     }
 
     @Test
-    public void verifyMethodsWereCalled() {
-        Measure measure = new Measure();
-        measure.setMeasureName("Fake Measure");
+    public void measure_process_was_called() {
+        measureService.process(server, job, Collections.singletonList(measure));
+        assertThat(spy.processWasCalled).isEqualTo(true);
+    }
 
+    @Test
+    public void data_was_chunked() {
         measureService.process(server, job, Collections.singletonList(measure));
 
         verify(chunkService, times(1)).chunkData();
         verify(chunkRepo, times(4)).findTop1ByServerIdAndChunkStatus(11L, ChunkStatus.PENDING);
-
-        assertThat(spy.processWasCalledWithMeasures.get(0).getMeasureName()).isEqualTo("Fake Measure");
-        assertThat(spy.processWasCalledWithPatients.get(0).getPatientId()).isEqualTo(99L);
-        assertThat(spy.processWasCalledWithVisits.get(0).getPatientId()).isEqualTo(99L);
 
         verify(chunkRepo, times(1))
                 .updateChunkStatusByServerIdAndChunkGroup(11L, 1, ChunkStatus.DONE);
@@ -108,15 +118,22 @@ public class MeasureServiceTest {
                 .updateChunkStatusByServerIdAndChunkGroup(11L, 2, ChunkStatus.DONE);
         verify(chunkRepo, times(1))
                 .updateChunkStatusByServerIdAndChunkGroup(11L, 3, ChunkStatus.DONE);
+    }
 
-        assertThat(spy.processWasCalled).isEqualTo(true);
+    @Test
+    public void measure_processor_was_cleared() {
+        measureService.process(server, job, Collections.singletonList(measure));
         assertThat(spy.clearWasCalled).isEqualTo(true);
+    }
 
+    @Test
+    public void job_status_was_updated_to_success() {
+        measureService.process(server, job, Collections.singletonList(measure));
         verify(jobRepo, times(1)).updateJobStatus(job.getJobId(), JobStatus.SUCCESS);
     }
 
     @Test
-    public void verifyNothingIsProcessedWhenNoMeasuresAreSupplied() {
+    public void nothing_is_proessed_when_no_measures_are_supplied() {
         List<Measure> measures = Collections.emptyList();
         measureService.process(server, job, measures);
         verify(chunkService, times(0)).chunkData();
@@ -124,7 +141,7 @@ public class MeasureServiceTest {
     }
 
     @Test
-    public void codeSetsRelatedToAMeasureArePassedToTheProcessor() throws IOException {
+    public void measure_codesets_are_passed_to_processor() throws IOException {
         CodeSetGroup codeSetGroupA = CodeSetGroup.builder().id(1L).groupName("CODE_SET_A").build();
         List<CodeSetGroup> codeSetGroups = new ArrayList<CodeSetGroup>() {{
             add(codeSetGroupA);
@@ -145,21 +162,64 @@ public class MeasureServiceTest {
     }
 
     @Test
-    public void measureResultsAndLogsAreRemovedAndSavedWhenUpdated() throws IOException {
-        List<MeasureResult> expected = new ArrayList<>();
-        expected.add(MeasureResult.builder().patientId(1L).measureId(1L).resultCode("DENOMINATOR").build());
-
+    public void measure_results_are_removed() throws IOException {
         Measure measure = Helpers.getMeasureFromResource("fixtures", "sampleMeasure2.json");
         measureService.process(server, job, Collections.singletonList(measure));
 
         verify(measureResultRepo, times(1)).deleteByChunkGroupAndServerIdAndMeasureId(1, server.getServerId(), 11L);
         verify(measureResultRepo, times(1)).deleteByChunkGroupAndServerIdAndMeasureId(2, server.getServerId(), 11L);
         verify(measureResultRepo, times(1)).deleteByChunkGroupAndServerIdAndMeasureId(3, server.getServerId(), 11L);
+    }
+
+    @Test
+    public void measure_results_are_saved() throws IOException {
+        Measure measure = Helpers.getMeasureFromResource("fixtures", "sampleMeasure2.json");
+        measureService.process(server, job, Collections.singletonList(measure));
+
+        verify(measureResultRepo, times(1)).saveAll(
+                Collections.singletonList(
+                        MeasureResult.builder().patientId(77L).measureId(11L).resultCode("DENOMINATOR").build()
+                )
+        );
+
+        verify(measureResultRepo, times(1)).saveAll(
+                Collections.singletonList(
+                        MeasureResult.builder().patientId(88L).measureId(11L).resultCode("DENOMINATOR").build()
+                )
+        );
+
+        verify(measureResultRepo, times(1)).saveAll(
+                Collections.singletonList(
+                        MeasureResult.builder().patientId(99L).measureId(11L).resultCode("DENOMINATOR").build()
+                )
+        );
+    }
+
+    @Test
+    public void measure_patient_logs_are_removed() throws IOException {
+        List<MeasureResult> expected = new ArrayList<>();
+        expected.add(MeasureResult.builder().patientId(1L).measureId(1L).resultCode("DENOMINATOR").build());
+
+        Measure measure = Helpers.getMeasureFromResource("fixtures", "sampleMeasure2.json");
+        measureService.process(server, job, Collections.singletonList(measure));
 
         verify(patientMeasureLogRepo, times(1)).deleteByChunkGroupAndServerIdAndMeasureId(1, server.getServerId(), 11L);
         verify(patientMeasureLogRepo, times(1)).deleteByChunkGroupAndServerIdAndMeasureId(2, server.getServerId(), 11L);
         verify(patientMeasureLogRepo, times(1)).deleteByChunkGroupAndServerIdAndMeasureId(3, server.getServerId(), 11L);
+    }
 
-        verify(measureResultRepo, times(3)).saveAll(expected);
+    @Test
+    public void patient_measure_logs_are_saved() throws IOException {
+        List<PatientMeasureLog> expected = new ArrayList<>();
+        expected.add(PatientMeasureLog.builder().patientId(77L).measureId(11L).build());
+        expected.add(PatientMeasureLog.builder().patientId(88L).measureId(11L).build());
+        expected.add(PatientMeasureLog.builder().patientId(99L).measureId(11L).build());
+
+        Measure measure = Helpers.getMeasureFromResource("fixtures", "sampleMeasure2.json");
+        measureService.process(server, job, Collections.singletonList(measure));
+
+        verify(patientMeasureLogRepo, times(1)).saveAll(
+                Collections.singletonList(PatientMeasureLog.builder().patientId(77L).measureId(11L).build())
+        );
     }
 }

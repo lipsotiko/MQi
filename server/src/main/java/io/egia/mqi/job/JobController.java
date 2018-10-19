@@ -5,12 +5,18 @@ import io.egia.mqi.measure.MeasureService;
 import io.egia.mqi.server.Server;
 import io.egia.mqi.server.ServerService;
 import io.egia.mqi.server.SystemType;
+import org.reactivestreams.Publisher;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.MediaType;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.xml.crypto.Data;
 import java.net.UnknownHostException;
+import java.time.LocalDateTime;
+import java.util.Date;
 import java.util.List;
 
 @RestController
@@ -21,6 +27,7 @@ public class JobController {
     private MeasureRepo measureRepo;
     private MeasureService measureService;
     private ServerService serverService;
+    private JobPublisher jobPublisher;
 
     @Value("${server.port}")
     private String serverPort;
@@ -35,6 +42,7 @@ public class JobController {
         this.measureRepo = measureRepo;
         this.measureService = measureService;
         this.serverService = serverService;
+        this.jobPublisher = jobPublisher;
     }
 
     @PostMapping("/process")
@@ -42,7 +50,8 @@ public class JobController {
 
         Server server = serverService.getServerFromHostNameAndPort(serverPort);
         if (server.getSystemType().equals(SystemType.PRIMARY)) {
-            Job job = jobRepo.saveAndFlush(Job.builder().jobStatus(JobStatus.RUNNING).build());
+            Job job = jobRepo.saveAndFlush(
+                    Job.builder().jobStatus(JobStatus.RUNNING).startTime(new Date()).build());
             for (Long measureId : measureIds) {
                 jobMeasureRepo.saveAndFlush(
                         JobMeasure.builder().jobId(job.getJobId()).measureId(measureId).build()
@@ -50,7 +59,15 @@ public class JobController {
             }
 
             measureService.process(server, job, measureRepo.findAllById(measureIds));
-            //TODO: Trigger call to other servers that will help process data
+
+            job.setJobStatus(JobStatus.SUCCESS);
+            job.setEndTime(new Date());
+            jobRepo.save(job);
         }
+    }
+
+    @GetMapping(produces = MediaType.TEXT_EVENT_STREAM_VALUE, value = "/job_subscription")
+    public Publisher<Job> jobStatus() {
+        return jobPublisher.getPublisher();
     }
 }

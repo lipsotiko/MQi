@@ -16,6 +16,7 @@ public class ProcessorSpy implements Processor {
     List<Patient> processWasCalledWithPatients = new ArrayList<>();
     List<Visit> processWasCalledWithVisits = new ArrayList<>();
     MeasureMetaData processWasCalledWithMeasureMetaData;
+    private List<PatientMeasureLog> patientMeasureLogs = new ArrayList<>();
 
     @Override
     public void process(List<Measure> measures,
@@ -26,11 +27,11 @@ public class ProcessorSpy implements Processor {
 
         processWasCalled = true;
 
-        if(measures != null) {
+        if (measures != null) {
             processWasCalledWithMeasures = measures;
         }
 
-        if (patients != null){
+        if (patients != null) {
             processWasCalledWithPatients.addAll(patients);
         }
 
@@ -42,23 +43,62 @@ public class ProcessorSpy implements Processor {
             processWasCalledWithMeasureMetaData = measureMetaData;
         }
 
+        if (measures != null && patients != null) {
+            for (Measure m : measures) {
+                for (Patient p : patients) {
+                    patientMeasureLogs.add(
+                            PatientMeasureLog.builder()
+                                    .measureId(m.getMeasureId())
+                                    .patientId(p.getPatientId())
+                                    .build()
+                    );
+                }
+            }
+        }
 
     }
 
     @Override
     public void clear() {
         clearWasCalled = true;
+        processWasCalledWithMeasures = new ArrayList<>();
+        processWasCalledWithPatients = new ArrayList<>();
     }
 
     @Override
     public List<PatientMeasureLog> getLog() {
-        return null;
+        List<PatientMeasureLog> stubbedLogs = new ArrayList<>();
+
+        for (Measure m : processWasCalledWithMeasures) {
+            for (Patient p : processWasCalledWithPatients) {
+                stubbedLogs.add(
+                        PatientMeasureLog.builder()
+                                .measureId(m.getMeasureId())
+                                .patientId(p.getPatientId())
+                                .build()
+                );
+            }
+
+        }
+
+        return stubbedLogs;
     }
 
     @Override
     public List<MeasureResult> getResults() {
         List<MeasureResult> stubbedResults = new ArrayList<>();
-        stubbedResults.add(MeasureResult.builder().patientId(1L).measureId(1L).resultCode("DENOMINATOR").build());
+
+        for (Measure m : processWasCalledWithMeasures) {
+            for (Patient p : processWasCalledWithPatients) {
+                stubbedResults.add(
+                        MeasureResult.builder()
+                                .measureId(m.getMeasureId())
+                                .patientId(p.getPatientId())
+                                .resultCode("DENOMINATOR").build()
+                );
+            }
+        }
+
         return stubbedResults;
     }
 

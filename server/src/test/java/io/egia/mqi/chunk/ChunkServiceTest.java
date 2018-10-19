@@ -106,7 +106,7 @@ public class ChunkServiceTest {
     }
 
     @Test
-    public void chunkDataTest() {
+    public void data_is_chunked() {
         ChunkService chunkService =
                 new ChunkService(serverRepo, chunkRepo, patientRecordCountRepo);
 

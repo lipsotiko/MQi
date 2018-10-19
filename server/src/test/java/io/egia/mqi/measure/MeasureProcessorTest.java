@@ -52,7 +52,7 @@ public class MeasureProcessorTest {
     }
 
     @Test
-    public void validatePatientDataHash() {
+    public void patient_data_hash_gets_built() {
         subject.process(measures, patients, visits, null, timeExecuted);
         Hashtable<Long, PatientData> patientDataHash = subject.getPatientDataHash();
         Set<Long> keys = patientDataHash.keySet();
@@ -69,7 +69,7 @@ public class MeasureProcessorTest {
     }
 
     @Test
-    public void clearMeasureWorkspace() {
+    public void clears_measure_processor() {
         subject.process(measures, patients, visits, null, timeExecuted);
         subject.clear();
         assertThat(subject.getPatientDataHash().size()).isEqualTo(0);

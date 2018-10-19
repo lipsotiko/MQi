@@ -43,14 +43,14 @@ public class HasCodeSetTest {
     }
 
     @Test
-    public void patientHasCodeSetA() {
+    public void patient_has_code_set_A() {
         PatientData patientData = getPatientData("123", CodeSystem.ICD_10);
         hasCodeSet.evaluate(patientData, ruleParams, new MeasureMetaData(codeSets), measureWorkspace);
         assertThat(measureWorkspace.getContinueProcessing()).isEqualTo(true);
     }
 
     @Test
-    public void patientDoesNotHaveCodeSetA() {
+    public void patient_does_not_have_code_set_A() {
         PatientData patientData = getPatientData("789", CodeSystem.ICD_10);
         hasCodeSet.evaluate(patientData, ruleParams, new MeasureMetaData(codeSets), measureWorkspace);
         assertThat(measureWorkspace.getContinueProcessing()).isEqualTo(false);

@@ -43,7 +43,7 @@ public class MeasureControllerTest {
     }
 
     @Test
-    public void putMeasureWithUpdatedMeasureDescriptionTest() {
+    public void saving_measures_with_new_description_does_not_update_its_timestamp() {
         MeasureController measureController = new MeasureController(measureRepo, null);
         measureController.putMeasure(updatedMeasureDescription);
         verify(measureRepo, times(1)).saveAndFlush(captor.capture());
@@ -52,7 +52,7 @@ public class MeasureControllerTest {
     }
 
     @Test
-    public void putMeasureWithUpdatedMeasureLogicTest() {
+    public void saving_measures_with_new_logic_updates_its_timestamp() {
         MeasureController measureController = new MeasureController(measureRepo, null);
         measureController.putMeasure(updatedMeasureLogic);
         verify(measureRepo, times(1)).saveAndFlush(captor.capture());
@@ -61,5 +61,4 @@ public class MeasureControllerTest {
         assertThat(captor.getValue().getMeasureLogic()).isNotEqualTo(existingMeasure.getMeasureLogic());
         assertThat(captor.getValue().getLastUpdated()).isNotEqualTo(existingMeasure.getLastUpdated());
     }
-
 }

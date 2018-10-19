@@ -48,7 +48,7 @@ public class AgeWithinDateRangeTest {
     }
 
     @Test
-    public void turns28AtStartOfDateRange() {
+    public void turns_28_at_start_of_date_range() {
         Patient patient = new Patient();
         Date dob = new GregorianCalendar(1956, Calendar.APRIL, 28).getTime();
         patient.setDateOfBirth(dob);
@@ -58,7 +58,7 @@ public class AgeWithinDateRangeTest {
     }
 
     @Test
-    public void turns28PriorToStartOfDateRange() {
+    public void turns_28_prior_to_start_of_date_range() {
         Patient patient = new Patient();
         Date dob = new GregorianCalendar(1955, Calendar.APRIL, 28).getTime();
         patient.setDateOfBirth(dob);
@@ -68,7 +68,7 @@ public class AgeWithinDateRangeTest {
     }
 
     @Test
-    public void turns32AtEndOfDateRange() {
+    public void turns_32_at_end_of_date_range() {
         Patient patient = new Patient();
         Date dob = new GregorianCalendar(1958, Calendar.APRIL, 28).getTime();
         patient.setDateOfBirth(dob);
@@ -78,7 +78,7 @@ public class AgeWithinDateRangeTest {
     }
 
     @Test
-    public void turns32AfterTheEndOfDateRange() {
+    public void turns_32_after_the_end_of_date_range() {
         Patient patient = new Patient();
         Date dob = new GregorianCalendar(1957, Calendar.APRIL, 28).getTime();
         patient.setDateOfBirth(dob);
@@ -88,7 +88,7 @@ public class AgeWithinDateRangeTest {
     }
 
     @Test
-    public void turns28OnLeapYearAtStartOfDateRange() {
+    public void turns_28_on_leap_year_at_start_of_date_range() {
         Patient patient = new Patient();
         Date dob = new GregorianCalendar(1956, Calendar.FEBRUARY, 28).getTime();
         patient.setDateOfBirth(dob);
@@ -98,7 +98,7 @@ public class AgeWithinDateRangeTest {
     }
 
     @Test
-    public void patientsWithNullDobShouldStopBeingProcessed() {
+    public void patients_with_null_dob_should_stop_being_processed() {
         Patient patient = new Patient();
         patientData.addPatientRecord(patient);
         ageWithinDateRange.evaluate(patientData, ruleParams, measureMetaData, measureWorkspace);
@@ -106,7 +106,7 @@ public class AgeWithinDateRangeTest {
     }
 
     @Test
-    public void dateStringThatThrowsParseExceptionShouldStopBeingProcessed() {
+    public void date_string_that_throws_parse_exception_should_stop_processing() {
         Patient patient = new Patient();
         Date dob = new GregorianCalendar(1956, Calendar.FEBRUARY, 28).getTime();
         patient.setDateOfBirth(dob);
