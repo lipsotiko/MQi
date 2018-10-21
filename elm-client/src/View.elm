@@ -15,8 +15,8 @@ view model =
         [
             div [ class "measure-list" ] [
                 h3 [ ] [
-                    text "Measures:"
-                    , button [ onClick ProcessMeasures ] [ text "Process"]
+                    button [ onClick ProcessMeasures ] [ text "Process"]
+                    , button [ onClick AddMeasure ] [ text "+ Measure"]
                     ]
                 , ul
                   [ class "list-container" ]
@@ -46,11 +46,7 @@ view model =
                , div
                     []
                     [
-                        h3 [ ]
-                        [ text "Steps:" ]
-                        , button
-                            [ onClick AddStep]
-                            [text "+"]
+                        button [ onClick AddStep] [text "+ Step"]
                     ]
                 , ul
                     [ class "list-container" ]
@@ -58,23 +54,24 @@ view model =
                 , button [ onClick (SaveMeasure model.measure)] [ text "Save" ]
                 , button [ onClick (DeleteMeasure model.measure.id)] [ text "Delete" ]
                 , button [ onClick (SelectMeasure model.measure.id) ] [ text "Reset"]
-                , button [ onClick ClearMeasure ] [ text "Clear" ]
                 , p [][text model.measure.lastUpdated]
                 , p [][text model.measure.minimumSystemVersion]
             ]
         ]
 
+measureItemView: Int -> MeasureItem -> Html Msg
+measureItemView idx measureItem =
+    li [ class "list-item", onClick (SelectMeasure measureItem.id) ]
+       [ checkbox (SelectMeasureForBatch measureItem.id) measureItem.name
+
+        ]
+
 checkbox : msg -> String -> Html msg
 checkbox msg name =
   label []
-    [ text name
-    , input [ type_ "checkbox", onClick msg ] []
+    [ input [ type_ "checkbox", onClick msg ] []
+      , text name
     ]
-
-measureItemView: Int -> MeasureItem -> Html Msg
-measureItemView idx measureItem =
-    li [ class "list-item", onClick (SelectMeasure measureItem.id)]
-       [ checkbox (SelectMeasureForBatch measureItem.id) measureItem.name ]
 
 stepView : Model -> Int -> Step -> Html Msg
 stepView model idx step =

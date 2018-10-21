@@ -43,7 +43,7 @@ public class MeasureStepperTest {
     }
 
     @Test
-    public void measure_with_infinite_loop_throws_exception() throws IOException {
+    public void measure_with_infinite_loop_throws_exception() throws IOException, MeasureProcessorException {
         Measure measure = Helpers.getMeasureFromResource("fixtures", "measureWithInfiniteLoop.json");
         MeasureStepper subject = new MeasureStepper(
                 new PatientData(1L), measure, new MeasureWorkspace(1L, 11L), new MeasureMetaData());
@@ -57,6 +57,17 @@ public class MeasureStepperTest {
         MeasureStepper subject = new MeasureStepper(
                 new PatientData(1L), measure, new MeasureWorkspace(1L,  11L), new MeasureMetaData());
 
+        assertThatExceptionOfType(MeasureProcessorException.class).isThrownBy(subject::stepThroughMeasure);
+    }
+
+    @Test
+    public void measure_with_no_steps_throws_exception() {
+        Measure measure = new Measure();
+        MeasureLogic measureLogic = new MeasureLogic();
+        measureLogic.setSteps(Collections.emptyList());
+        measure.setMeasureLogic(measureLogic);
+        MeasureStepper subject = new MeasureStepper(
+                new PatientData(1L), measure, new MeasureWorkspace(1L,  11L), new MeasureMetaData());
         assertThatExceptionOfType(MeasureProcessorException.class).isThrownBy(subject::stepThroughMeasure);
     }
 }

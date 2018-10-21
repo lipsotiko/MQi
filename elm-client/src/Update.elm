@@ -70,6 +70,9 @@ update msg model =
             in
                 { model | measure = newMeasure } ! []
 
+        AddMeasure ->
+            model ! [ putMeasure defaultNewMeasure ]
+
         AddStep ->
             let
                 oldMeasure = model.measure
@@ -145,16 +148,13 @@ update msg model =
             let
                 newMeasures = List.filter (\m -> m.id /= model.measure.id) model.measures
             in
-                { model | measures = newMeasures, measure = emptyMeasure } ! []
+                { model | measures = newMeasures, measure = defaultMeasure } ! []
 
         DeleteMeasureResponse (Err message) ->
            let
                d = Debug.log "Error" (toString message)
            in
                model ! []
-
-        ClearMeasure ->
-                { model | measure = emptyMeasure } ! []
 
         GetMeasureResponse (Ok measure) ->
                 { model | measure = measure } ! []
@@ -163,7 +163,7 @@ update msg model =
              let
                  d = Debug.log "Error" (toString message)
              in
-                 { model | measure = emptyMeasure } ! []
+                 { model | measure = defaultMeasure } ! []
 
         GetRuleParamsResponse (Ok ruleParameters) ->
             let
@@ -302,6 +302,10 @@ getRuleParameters : List RuleParameter -> String -> List RuleParameter
 getRuleParameters ruleParameters ruleName =
      List.filter (\r -> r.ruleName == ruleName) ruleParameters
 
-emptyMeasure : Measure
-emptyMeasure =
+defaultMeasure : Measure
+defaultMeasure =
     Measure 0 "" "" [] "" "" Nothing
+
+defaultNewMeasure : Measure
+defaultNewMeasure =
+    Measure 0 "New Measure" "" [] "" "" Nothing

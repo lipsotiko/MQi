@@ -29,6 +29,10 @@ class MeasureStepper {
     }
 
     void stepThroughMeasure() throws MeasureProcessorException {
+        if(steps.size() == 0) {
+            throw new MeasureProcessorException("Measure logic has no steps");
+        }
+
         int firstStepId = getInitialStepId();
         Step currentStep = getStepById(firstStepId);
         Class<?> ruleClass;

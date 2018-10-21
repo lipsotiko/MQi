@@ -39,6 +39,8 @@ public class MeasureProcessor implements Processor {
                     try {
                         evaluatePatientDataByMeasure(patientData, measure, measureMetaData);
                     } catch (MeasureProcessorException e) {
+                        //todo: do something to inform the user the job failed
+                        //todo: set the job status to failed
                         e.printStackTrace();
                     }
                 }));
@@ -96,6 +98,11 @@ public class MeasureProcessor implements Processor {
 
     private void evaluatePatientDataByMeasure(PatientData patientData, Measure measure, MeasureMetaData measureMetaData)
             throws MeasureProcessorException {
+
+        if (measure.getMeasureLogic() == null) {
+            throw new MeasureProcessorException("No logic was Supplied for measure: " + measure.getMeasureName());
+        }
+
         MeasureWorkspace measureWorkspace = new MeasureWorkspace(patientData.getPatientId(), measure.getMeasureId());
         MeasureStepper measureStepper = new MeasureStepper(patientData, measure, measureWorkspace, measureMetaData);
         measureStepper.stepThroughMeasure();

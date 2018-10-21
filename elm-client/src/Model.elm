@@ -51,6 +51,7 @@ type alias Drag = {
 
 type Msg
     = AddStep
+    | AddMeasure
     | DeleteStep Int
     | EditStep Int
     | DragStart Int Position
@@ -62,7 +63,6 @@ type Msg
     | FailureStepId Int String
     | ParameterValue Int String String
     | SelectMeasure Int
-    | ClearMeasure
     | GetMeasuresResponse (Result Http.Error (List MeasureItem))
     | GetMeasureResponse (Result Http.Error (Measure))
     | GetRuleParamsResponse (Result Http.Error (List RuleParameter))

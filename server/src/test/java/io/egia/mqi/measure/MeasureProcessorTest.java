@@ -5,6 +5,7 @@ import io.egia.mqi.patient.Patient;
 import io.egia.mqi.patient.PatientData;
 import io.egia.mqi.patient.PatientMeasureLogRepo;
 import io.egia.mqi.visit.Visit;
+import org.assertj.core.api.Assertions;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -15,6 +16,8 @@ import java.io.IOException;
 import java.time.ZonedDateTime;
 import java.util.*;
 
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.assertj.core.api.Assertions.catchThrowableOfType;
 import static org.assertj.core.api.Java6Assertions.assertThat;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -74,5 +77,14 @@ public class MeasureProcessorTest {
         subject.clear();
         assertThat(subject.getPatientDataHash().size()).isEqualTo(0);
         assertThat(subject.getRulesEvaluatedCount()).isEqualTo(0);
+    }
+
+    @Test
+    public void measure_with_null_logic_throws_measure_processor_exception() {
+        Measure measure = new Measure();
+        measure.setMeasureName("Measure With No Measure Logic");
+        catchThrowableOfType(() ->
+                subject.process(Collections.singletonList(measure), patients, visits, null, timeExecuted),
+                MeasureProcessorException.class);
     }
 }

@@ -18,7 +18,7 @@ public class ServerService {
 
     public Server getServerFromHostNameAndPort(String serverPort) throws UnknownHostException {
         String thisServersName = getHostName();
-        return this.serverRepo.findOneByServerNameAndServerPort(thisServersName, serverPort);
+         return this.serverRepo.findOneByServerNameAndServerPort(thisServersName, serverPort);
     }
 
     private static String getHostName() throws UnknownHostException {

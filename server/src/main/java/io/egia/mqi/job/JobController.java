@@ -1,5 +1,6 @@
 package io.egia.mqi.job;
 
+import io.egia.mqi.measure.MeasureProcessorException;
 import io.egia.mqi.measure.MeasureRepo;
 import io.egia.mqi.measure.MeasureService;
 import io.egia.mqi.server.Server;
@@ -13,9 +14,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
-import javax.xml.crypto.Data;
 import java.net.UnknownHostException;
-import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.List;
 
