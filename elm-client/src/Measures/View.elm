@@ -1,11 +1,13 @@
-module View exposing (..)
+module Measures.View exposing (..)
 
 import Html exposing (..)
 import Html.Attributes exposing (..)
 import Html.Events exposing (on, onClick, onInput)
 import Json.Decode
-import Model exposing (..)
+import Measures.Message exposing (..)
+import Measures.Model exposing (..)
 import Mouse exposing (Position)
+
 
 view : Model -> Html Msg
 view model =

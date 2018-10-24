@@ -1,11 +1,12 @@
-module HttpActions exposing (processMeasures, getMeasureList, getMeasure , getRulesParams, putMeasure, deleteMeasure)
+module Measures.HttpActions exposing (processMeasures, getMeasureList, getMeasure , getRulesParams, putMeasure, deleteMeasure)
 
 import Array exposing (Array, fromList)
 import Http
 import Json.Decode as Decode exposing (list, int, string, bool, Decoder)
 import Json.Decode.Pipeline exposing (decode, hardcoded, optional, required, requiredAt)
 import Json.Encode as Encode
-import Model exposing (..)
+import Measures.Message exposing (Msg(DeleteMeasureResponse, GetMeasureResponse, GetMeasuresResponse, GetRuleParamsResponse, NewMeasureResponse, ProcessMeasuresResponse))
+import Measures.Model exposing (..)
 
 
 deleteMeasure: Int -> Cmd Msg
@@ -47,6 +48,7 @@ put url body decoder =
     , withCredentials = False
     }
 
+
 delete : String -> Http.Request String
 delete url =
   Http.request {
@@ -58,6 +60,7 @@ delete url =
     , timeout = Nothing
     , withCredentials = False
     }
+
 
 post : String -> Http.Body -> Http.Request (String)
 post url body =
@@ -71,6 +74,7 @@ post url body =
     , withCredentials = False
     }
 
+
 processMeasures : List Int -> Cmd Msg
 processMeasures ids =
     let
@@ -79,6 +83,7 @@ processMeasures ids =
     in
         Http.send ProcessMeasuresResponse request
 
+
 getMeasureList : Cmd Msg
 getMeasureList =
     let
@@ -86,6 +91,7 @@ getMeasureList =
         request = Http.get url (Decode.list measureListItemDecoder)
     in
         Http.send GetMeasuresResponse request
+
 
 measureListItemDecoder: Decoder MeasureItem
 measureListItemDecoder = decode MeasureItem

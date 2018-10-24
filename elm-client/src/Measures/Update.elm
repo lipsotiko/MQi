@@ -1,14 +1,14 @@
-module Update exposing (..)
+module Measures.Update exposing (..)
 
-import HttpActions exposing (deleteMeasure, getMeasure, getMeasureList, processMeasures, putMeasure)
+import Measures.HttpActions exposing (deleteMeasure, getMeasure, getMeasureList, processMeasures, putMeasure)
 import List.Extra exposing (unique)
-import Model exposing (..)
+import Measures.Message exposing (Msg(..))
+import Measures.Model exposing (..)
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
     case msg of
-
         DeleteStep idx ->
             let
                 oldMeasure = model.measure
