@@ -2,7 +2,7 @@ module Layout exposing (init, update, view, subscriptions, Msg(OnLocationChange)
 
 import Html exposing (Html, div, h1, text)
 import Navigation exposing (Location)
-import Route exposing (Route(HomeRoute, MeasuresRoute, NotFoundRoute), parseLocation)
+import Route exposing (Route(DashboardRoute, MeasuresRoute, NotFoundRoute), parseLocation)
 import SubPage
 
 

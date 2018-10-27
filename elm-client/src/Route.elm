@@ -4,7 +4,7 @@ import Navigation exposing (Location)
 import UrlParser exposing (Parser, map, oneOf, parseHash, s, top)
 
 type Route
-    = HomeRoute
+    = DashboardRoute
     | MeasuresRoute
     | NotFoundRoute
 
@@ -21,6 +21,6 @@ parseLocation location =
 matchers : Parser (Route -> a) a
 matchers =
     oneOf
-        [ map HomeRoute top
+        [ map DashboardRoute top
         , map MeasuresRoute (s "measures")
         ]
