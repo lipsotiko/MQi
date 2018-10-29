@@ -29,8 +29,7 @@ import static org.mockito.Mockito.*;
 
 @RunWith(MockitoJUnitRunner.class)
 public class MeasureServiceTest {
-    @Mock
-    private JobRepo jobRepo;
+
     @Mock
     private ChunkRepo chunkRepo;
     @Mock
@@ -57,8 +56,8 @@ public class MeasureServiceTest {
     public void setUp() {
         spy = new ProcessorSpy();
         measureService = new MeasureService(
-                jobRepo, chunkRepo, patientRepo, visitRepo, chunkService, spy,
-                codeSetGroupRepo, codeSetRepo, patientMeasureLogRepo, measureResultRepo);
+                chunkRepo, patientRepo, visitRepo, chunkService, spy, codeSetGroupRepo,
+                codeSetRepo, patientMeasureLogRepo, measureResultRepo);
 
         job = new Job();
         job.setJobId(44L);
@@ -101,13 +100,13 @@ public class MeasureServiceTest {
 
     @Test
     public void measure_process_was_called() {
-        measureService.process(server, job, Collections.singletonList(measure));
+        measureService.process(server, Collections.singletonList(measure));
         assertThat(spy.processWasCalled).isEqualTo(true);
     }
 
     @Test
     public void data_was_chunked() {
-        measureService.process(server, job, Collections.singletonList(measure));
+        measureService.process(server, Collections.singletonList(measure));
 
         verify(chunkService, times(1)).chunkData();
         verify(chunkRepo, times(4)).findTop1ByServerIdAndChunkStatus(11L, ChunkStatus.PENDING);
@@ -122,20 +121,14 @@ public class MeasureServiceTest {
 
     @Test
     public void measure_processor_was_cleared() {
-        measureService.process(server, job, Collections.singletonList(measure));
+        measureService.process(server, Collections.singletonList(measure));
         assertThat(spy.clearWasCalled).isEqualTo(true);
-    }
-
-    @Test
-    public void job_status_was_updated_to_success() {
-        measureService.process(server, job, Collections.singletonList(measure));
-        verify(jobRepo, times(1)).updateJobStatus(job.getJobId(), JobStatus.SUCCESS);
     }
 
     @Test
     public void nothing_is_proessed_when_no_measures_are_supplied() {
         List<Measure> measures = Collections.emptyList();
-        measureService.process(server, job, measures);
+        measureService.process(server, measures);
         verify(chunkService, times(0)).chunkData();
         assertThat(spy.processWasCalled).isEqualTo(false);
     }
@@ -156,7 +149,7 @@ public class MeasureServiceTest {
         }}))
                 .thenReturn(Collections.singletonList(codeSetA));
         Measure measure = Helpers.getMeasureFromResource("fixtures", "sampleMeasure.json");
-        measureService.process(server, job, Collections.singletonList(measure));
+        measureService.process(server, Collections.singletonList(measure));
         assertThat(spy.processWasCalledWithMeasureMetaData.getCodeSets())
                 .isEqualTo(Collections.singletonList(codeSetA));
     }
@@ -164,7 +157,7 @@ public class MeasureServiceTest {
     @Test
     public void measure_results_are_removed() throws IOException {
         Measure measure = Helpers.getMeasureFromResource("fixtures", "sampleMeasure2.json");
-        measureService.process(server, job, Collections.singletonList(measure));
+        measureService.process(server, Collections.singletonList(measure));
 
         verify(measureResultRepo, times(1)).deleteByChunkGroupAndServerIdAndMeasureId(1, server.getServerId(), 11L);
         verify(measureResultRepo, times(1)).deleteByChunkGroupAndServerIdAndMeasureId(2, server.getServerId(), 11L);
@@ -174,7 +167,7 @@ public class MeasureServiceTest {
     @Test
     public void measure_results_are_saved() throws IOException {
         Measure measure = Helpers.getMeasureFromResource("fixtures", "sampleMeasure2.json");
-        measureService.process(server, job, Collections.singletonList(measure));
+        measureService.process(server, Collections.singletonList(measure));
 
         verify(measureResultRepo, times(1)).saveAll(
                 Collections.singletonList(
@@ -201,7 +194,7 @@ public class MeasureServiceTest {
         expected.add(MeasureResult.builder().patientId(1L).measureId(1L).resultCode("DENOMINATOR").build());
 
         Measure measure = Helpers.getMeasureFromResource("fixtures", "sampleMeasure2.json");
-        measureService.process(server, job, Collections.singletonList(measure));
+        measureService.process(server, Collections.singletonList(measure));
 
         verify(patientMeasureLogRepo, times(1)).deleteByChunkGroupAndServerIdAndMeasureId(1, server.getServerId(), 11L);
         verify(patientMeasureLogRepo, times(1)).deleteByChunkGroupAndServerIdAndMeasureId(2, server.getServerId(), 11L);
@@ -210,16 +203,17 @@ public class MeasureServiceTest {
 
     @Test
     public void patient_measure_logs_are_saved() throws IOException {
-        List<PatientMeasureLog> expected = new ArrayList<>();
-        expected.add(PatientMeasureLog.builder().patientId(77L).measureId(11L).build());
-        expected.add(PatientMeasureLog.builder().patientId(88L).measureId(11L).build());
-        expected.add(PatientMeasureLog.builder().patientId(99L).measureId(11L).build());
-
         Measure measure = Helpers.getMeasureFromResource("fixtures", "sampleMeasure2.json");
-        measureService.process(server, job, Collections.singletonList(measure));
+        measureService.process(server, Collections.singletonList(measure));
 
         verify(patientMeasureLogRepo, times(1)).saveAll(
                 Collections.singletonList(PatientMeasureLog.builder().patientId(77L).measureId(11L).build())
+        );
+        verify(patientMeasureLogRepo, times(1)).saveAll(
+                Collections.singletonList(PatientMeasureLog.builder().patientId(88L).measureId(11L).build())
+        );
+        verify(patientMeasureLogRepo, times(1)).saveAll(
+                Collections.singletonList(PatientMeasureLog.builder().patientId(99L).measureId(11L).build())
         );
     }
 }

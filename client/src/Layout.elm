@@ -1,6 +1,7 @@
 module Layout exposing (init, update, view, subscriptions, Msg(OnLocationChange), Model)
 
-import Html exposing (Html, div, h1, text)
+import Html exposing (Html, a, div, h1, text)
+import Html.Attributes exposing (href)
 import Navigation exposing (Location)
 import Route exposing (Route(DashboardRoute, MeasuresRoute, NotFoundRoute), parseLocation)
 import SubPage
@@ -10,6 +11,7 @@ type alias Model = {
     subModel: SubPage.Model,
     route: Route
     }
+
 
 type Msg
     = OnLocationChange Location
@@ -31,19 +33,24 @@ update msg model =
         OnLocationChange location ->
             let
                 newRoute = parseLocation location
+                ( newSubmodel, cmd ) =  SubPage.init newRoute
             in
-                ( { model | route = newRoute }, Cmd.none )
+                ( { model | route = newRoute, subModel = newSubmodel }, Cmd.map SubMsg cmd )
+
         SubMsg cmdMsg ->
             let
-                (subModel, subCmd) = SubPage.update cmdMsg model.subModel
+                (newSubmodel, subCmd) = SubPage.update cmdMsg model.subModel
             in
-                ( { model | subModel = subModel }, Cmd.map SubMsg subCmd )
+                ( { model | subModel = newSubmodel }, Cmd.map SubMsg subCmd )
 
 
 view : Model -> Html Msg
 view model =
     let
-        navigation = div[][text "Navigation will go here..."]
+        navigation = div[][
+                         a[href "/"][text "Dashboard"],
+                         a[href "/#measures"][text "Measures"]
+                     ]
         content = Html.map SubMsg (SubPage.view model.subModel)
         footer = div[][text "Footer will go here..."]
     in

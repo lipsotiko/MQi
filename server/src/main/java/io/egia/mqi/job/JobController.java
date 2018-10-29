@@ -1,6 +1,5 @@
 package io.egia.mqi.job;
 
-import io.egia.mqi.measure.MeasureProcessorException;
 import io.egia.mqi.measure.MeasureRepo;
 import io.egia.mqi.measure.MeasureService;
 import io.egia.mqi.server.Server;
@@ -57,7 +56,7 @@ public class JobController {
                 );
             }
 
-            measureService.process(server, job, measureRepo.findAllById(measureIds));
+            measureService.process(server, measureRepo.findAllById(measureIds));
 
             job.setJobStatus(JobStatus.SUCCESS);
             job.setEndTime(new Date());

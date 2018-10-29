@@ -4,9 +4,6 @@ import io.egia.mqi.chunk.Chunk;
 import io.egia.mqi.chunk.ChunkRepo;
 import io.egia.mqi.chunk.ChunkService;
 import io.egia.mqi.chunk.ChunkStatus;
-import io.egia.mqi.job.Job;
-import io.egia.mqi.job.JobRepo;
-import io.egia.mqi.job.JobStatus;
 import io.egia.mqi.patient.Patient;
 import io.egia.mqi.patient.PatientMeasureLogRepo;
 import io.egia.mqi.patient.PatientRepo;
@@ -27,7 +24,6 @@ public class MeasureService {
     private Logger log = LoggerFactory.getLogger(MeasureService.class);
     private ChunkRepo chunkRepo;
     private ChunkService chunkService;
-    private JobRepo jobRepo;
     private PatientRepo patientRepo;
     private VisitRepo visitRepo;
     private Processor processor;
@@ -36,13 +32,12 @@ public class MeasureService {
     private final PatientMeasureLogRepo patientMeasureLogRepo;
     private final MeasureResultRepo measureResultRepo;
 
-    MeasureService(JobRepo jobRepo, ChunkRepo chunkRepo, PatientRepo patientRepo,
+    MeasureService(ChunkRepo chunkRepo, PatientRepo patientRepo,
                    VisitRepo visitRepo, ChunkService chunkService, Processor processor,
                    CodeSetGroupRepo codeSetGroupRepo, CodeSetRepo codeSetRepo,
                    PatientMeasureLogRepo patientMeasureLogRepo, MeasureResultRepo measureResultRepo) {
         this.chunkRepo = chunkRepo;
         this.chunkService = chunkService;
-        this.jobRepo = jobRepo;
         this.patientRepo = patientRepo;
         this.visitRepo = visitRepo;
         this.processor = processor;
@@ -53,7 +48,7 @@ public class MeasureService {
     }
 
     //TODO: Make process async
-    public void process(Server server, Job job, List<Measure> measures) {
+    public void process(Server server, List<Measure> measures) {
         if (measures.size() == 0) return;
 
         MeasureMetaData measureMetaData = new MeasureMetaData(getCodesSetsForMeasures(measures));
@@ -73,7 +68,6 @@ public class MeasureService {
             currentChunk = chunkRepo.findTop1ByServerIdAndChunkStatus(serverId, ChunkStatus.PENDING);
         }
 
-        jobRepo.updateJobStatus(job.getJobId(), JobStatus.SUCCESS);
     }
 
     private void deleteMeasureResults(List<Measure> measures, Long serverId, int chunkGroup) {

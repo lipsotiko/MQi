@@ -54,12 +54,12 @@ update msg model =
 view: Model -> Html Msg
 view model =
     case model of
-        DashboardModel m ->
-            Html.map DashBoardMessage (DashboardView.view m)
-        MeasuresModel m ->
-            Html.map MeasuresMessage (MeasuresView.view m)
-        NotFoundModel m ->
-            Html.map NotFoundMessage (NotFoundView.view m)
+        DashboardModel mdl ->
+            Html.map DashBoardMessage (DashboardView.view mdl)
+        MeasuresModel mdl ->
+            Html.map MeasuresMessage (MeasuresView.view mdl)
+        NotFoundModel mdl ->
+            Html.map NotFoundMessage (NotFoundView.view mdl)
 
 
 subscriptions: Model -> Sub Msg
@@ -67,8 +67,8 @@ subscriptions model =
     case model of
         DashboardModel _ ->
             Sub.map DashBoardMessage (Sub.none)
-        MeasuresModel m ->
-            Sub.map MeasuresMessage (MeasuresSubscriptions.subscriptions m)
+        MeasuresModel mdl ->
+            Sub.map MeasuresMessage (MeasuresSubscriptions.subscriptions mdl)
         NotFoundModel _ ->
             Sub.map NotFoundMessage (Sub.none)
 
