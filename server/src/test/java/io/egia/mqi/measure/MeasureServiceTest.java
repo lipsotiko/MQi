@@ -6,7 +6,6 @@ import io.egia.mqi.chunk.ChunkService;
 import io.egia.mqi.chunk.ChunkStatus;
 import io.egia.mqi.helpers.Helpers;
 import io.egia.mqi.job.Job;
-import io.egia.mqi.job.JobRepo;
 import io.egia.mqi.job.JobStatus;
 import io.egia.mqi.patient.Patient;
 import io.egia.mqi.patient.PatientMeasureLog;
@@ -30,23 +29,14 @@ import static org.mockito.Mockito.*;
 @RunWith(MockitoJUnitRunner.class)
 public class MeasureServiceTest {
 
-    @Mock
-    private ChunkRepo chunkRepo;
-    @Mock
-    private PatientRepo patientRepo;
-    @Mock
-    private VisitRepo visitRepo;
-    @Mock
-    private ChunkService chunkService;
+    @Mock private ChunkRepo chunkRepo;
+    @Mock private PatientRepo patientRepo;
+    @Mock private VisitRepo visitRepo;
     private ProcessorSpy spy;
-    @Mock
-    private CodeSetGroupRepo codeSetGroupRepo;
-    @Mock
-    private CodeSetRepo codeSetRepo;
-    @Mock
-    private PatientMeasureLogRepo patientMeasureLogRepo;
-    @Mock
-    private MeasureResultRepo measureResultRepo;
+    @Mock private CodeSetGroupRepo codeSetGroupRepo;
+    @Mock private CodeSetRepo codeSetRepo;
+    @Mock private PatientMeasureLogRepo patientMeasureLogRepo;
+    @Mock private MeasureResultRepo measureResultRepo;
     private Measure measure;
     private MeasureService measureService;
     private Server server = Server.builder().serverId(11L).systemType(SystemType.PRIMARY).build();
@@ -56,7 +46,7 @@ public class MeasureServiceTest {
     public void setUp() {
         spy = new ProcessorSpy();
         measureService = new MeasureService(
-                chunkRepo, patientRepo, visitRepo, chunkService, spy, codeSetGroupRepo,
+                chunkRepo, patientRepo, visitRepo, spy, codeSetGroupRepo,
                 codeSetRepo, patientMeasureLogRepo, measureResultRepo);
 
         job = new Job();
@@ -108,7 +98,6 @@ public class MeasureServiceTest {
     public void data_was_chunked() {
         measureService.process(server, Collections.singletonList(measure));
 
-        verify(chunkService, times(1)).chunkData();
         verify(chunkRepo, times(4)).findTop1ByServerIdAndChunkStatus(11L, ChunkStatus.PENDING);
 
         verify(chunkRepo, times(1))
@@ -129,7 +118,6 @@ public class MeasureServiceTest {
     public void nothing_is_proessed_when_no_measures_are_supplied() {
         List<Measure> measures = Collections.emptyList();
         measureService.process(server, measures);
-        verify(chunkService, times(0)).chunkData();
         assertThat(spy.processWasCalled).isEqualTo(false);
     }
 

@@ -1,5 +1,7 @@
 package io.egia.mqi.chunk;
 
+import io.egia.mqi.job.Job;
+import io.egia.mqi.job.JobRepo;
 import io.egia.mqi.patient.PatientRecordCount;
 import io.egia.mqi.patient.PatientRecordCountRepo;
 import io.egia.mqi.server.Server;
@@ -18,25 +20,31 @@ import java.util.stream.Collectors;
 public class ChunkService {
     private Logger log = LoggerFactory.getLogger(ChunkService.class);
     private ChunkRepo chunkRepo;
+    private JobRepo jobRepo;
     private PatientRecordCountRepo patientRecordCountRepo;
     private ServerRepo serverRepo;
 
     ChunkService(ServerRepo serverRepo,
                  ChunkRepo chunkRepo,
+                 JobRepo jobRepo,
                  PatientRecordCountRepo patientRecordCountRepo) {
         this.serverRepo = serverRepo;
         this.chunkRepo = chunkRepo;
+        this.jobRepo = jobRepo;
         this.patientRecordCountRepo = patientRecordCountRepo;
     }
 
-    public void chunkData() {
-        log.info("Executing chunking process");
+    public void chunkData(Job job) {
+        log.info("Started chunking process");
         chunkRepo.deleteAllInBatch();
         List<Server> servers = serverRepo.findAll();
 
         long count = patientRecordCountRepo.count();
         int pageSize = getPageSize(servers);
         long pages = count / pageSize;
+
+        job.setInitialPatientCount(count);
+        jobRepo.save(job);
 
         for (int i = 0; i < pages; i++) {
             int currentPatient = 0;
@@ -64,6 +72,12 @@ public class ChunkService {
             }
             chunkRepo.saveAll(chunks);
         }
+
+        log.info("Completed chunking process");
+    }
+
+    public Long getProcessedPatientCount() {
+        return chunkRepo.countByChunkStatus(ChunkStatus.DONE);
     }
 
     private int getPageSize(List<Server> servers) {

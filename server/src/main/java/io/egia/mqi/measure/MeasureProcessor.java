@@ -1,6 +1,9 @@
 package io.egia.mqi.measure;
 
-import io.egia.mqi.patient.*;
+import io.egia.mqi.patient.Patient;
+import io.egia.mqi.patient.PatientData;
+import io.egia.mqi.patient.PatientMeasureLog;
+import io.egia.mqi.patient.PatientRecordInterface;
 import io.egia.mqi.visit.Visit;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

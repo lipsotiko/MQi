@@ -1,5 +1,7 @@
 package io.egia.mqi.chunk;
 
+import io.egia.mqi.job.Job;
+import io.egia.mqi.job.JobRepo;
 import io.egia.mqi.measure.Measure;
 import io.egia.mqi.patient.PatientRecordCount;
 import io.egia.mqi.patient.PatientRecordCountRepo;
@@ -31,8 +33,12 @@ public class ChunkServiceTest {
     private PatientRecordCountRepo patientRecordCountRepo;
     @Mock
     private ChunkRepo chunkRepo;
+    @Mock
+    private JobRepo jobRepo;
     @Captor
-    private ArgumentCaptor<List<Chunk>> captor = ArgumentCaptor.forClass(List.class);
+    private ArgumentCaptor<List<Chunk>> chunkCaptor = ArgumentCaptor.forClass(List.class);
+    @Captor
+    private ArgumentCaptor<Job> jobCaptor = ArgumentCaptor.forClass(Job.class);
 
     private List<PatientRecordCount> firstPatientRecordCounts = new ArrayList<>();
     private List<PatientRecordCount> secondPatientRecordCounts = new ArrayList<>();
@@ -40,6 +46,8 @@ public class ChunkServiceTest {
     private List<Server> servers = new ArrayList<>();
     private List<Chunk> expected_1 = new ArrayList<>();
     private List<Chunk> expected_2 = new ArrayList<>();
+
+    private Job job;
 
     @Before
     public void setUp() {
@@ -103,17 +111,28 @@ public class ChunkServiceTest {
         expected_2.add(buildChunk(16L, 11L, 100, 1));
         expected_2.add(buildChunk(17L, 22L, 200, 1));
         expected_2.add(buildChunk(18L, 33L, 300, 1));
+
+        job = Job.builder().build();
     }
 
     @Test
     public void data_is_chunked() {
         ChunkService chunkService =
-                new ChunkService(serverRepo, chunkRepo, patientRecordCountRepo);
+                new ChunkService(serverRepo, chunkRepo, jobRepo, patientRecordCountRepo);
 
-        chunkService.chunkData();
-        verify(chunkRepo, times(2)).saveAll(captor.capture());
-        assertThat(captor.getAllValues().get(0)).isEqualTo(expected_1);
-        assertThat(captor.getAllValues().get(1)).isEqualTo(expected_2);
+        chunkService.chunkData(job);
+        verify(chunkRepo, times(2)).saveAll(chunkCaptor.capture());
+        assertThat(chunkCaptor.getAllValues().get(0)).isEqualTo(expected_1);
+        assertThat(chunkCaptor.getAllValues().get(1)).isEqualTo(expected_2);
+    }
+
+    @Test
+    public void initial_patient_count_is_saved_to_job() {
+        ChunkService chunkService =
+                new ChunkService(serverRepo, chunkRepo, jobRepo, patientRecordCountRepo);
+        chunkService.chunkData(job);
+        verify(jobRepo).save(jobCaptor.capture());
+        assertThat(jobCaptor.getAllValues().get(0).getInitialPatientCount()).isEqualTo(18);
     }
 
     private Chunk buildChunk(long l, long l2, long l3, int l4) {

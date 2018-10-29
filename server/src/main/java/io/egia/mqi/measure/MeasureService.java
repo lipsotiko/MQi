@@ -2,7 +2,6 @@ package io.egia.mqi.measure;
 
 import io.egia.mqi.chunk.Chunk;
 import io.egia.mqi.chunk.ChunkRepo;
-import io.egia.mqi.chunk.ChunkService;
 import io.egia.mqi.chunk.ChunkStatus;
 import io.egia.mqi.patient.Patient;
 import io.egia.mqi.patient.PatientMeasureLogRepo;
@@ -23,7 +22,6 @@ import java.util.Set;
 public class MeasureService {
     private Logger log = LoggerFactory.getLogger(MeasureService.class);
     private ChunkRepo chunkRepo;
-    private ChunkService chunkService;
     private PatientRepo patientRepo;
     private VisitRepo visitRepo;
     private Processor processor;
@@ -32,12 +30,15 @@ public class MeasureService {
     private final PatientMeasureLogRepo patientMeasureLogRepo;
     private final MeasureResultRepo measureResultRepo;
 
-    MeasureService(ChunkRepo chunkRepo, PatientRepo patientRepo,
-                   VisitRepo visitRepo, ChunkService chunkService, Processor processor,
-                   CodeSetGroupRepo codeSetGroupRepo, CodeSetRepo codeSetRepo,
-                   PatientMeasureLogRepo patientMeasureLogRepo, MeasureResultRepo measureResultRepo) {
+    MeasureService(ChunkRepo chunkRepo,
+                   PatientRepo patientRepo,
+                   VisitRepo visitRepo,
+                   Processor processor,
+                   CodeSetGroupRepo codeSetGroupRepo,
+                   CodeSetRepo codeSetRepo,
+                   PatientMeasureLogRepo patientMeasureLogRepo,
+                   MeasureResultRepo measureResultRepo) {
         this.chunkRepo = chunkRepo;
-        this.chunkService = chunkService;
         this.patientRepo = patientRepo;
         this.visitRepo = visitRepo;
         this.processor = processor;
@@ -47,12 +48,14 @@ public class MeasureService {
         this.measureResultRepo = measureResultRepo;
     }
 
-    //TODO: Make process async
     public void process(Server server, List<Measure> measures) {
-        if (measures.size() == 0) return;
+
+        if (measures.size() == 0) {
+            return;
+        }
 
         MeasureMetaData measureMetaData = new MeasureMetaData(getCodesSetsForMeasures(measures));
-        chunkService.chunkData();
+
         Long serverId = server.getServerId();
         Optional<Chunk> currentChunk = chunkRepo.findTop1ByServerIdAndChunkStatus(serverId, ChunkStatus.PENDING);
         while (currentChunk.isPresent()) {
@@ -67,7 +70,6 @@ public class MeasureService {
             chunkRepo.updateChunkStatusByServerIdAndChunkGroup(serverId, chunkGroup, ChunkStatus.DONE);
             currentChunk = chunkRepo.findTop1ByServerIdAndChunkStatus(serverId, ChunkStatus.PENDING);
         }
-
     }
 
     private void deleteMeasureResults(List<Measure> measures, Long serverId, int chunkGroup) {

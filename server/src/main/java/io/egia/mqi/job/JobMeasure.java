@@ -18,7 +18,7 @@ import javax.persistence.Id;
 class JobMeasure {
 	@Id
 	@GeneratedValue(strategy=GenerationType.IDENTITY)
-	private Long jobMeasureId;
+	private Long id;
 	private Long jobId;
 	private Long measureId;
 }

@@ -1,66 +1,69 @@
 package io.egia.mqi.job;
 
+import io.egia.mqi.chunk.ChunkService;
 import io.egia.mqi.measure.MeasureRepo;
 import io.egia.mqi.measure.MeasureService;
 import io.egia.mqi.server.Server;
 import io.egia.mqi.server.ServerService;
 import io.egia.mqi.server.SystemType;
 import org.reactivestreams.Publisher;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.MediaType;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.net.UnknownHostException;
-import java.util.Date;
 import java.util.List;
 
 @RestController
 public class JobController {
+    private Logger log = LoggerFactory.getLogger(JobController.class);
 
-    private JobRepo jobRepo;
-    private JobMeasureRepo jobMeasureRepo;
+    private JobService jobService;
     private MeasureRepo measureRepo;
+    private ChunkService chunkService;
     private MeasureService measureService;
     private ServerService serverService;
+    private JobProgressMonitor jobProgressMonitor;
     private JobPublisher jobPublisher;
 
     @Value("${server.port}")
     private String serverPort;
 
-    JobController(JobRepo jobRepo
-            , JobMeasureRepo jobMeasureRepo
-            , MeasureRepo measureRepo
-            , MeasureService measureService
-            , ServerService serverService) {
-        this.jobRepo = jobRepo;
-        this.jobMeasureRepo = jobMeasureRepo;
+    JobController(JobService jobService,
+                  MeasureRepo measureRepo,
+                  ChunkService chunkService,
+                  MeasureService measureService,
+                  ServerService serverService,
+                  JobProgressMonitor jobProgressMonitor,
+                  JobPublisher jobPublisher) {
+        this.jobService = jobService;
         this.measureRepo = measureRepo;
+        this.chunkService = chunkService;
         this.measureService = measureService;
         this.serverService = serverService;
+        this.jobProgressMonitor = jobProgressMonitor;
         this.jobPublisher = jobPublisher;
     }
 
+
+    @Async
     @PostMapping("/process")
     public void process(@RequestBody List<Long> measureIds) throws UnknownHostException {
-
         Server server = serverService.getServerFromHostNameAndPort(serverPort);
+
         if (server.getSystemType().equals(SystemType.PRIMARY)) {
-            Job job = jobRepo.saveAndFlush(
-                    Job.builder().jobStatus(JobStatus.RUNNING).startTime(new Date()).build());
-            for (Long measureId : measureIds) {
-                jobMeasureRepo.saveAndFlush(
-                        JobMeasure.builder().jobId(job.getJobId()).measureId(measureId).build()
-                );
-            }
-
+            Job job = jobService.addMeasuresToJob(measureIds);
+            log.info( String.format("Started processing Job#: %s ", job.getJobId()));
+            chunkService.chunkData(job);
+            jobProgressMonitor.startMonitoringJob(5000, job.getJobId());
             measureService.process(server, measureRepo.findAllById(measureIds));
-
-            job.setJobStatus(JobStatus.SUCCESS);
-            job.setEndTime(new Date());
-            jobRepo.save(job);
+            log.info( String.format("Completed processing Job#: %s ", job.getJobId()));
         }
     }
 

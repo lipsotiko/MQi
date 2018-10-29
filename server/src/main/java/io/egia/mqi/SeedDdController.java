@@ -1,22 +1,23 @@
 package io.egia.mqi;
 
 import io.egia.mqi.chunk.ChunkRepo;
+import io.egia.mqi.job.JobMeasureRepo;
+import io.egia.mqi.job.JobRepo;
 import io.egia.mqi.measure.MeasureResultRepo;
 import io.egia.mqi.patient.Patient;
 import io.egia.mqi.patient.PatientMeasureLogRepo;
 import io.egia.mqi.patient.PatientRepo;
-import io.egia.mqi.server.Server;
 import io.egia.mqi.server.ServerRepo;
 import io.egia.mqi.server.ServerService;
-import io.egia.mqi.server.SystemType;
 import io.egia.mqi.visit.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.net.InetAddress;
-import java.net.UnknownHostException;
-import java.util.*;
+import java.util.Calendar;
+import java.util.GregorianCalendar;
+import java.util.HashMap;
+import java.util.Map;
 
 @RestController
 public class SeedDdController {
@@ -31,36 +32,23 @@ public class SeedDdController {
     @Autowired private CodeSetRepo codeSetRepo;
     @Autowired private CodeSetGroupRepo codeSetGroupRepo;
     @Autowired private MeasureResultRepo measureResultRepo;
+    @Autowired private JobRepo jobRepo;
+    @Autowired private JobMeasureRepo jobMeasureRepo;
 
 
     @GetMapping("/seed")
-    public Map<String, Integer> seedDb() throws UnknownHostException {
+    public Map<String, Integer> seedDb() {
 
         chunkRepo.deleteAll();
         visitCodeRepo.deleteAll();
         visitRepo.deleteAll();
         patientRepo.deleteAll();
-        serverRepo.deleteAll();
         codeSetRepo.deleteAll();
         codeSetGroupRepo.deleteAll();
         patientMeasureLogRepo.deleteAll();
         measureResultRepo.deleteAll();
-
-        serverRepo.saveAndFlush(
-                Server.builder()
-                        .serverName(InetAddress.getLocalHost().getHostName())
-                        .systemType(SystemType.PRIMARY)
-                        .systemVersion("1.0.0")
-                        .pageSize(10)
-                        .serverPort("8080").build());
-
-        serverRepo.saveAndFlush(
-                Server.builder()
-                        .serverName("Test Server 2")
-                        .systemType(SystemType.SECONDARY)
-                        .systemVersion("1.0.0")
-                        .pageSize(10)
-                        .serverPort("8081").build());
+        jobMeasureRepo.deleteAll();
+        jobRepo.deleteAll();
 
         for (long i = 1L; i <= 50; i++) {
             Patient patient = new Patient();

@@ -112,6 +112,8 @@ create table if not exists job (
 	job_status integer,
 	start_time timestamp,
 	end_time timestamp,
+	initial_patient_count bigint,
+	processed_patient_count bigint,
 	last_updated timestamp default current_timestamp
 );
 
@@ -122,7 +124,7 @@ execute procedure fn_update_timestamp();
 
 drop table if exists job_measure;
 create table if not exists job_measure (
-	job_measure_id bigserial primary key,
+	id bigserial primary key,
 	job_id bigint,
 	measure_id bigint
 );
@@ -168,7 +170,7 @@ create table if not exists job_status (
 insert into job_status (id, job_status)
 values(0, 'PENDING'),
     (1, 'RUNNING'),
-    (2, 'SUCCESS'),
+    (2, 'DONE'),
     (3, 'FAILURE');
 
 drop table if exists code_system;
@@ -190,8 +192,6 @@ values (0, 'ICD_9'),
     (9, 'SNOMED');
 
 
-
-
 drop view if exists patient_record_count;
 create view patient_record_count as
 select a.patient_id
@@ -205,7 +205,7 @@ join measure m
     on 1=1
 join job_measure jm
     on m.measure_id = jm.measure_id
-    and jm.job_measure_id = (select max(job_measure_id) from job_measure)
+    and jm.id = (select max(id) from job_measure)
 left join patient_measure_log lpm
     on a.patient_id = lpm.patient_id
     and lpm.measure_id = m.measure_id
