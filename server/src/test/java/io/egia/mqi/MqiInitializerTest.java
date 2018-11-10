@@ -16,13 +16,9 @@ import static org.mockito.Mockito.verify;
 @RunWith(MockitoJUnitRunner.class)
 public class MqiInitializerTest {
 
-    @Mock
-    private ServerService serverService;
-    @Mock
-    private RuleParamUtility ruleParamUtility;
-    @Mock
-    private ContextRefreshedEvent contextRefreshedEvent;
-
+    @Mock private ServerService serverService;
+    @Mock private RuleParamUtility ruleParamUtility;
+    @Mock private ContextRefreshedEvent contextRefreshedEvent;
     private MqiInitializer subject;
 
     @Before

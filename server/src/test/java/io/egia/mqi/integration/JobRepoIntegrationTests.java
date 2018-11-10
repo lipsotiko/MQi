@@ -18,8 +18,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 @SpringBootTest
 public class JobRepoIntegrationTests {
 
-    @Autowired
-    private JobRepo jobRepo;
+    @Autowired private JobRepo jobRepo;
 
     @Before
     public void setUp() {

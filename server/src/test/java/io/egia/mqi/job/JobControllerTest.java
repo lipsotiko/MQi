@@ -18,9 +18,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.never;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 @RunWith(MockitoJUnitRunner.class)
 public class JobControllerTest {
@@ -64,7 +62,7 @@ public class JobControllerTest {
     public void primary_server_adds_measures_to_job_service() throws UnknownHostException {
         when(serverService.getServerFromHostNameAndPort(any())).thenReturn(primaryServer);
         jobController.process(stubbedMeasureIds);
-        verify(jobService).addMeasuresToJob(stubbedMeasureIds);
+        verify(jobService, times(1)).addMeasuresToJob(stubbedMeasureIds);
     }
 
     @Test
@@ -78,7 +76,7 @@ public class JobControllerTest {
     public void primary_server_starts_job_progress_monitor() throws UnknownHostException {
         when(serverService.getServerFromHostNameAndPort(any())).thenReturn(primaryServer);
         jobController.process(stubbedMeasureIds);
-        verify(jobProgressMonitor).startMonitoringJob(5000, job.getJobId());
+        verify(jobProgressMonitor).startMonitoringJob(60000, job.getJobId());
     }
 
     @Test

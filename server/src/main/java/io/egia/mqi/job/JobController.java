@@ -61,7 +61,7 @@ public class JobController {
             Job job = jobService.addMeasuresToJob(measureIds);
             log.info( String.format("Started processing Job#: %s ", job.getJobId()));
             chunkService.chunkData(job);
-            jobProgressMonitor.startMonitoringJob(5000, job.getJobId());
+            jobProgressMonitor.startMonitoringJob(60000, job.getJobId());
             measureService.process(server, measureRepo.findAllById(measureIds));
             log.info( String.format("Completed processing Job#: %s ", job.getJobId()));
         }

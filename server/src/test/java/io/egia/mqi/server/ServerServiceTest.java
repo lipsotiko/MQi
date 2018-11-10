@@ -16,9 +16,7 @@ import static org.mockito.ArgumentMatchers.anyString;
 @RunWith(MockitoJUnitRunner.class)
 public class ServerServiceTest {
 
-    @Mock
-    private ServerRepo serverRepo;
-
+    @Mock private ServerRepo serverRepo;
     private ServerService serverService;
 
     private static Server server;
@@ -32,19 +30,19 @@ public class ServerServiceTest {
     }
 
     @Test
-    public void returnsThisServersHostName() throws UnknownHostException {
+    public void returns_this_servers_hostname() throws UnknownHostException {
         String thisServersName = InetAddress.getLocalHost().getHostName();
         assertThat(ServerService.thisServersHostName()).isEqualTo(thisServersName);
     }
 
     @Test
-    public void returnsServerFromHostNameAndPort() throws UnknownHostException {
+    public void returns_server_from_hostname_and_port() throws UnknownHostException {
         Mockito.when(serverRepo.findOneByServerNameAndServerPort(anyString(), anyString())).thenReturn(server);
         assertThat(serverService.getServerFromHostNameAndPort("8080")).isEqualTo(server);
     }
 
     @Test
-    public void returnsPrimaryServer() {
+    public void returns_primary_server() {
         Mockito.when(serverRepo.findOneBySystemType(SystemType.PRIMARY)).thenReturn(server);
         assertThat(serverService.getPrimaryServer()).isEqualTo(server);
     }

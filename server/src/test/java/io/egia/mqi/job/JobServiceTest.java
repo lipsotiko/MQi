@@ -17,12 +17,8 @@ import static org.mockito.Mockito.when;
 @RunWith(MockitoJUnitRunner.class)
 public class JobServiceTest {
 
-    @Mock
-    JobRepo jobRepo;
-
-    @Mock
-    JobMeasureRepo jobMeasureRepo;
-
+    @Mock JobRepo jobRepo;
+    @Mock JobMeasureRepo jobMeasureRepo;
     private ArgumentCaptor<Job> jobCaptor = ArgumentCaptor.forClass(Job.class);
     private ArgumentCaptor<JobMeasure> jobMeasureCaptor = ArgumentCaptor.forClass(JobMeasure.class);
 

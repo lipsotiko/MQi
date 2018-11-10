@@ -21,8 +21,7 @@ import static org.assertj.core.api.Assertions.fail;
 @SpringBootTest
 public class ChunkRepoIntegrationTest {
 
-    @Autowired
-    private ChunkRepo chunkRepo;
+    @Autowired private ChunkRepo chunkRepo;
 
     @Before
     public void setUp() {

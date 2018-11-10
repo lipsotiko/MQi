@@ -2,6 +2,7 @@ package io.egia.mqi.job;
 
 import io.reactivex.Flowable;
 import io.reactivex.subscribers.TestSubscriber;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,15 +19,19 @@ public class JobPublisherTest {
 
     @Autowired private JobRepo jobRepo;
     @Autowired private JobPublisher jobPublisher;
+    private TestSubscriber<Job> observer;
+
+    @Before
+    public void setUp() {
+        observer = new TestSubscriber<>();
+        Flowable<Job> publisher = jobPublisher.getPublisher();
+        publisher.subscribe(observer);
+    }
 
     @Test
     public void publishes_job_updates() throws InterruptedException {
-        TestSubscriber<Job> observer = new TestSubscriber<>();
-        Flowable<Job> publisher = jobPublisher.getPublisher();
-        publisher.subscribe(observer);
         jobRepo.save(Job.builder().jobStatus(JobStatus.RUNNING).build());
         Thread.sleep(1000);
-        observer.assertSubscribed();
         assertThat(observer.values().get(0).getJobStatus()).isEqualTo(JobStatus.RUNNING);
     }
 }

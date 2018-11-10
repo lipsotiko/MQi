@@ -2,7 +2,6 @@ package io.egia.mqi.measure;
 
 import io.egia.mqi.chunk.Chunk;
 import io.egia.mqi.chunk.ChunkRepo;
-import io.egia.mqi.chunk.ChunkService;
 import io.egia.mqi.chunk.ChunkStatus;
 import io.egia.mqi.helpers.Helpers;
 import io.egia.mqi.job.Job;
@@ -32,15 +31,16 @@ public class MeasureServiceTest {
     @Mock private ChunkRepo chunkRepo;
     @Mock private PatientRepo patientRepo;
     @Mock private VisitRepo visitRepo;
-    private ProcessorSpy spy;
     @Mock private CodeSetGroupRepo codeSetGroupRepo;
     @Mock private CodeSetRepo codeSetRepo;
     @Mock private PatientMeasureLogRepo patientMeasureLogRepo;
     @Mock private MeasureResultRepo measureResultRepo;
+    private ProcessorSpy spy;
     private Measure measure;
     private MeasureService measureService;
     private Server server = Server.builder().serverId(11L).systemType(SystemType.PRIMARY).build();
-    private Job job;
+    private Patient p77, p88, p99;
+    private Visit v199;
 
     @Before
     public void setUp() {
@@ -49,29 +49,29 @@ public class MeasureServiceTest {
                 chunkRepo, patientRepo, visitRepo, spy, codeSetGroupRepo,
                 codeSetRepo, patientMeasureLogRepo, measureResultRepo);
 
-        job = new Job();
+        Job job = new Job();
         job.setJobId(44L);
         job.setJobStatus(JobStatus.RUNNING);
 
-        Patient p77 = new Patient();
+        p77 = new Patient();
         p77.setPatientId(77L);
         when(patientRepo.findByServerIdAndChunkGroup(11L, 1)).thenReturn(
                 new ArrayList<>(Collections.singletonList(p77)));
 
-        Patient p88 = new Patient();
+        p88 = new Patient();
         p88.setPatientId(88L);
         when(patientRepo.findByServerIdAndChunkGroup(11L, 2)).thenReturn(
                 new ArrayList<>(Collections.singletonList(p88)));
 
-        Patient p99 = new Patient();
+        p99 = new Patient();
         p99.setPatientId(99L);
         when(patientRepo.findByServerIdAndChunkGroup(11L, 3)).thenReturn(
                 new ArrayList<>(Collections.singletonList(p99)));
 
-        Visit v = new Visit();
-        v.setPatientId(99L);
-        List<Visit> visits = new ArrayList<>(Collections.singletonList(v));
-        visits.add(v);
+        v199 = new Visit();
+        v199.setVisitId(199L);
+        v199.setPatientId(99L);
+        List<Visit> visits = new ArrayList<>(Collections.singletonList(v199));
         when(visitRepo.findByServerIdAndChunkGroup(11L, 1)).thenReturn(visits);
 
         Chunk firstChunkPending = Chunk.builder().serverId(11L).patientId(99L).chunkGroup(1).chunkStatus(ChunkStatus.PENDING).build();
@@ -89,17 +89,19 @@ public class MeasureServiceTest {
     }
 
     @Test
-    public void measure_process_was_called() {
+    public void measure_process_was_called_with_patient_data() {
         measureService.process(server, Collections.singletonList(measure));
         assertThat(spy.processWasCalled).isEqualTo(true);
+        assertThat(spy.processWasCalledWithPatients).containsExactly(p77, p88, p99);
+        assertThat(spy.processWasCalledWithVisits).containsExactly(v199);
     }
 
     @Test
     public void data_was_chunked() {
         measureService.process(server, Collections.singletonList(measure));
 
-        verify(chunkRepo, times(4)).findTop1ByServerIdAndChunkStatus(11L, ChunkStatus.PENDING);
-
+        verify(chunkRepo, times(4))
+                .findTop1ByServerIdAndChunkStatus(11L, ChunkStatus.PENDING);
         verify(chunkRepo, times(1))
                 .updateChunkStatusByServerIdAndChunkGroup(11L, 1, ChunkStatus.DONE);
         verify(chunkRepo, times(1))
@@ -158,19 +160,9 @@ public class MeasureServiceTest {
         measureService.process(server, Collections.singletonList(measure));
 
         verify(measureResultRepo, times(1)).saveAll(
-                Collections.singletonList(
-                        MeasureResult.builder().patientId(77L).measureId(11L).resultCode("DENOMINATOR").build()
-                )
-        );
-
-        verify(measureResultRepo, times(1)).saveAll(
-                Collections.singletonList(
-                        MeasureResult.builder().patientId(88L).measureId(11L).resultCode("DENOMINATOR").build()
-                )
-        );
-
-        verify(measureResultRepo, times(1)).saveAll(
-                Collections.singletonList(
+                Arrays.asList(
+                        MeasureResult.builder().patientId(77L).measureId(11L).resultCode("DENOMINATOR").build(),
+                        MeasureResult.builder().patientId(88L).measureId(11L).resultCode("DENOMINATOR").build(),
                         MeasureResult.builder().patientId(99L).measureId(11L).resultCode("DENOMINATOR").build()
                 )
         );
@@ -178,9 +170,6 @@ public class MeasureServiceTest {
 
     @Test
     public void measure_patient_logs_are_removed() throws IOException {
-        List<MeasureResult> expected = new ArrayList<>();
-        expected.add(MeasureResult.builder().patientId(1L).measureId(1L).resultCode("DENOMINATOR").build());
-
         Measure measure = Helpers.getMeasureFromResource("fixtures", "sampleMeasure2.json");
         measureService.process(server, Collections.singletonList(measure));
 
@@ -195,13 +184,11 @@ public class MeasureServiceTest {
         measureService.process(server, Collections.singletonList(measure));
 
         verify(patientMeasureLogRepo, times(1)).saveAll(
-                Collections.singletonList(PatientMeasureLog.builder().patientId(77L).measureId(11L).build())
-        );
-        verify(patientMeasureLogRepo, times(1)).saveAll(
-                Collections.singletonList(PatientMeasureLog.builder().patientId(88L).measureId(11L).build())
-        );
-        verify(patientMeasureLogRepo, times(1)).saveAll(
-                Collections.singletonList(PatientMeasureLog.builder().patientId(99L).measureId(11L).build())
+                Arrays.asList(
+                        PatientMeasureLog.builder().patientId(77L).measureId(11L).build(),
+                        PatientMeasureLog.builder().patientId(88L).measureId(11L).build(),
+                        PatientMeasureLog.builder().patientId(99L).measureId(11L).build()
+                )
         );
     }
 }

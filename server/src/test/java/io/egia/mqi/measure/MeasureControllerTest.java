@@ -18,17 +18,11 @@ import static org.mockito.Mockito.*;
 @RunWith(MockitoJUnitRunner.class)
 public class MeasureControllerTest {
 
-    @Mock
-    private MeasureRepo measureRepo;
-
+    @Mock private MeasureRepo measureRepo;
     private Measure existingMeasure;
-
     private Measure updatedMeasureDescription;
-
     private Measure updatedMeasureLogic;
-
-    @Captor
-    private ArgumentCaptor<Measure> captor = ArgumentCaptor.forClass(Measure.class);
+    @Captor private ArgumentCaptor<Measure> captor = ArgumentCaptor.forClass(Measure.class);
 
     @Before
     public void setUp() throws IOException {

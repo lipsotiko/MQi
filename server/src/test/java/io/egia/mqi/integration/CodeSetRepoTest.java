@@ -22,11 +22,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 @SpringBootTest
 public class CodeSetRepoTest {
 
-    @Autowired
-    private CodeSetGroupRepo codeSetGroupRepo;
-
-    @Autowired
-    private CodeSetRepo codeSetRepo;
+    @Autowired private CodeSetGroupRepo codeSetGroupRepo;
+    @Autowired private CodeSetRepo codeSetRepo;
 
     @Test
     public void codeSetRepo_findByCodeSetGroupIdIn() {

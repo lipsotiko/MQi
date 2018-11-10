@@ -15,7 +15,7 @@ import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 public class MeasureStepperTest {
 
     @Test
-    public void measureIsSteppedThrough() throws IOException, MeasureProcessorException {
+    public void measure_is_stepped_through() throws IOException, MeasureProcessorException {
         Measure measure = Helpers.getMeasureFromResource("fixtures", "sampleMeasure.json");
         List<String> testMeasureRules = new ArrayList<>();
         measure.getMeasureLogic().getSteps().forEach((step -> testMeasureRules.add(step.getRuleName())));

@@ -32,12 +32,8 @@ public class RuleParamUtilityTest {
             , new RuleParam("HasCodeSet","CODE_SET","TEXT")
     };
 
-    @Mock
-    private RuleParamRepo ruleParamRepo;
-
-    @Captor
-    private ArgumentCaptor<RuleParam> captor = ArgumentCaptor.forClass(RuleParam.class);
-
+    @Mock private RuleParamRepo ruleParamRepo;
+    @Captor private ArgumentCaptor<RuleParam> captor = ArgumentCaptor.forClass(RuleParam.class);
     private String packagePrefix = "io.egia.mqi.measure.rules";
 
     private Reflections reflections = new Reflections(packagePrefix

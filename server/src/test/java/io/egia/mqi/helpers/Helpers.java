@@ -1,6 +1,8 @@
 package io.egia.mqi.helpers;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import io.egia.mqi.job.Job;
+import io.egia.mqi.job.JobStatus;
 import io.egia.mqi.measure.Measure;
 import io.egia.mqi.measure.MeasureLogic;
 import org.apache.commons.io.FileUtils;
@@ -9,6 +11,7 @@ import org.springframework.core.io.ClassPathResource;
 import java.io.File;
 import java.io.IOException;
 import java.time.ZonedDateTime;
+import java.util.Optional;
 
 public class Helpers {
 
@@ -28,4 +31,8 @@ public class Helpers {
         return measure;
     }
 
+
+    public static Optional<Job> job(Long id, Long initialPatientCount, JobStatus jobStatus) {
+        return Optional.of(Job.builder().jobId(id).initialPatientCount(initialPatientCount).jobStatus(jobStatus).build());
+    }
 }

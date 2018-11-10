@@ -10,7 +10,7 @@ import java.util.List;
 
 public class ProcessorSpy implements Processor {
 
-    List<Measure> processWasCalledWithMeasures = new ArrayList<>();
+    private List<Measure> processWasCalledWithMeasures = new ArrayList<>();
     boolean processWasCalled = false;
     boolean clearWasCalled = false;
     List<Patient> processWasCalledWithPatients = new ArrayList<>();
@@ -61,8 +61,6 @@ public class ProcessorSpy implements Processor {
     @Override
     public void clear() {
         clearWasCalled = true;
-        processWasCalledWithMeasures = new ArrayList<>();
-        processWasCalledWithPatients = new ArrayList<>();
     }
 
     @Override

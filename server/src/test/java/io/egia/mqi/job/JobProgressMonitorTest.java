@@ -2,6 +2,7 @@ package io.egia.mqi.job;
 
 import io.egia.mqi.chunk.ChunkRepo;
 import io.egia.mqi.chunk.ChunkStatus;
+import io.egia.mqi.helpers.Helpers;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
@@ -19,30 +20,18 @@ import static org.mockito.Mockito.when;
 @RunWith(MockitoJUnitRunner.class)
 public class JobProgressMonitorTest {
 
-    @Mock
-    private ChunkRepo chunkRepo;
-
+    @Mock private ChunkRepo chunkRepo;
     @Mock private JobRepo jobRepo;
-
-    @Captor
-    private ArgumentCaptor<Job> jobCaptor = ArgumentCaptor.forClass(Job.class);
-
+    @Captor private ArgumentCaptor<Job> jobCaptor = ArgumentCaptor.forClass(Job.class);
 
     @Test
     public void updates_job_with_processed_patients_count() {
-        Optional<Job> pendingJobA = Optional.of(Job.builder().jobId(1L).initialPatientCount(30L).jobStatus(JobStatus.RUNNING).build());
-        Optional<Job> pendingJobB = Optional.of(Job.builder().jobId(1L).initialPatientCount(30L).jobStatus(JobStatus.RUNNING).build());
-        Optional<Job> pendingJobC = Optional.of(Job.builder().jobId(1L).initialPatientCount(30L).jobStatus(JobStatus.RUNNING).build());
+        Optional<Job> jobA = Helpers.job(1L, 30L, JobStatus.RUNNING);
+        Optional<Job> jobB = Helpers.job(1L, 30L, JobStatus.RUNNING);
+        Optional<Job> jobC = Helpers.job(1L, 30L, JobStatus.RUNNING);
 
-        when(jobRepo.findById(1L))
-                .thenReturn(pendingJobA)
-                .thenReturn(pendingJobB)
-                .thenReturn(pendingJobC)
-                .thenReturn(Optional.empty());
-        when(chunkRepo.countByChunkStatus(ChunkStatus.DONE))
-                .thenReturn(10L)
-                .thenReturn(20L)
-                .thenReturn(30L);
+        when(jobRepo.findById(1L)).thenReturn(jobA).thenReturn(jobB).thenReturn(jobC).thenReturn(Optional.empty());
+        when(chunkRepo.countByChunkStatus(ChunkStatus.DONE)).thenReturn(10L).thenReturn(20L).thenReturn(30L);
 
         JobProgressMonitor jobProgressMonitor = new JobProgressMonitor(jobRepo, chunkRepo);
         jobProgressMonitor.startMonitoringJob(1, 1L);
