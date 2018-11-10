@@ -1,6 +1,8 @@
 package io.egia.mqi.helpers;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import io.egia.mqi.chunk.Chunk;
+import io.egia.mqi.chunk.ChunkStatus;
 import io.egia.mqi.job.Job;
 import io.egia.mqi.job.JobStatus;
 import io.egia.mqi.measure.Measure;
@@ -16,12 +18,12 @@ import java.util.Optional;
 public class Helpers {
 
     public static Measure getMeasureFromResource(String path, String measureFile) throws IOException {
-        path = path+"/"+measureFile;
+        path = path + "/" + measureFile;
         File sampleMeasureJsonFile = new ClassPathResource(path).getFile();
         Measure measure = new Measure();
         measure.setMeasureName(measureFile);
 
-        String measureLogicString =  FileUtils.readFileToString(sampleMeasureJsonFile, "UTF-8");
+        String measureLogicString = FileUtils.readFileToString(sampleMeasureJsonFile, "UTF-8");
         ObjectMapper mapper = new ObjectMapper();
         MeasureLogic measureLogic = mapper.readValue(measureLogicString, MeasureLogic.class);
         measure.setMeasureId(11L);
@@ -33,6 +35,17 @@ public class Helpers {
 
 
     public static Optional<Job> job(Long id, Long initialPatientCount, JobStatus jobStatus) {
-        return Optional.of(Job.builder().jobId(id).initialPatientCount(initialPatientCount).jobStatus(jobStatus).build());
+        return Optional.of(Job.builder()
+                .jobId(id)
+                .initialPatientCount(initialPatientCount)
+                .jobStatus(jobStatus).build());
+    }
+
+    public static Optional<Chunk> chunk(Long serverId, Long patientId, Integer chunkGroup, ChunkStatus chunkStatus) {
+        return Optional.of(Chunk.builder()
+                .serverId(serverId)
+                .patientId(patientId)
+                .chunkGroup(chunkGroup)
+                .chunkStatus(chunkStatus).build());
     }
 }

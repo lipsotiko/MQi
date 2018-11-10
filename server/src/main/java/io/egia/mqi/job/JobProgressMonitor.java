@@ -29,6 +29,11 @@ class JobProgressMonitor {
         Optional<Job> optionalJob = jobRepo.findById(jobId);
         while (optionalJob.isPresent()) {
             Job job = optionalJob.get();
+
+            if(job.getJobStatus().equals(JobStatus.FAILURE)) {
+                return;
+            }
+
             processedPatientsCount = chunkRepo.countByChunkStatus(ChunkStatus.DONE);
             job.setProcessedPatientCount(processedPatientsCount);
 

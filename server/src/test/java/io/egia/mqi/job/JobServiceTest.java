@@ -35,4 +35,13 @@ public class JobServiceTest {
         assertThat(jobMeasureCaptor.getAllValues().get(1).getJobId()).isEqualTo(1L);
         assertThat(jobMeasureCaptor.getAllValues().get(1).getMeasureId()).isEqualTo(2L);
     }
+
+    @Test
+    public void sets_job_status_to_failure() {
+        when(jobRepo.save(any())).thenReturn(Job.builder().jobId(1L).build());
+        JobService jobService = new JobService(jobRepo, jobMeasureRepo);
+        jobService.addMeasuresToJob(Arrays.asList(1L, 2L));
+        jobService.fail();
+        verify(jobRepo).save(Job.builder().jobId(1L).jobStatus(JobStatus.FAILURE).build());
+    }
 }

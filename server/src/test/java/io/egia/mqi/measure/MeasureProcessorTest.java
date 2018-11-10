@@ -1,11 +1,9 @@
 package io.egia.mqi.measure;
 
-import io.egia.mqi.helpers.Helpers;
+import io.egia.mqi.job.JobService;
 import io.egia.mqi.patient.Patient;
 import io.egia.mqi.patient.PatientData;
-import io.egia.mqi.patient.PatientMeasureLogRepo;
 import io.egia.mqi.visit.Visit;
-import org.assertj.core.api.Assertions;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -16,9 +14,11 @@ import java.io.IOException;
 import java.time.ZonedDateTime;
 import java.util.*;
 
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static io.egia.mqi.helpers.Helpers.getMeasureFromResource;
 import static org.assertj.core.api.Assertions.catchThrowableOfType;
 import static org.assertj.core.api.Java6Assertions.assertThat;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 
 @RunWith(MockitoJUnitRunner.class)
 public class MeasureProcessorTest {
@@ -28,10 +28,13 @@ public class MeasureProcessorTest {
     private List<Measure> measures = new ArrayList<>();
     private ZonedDateTime timeExecuted = ZonedDateTime.now();
 
+    @Mock
+    private JobService jobService;
+
     @Before
     public void setUp() throws IOException {
 
-        subject = new MeasureProcessor();
+        subject = new MeasureProcessor(jobService);
 
         for (Long i = 1L; i <= 5; i++) {
             Patient p = new Patient();
@@ -49,7 +52,7 @@ public class MeasureProcessorTest {
             }
         }
 
-        Measure measure = Helpers.getMeasureFromResource("fixtures", "sampleMeasure2.json");
+        Measure measure = getMeasureFromResource("fixtures", "sampleMeasure2.json");
         measure.setMeasureId(1L);
         measures.add(measure);
     }
@@ -82,9 +85,15 @@ public class MeasureProcessorTest {
     @Test
     public void measure_with_null_logic_throws_measure_processor_exception() {
         Measure measure = new Measure();
-        measure.setMeasureName("Measure With No Measure Logic");
         catchThrowableOfType(() ->
                 subject.process(Collections.singletonList(measure), patients, visits, null, timeExecuted),
                 MeasureProcessorException.class);
+    }
+
+    @Test
+    public void measure_processor_exception_calls_job_service_fail_method() {
+        Measure measure = new Measure();
+        subject.process(Collections.singletonList(measure), patients, visits, null, timeExecuted);
+        verify(jobService, times(1)).fail();
     }
 }

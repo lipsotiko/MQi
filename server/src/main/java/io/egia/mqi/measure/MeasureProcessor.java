@@ -1,5 +1,7 @@
 package io.egia.mqi.measure;
 
+import io.egia.mqi.job.JobRepo;
+import io.egia.mqi.job.JobService;
 import io.egia.mqi.patient.Patient;
 import io.egia.mqi.patient.PatientData;
 import io.egia.mqi.patient.PatientMeasureLog;
@@ -13,6 +15,7 @@ import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.List;
+import java.util.Map;
 
 @Component
 public class MeasureProcessor implements Processor {
@@ -21,8 +24,10 @@ public class MeasureProcessor implements Processor {
     private Hashtable<Long, PatientData> patientDataHash = new Hashtable<>();
     private int rulesEvaluatedCount;
     private List<MeasureWorkspace> measureWorkspaces = new ArrayList<>();
+    private JobService jobService;
 
-    MeasureProcessor() {
+    MeasureProcessor(JobService jobService) {
+        this.jobService = jobService;
     }
 
     @Override
@@ -34,19 +39,22 @@ public class MeasureProcessor implements Processor {
         this.measures = measures;
         appendToPatientDataHash(patients);
         appendToPatientDataHash(visits);
-        this.patientDataHash.forEach((patientId, patientData) ->
-                this.measures.forEach((measure) -> {
-                    log.debug(String.format("Processing patient id: %s, measure: %s",
-                            patientId,
-                            measure.getMeasureName()));
-                    try {
-                        evaluatePatientDataByMeasure(patientData, measure, measureMetaData);
-                    } catch (MeasureProcessorException e) {
-                        //todo: do something to inform the user the job failed
-                        //todo: set the job status to failed
-                        e.printStackTrace();
-                    }
-                }));
+        for (Map.Entry<Long, PatientData> entry : this.patientDataHash.entrySet()) {
+            Long patientId = entry.getKey();
+            PatientData patientData = entry.getValue();
+            for (Measure measure : this.measures) {
+                log.debug(String.format("Processing patient id: %s, measure: %s",
+                        patientId,
+                        measure.getMeasureName()));
+                try {
+                    evaluatePatientDataByMeasure(patientData, measure, measureMetaData);
+                } catch (MeasureProcessorException e) {
+                    jobService.fail();
+                    e.printStackTrace();
+                    return;
+                }
+            }
+        }
     }
 
     @Override

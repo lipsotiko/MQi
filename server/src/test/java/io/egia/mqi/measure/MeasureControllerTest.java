@@ -12,6 +12,7 @@ import org.mockito.junit.MockitoJUnitRunner;
 import java.io.IOException;
 import java.util.Optional;
 
+import static io.egia.mqi.helpers.Helpers.getMeasureFromResource;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.*;
 
@@ -26,12 +27,12 @@ public class MeasureControllerTest {
 
     @Before
     public void setUp() throws IOException {
-        existingMeasure = Helpers.getMeasureFromResource("fixtures", "sampleMeasure.json");
+        existingMeasure = getMeasureFromResource("fixtures", "sampleMeasure.json");
         existingMeasure.setMeasureId(1L);
-        updatedMeasureDescription = Helpers.getMeasureFromResource("fixtures", "sampleMeasure.json");
+        updatedMeasureDescription = getMeasureFromResource("fixtures", "sampleMeasure.json");
         updatedMeasureDescription.setMeasureId(1L);
         updatedMeasureDescription.getMeasureLogic().setDescription("UPDATED DESCRIPTION");
-        updatedMeasureLogic = Helpers.getMeasureFromResource("fixtures", "updatedMeasure.json");
+        updatedMeasureLogic = getMeasureFromResource("fixtures", "updatedMeasure.json");
         updatedMeasureLogic.setMeasureId(1L);
         when(measureRepo.findById(1L)).thenReturn(Optional.of(existingMeasure));
     }

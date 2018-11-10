@@ -9,6 +9,7 @@ import org.junit.Test;
 import java.io.IOException;
 import java.util.*;
 
+import static io.egia.mqi.helpers.Helpers.getMeasureFromResource;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 
@@ -16,7 +17,7 @@ public class MeasureStepperTest {
 
     @Test
     public void measure_is_stepped_through() throws IOException, MeasureProcessorException {
-        Measure measure = Helpers.getMeasureFromResource("fixtures", "sampleMeasure.json");
+        Measure measure = getMeasureFromResource("fixtures", "sampleMeasure.json");
         List<String> testMeasureRules = new ArrayList<>();
         measure.getMeasureLogic().getSteps().forEach((step -> testMeasureRules.add(step.getRuleName())));
         PatientData patientData = new PatientData(1L);
@@ -44,7 +45,7 @@ public class MeasureStepperTest {
 
     @Test
     public void measure_with_infinite_loop_throws_exception() throws IOException, MeasureProcessorException {
-        Measure measure = Helpers.getMeasureFromResource("fixtures", "measureWithInfiniteLoop.json");
+        Measure measure = getMeasureFromResource("fixtures", "measureWithInfiniteLoop.json");
         MeasureStepper subject = new MeasureStepper(
                 new PatientData(1L), measure, new MeasureWorkspace(1L, 11L), new MeasureMetaData());
 
@@ -53,7 +54,7 @@ public class MeasureStepperTest {
 
     @Test
     public void measure_with_invalid_rule_throws_exception() throws IOException {
-        Measure measure = Helpers.getMeasureFromResource("fixtures", "measureWithRuleThatDoesNotExist.json");
+        Measure measure = getMeasureFromResource("fixtures", "measureWithRuleThatDoesNotExist.json");
         MeasureStepper subject = new MeasureStepper(
                 new PatientData(1L), measure, new MeasureWorkspace(1L,  11L), new MeasureMetaData());
 

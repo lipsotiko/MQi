@@ -6,7 +6,8 @@ import java.util.Date;
 import java.util.List;
 
 @Service
-class JobService {
+public class JobService {
+    private Job job;
     private JobRepo jobRepo;
     private JobMeasureRepo jobMeasureRepo;
 
@@ -16,7 +17,7 @@ class JobService {
     }
 
     Job addMeasuresToJob(List<Long> measureIds) {
-        Job job = jobRepo.save(
+        job = jobRepo.save(
                 Job.builder().jobStatus(JobStatus.RUNNING).startTime(new Date()).build());
         for (Long measureId : measureIds) {
             jobMeasureRepo.save(
@@ -25,5 +26,10 @@ class JobService {
         }
 
         return job;
+    }
+
+    public void fail() {
+        job.setJobStatus(JobStatus.FAILURE);
+        jobRepo.save(job);
     }
 }
