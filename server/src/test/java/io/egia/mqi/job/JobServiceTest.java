@@ -8,11 +8,11 @@ import org.mockito.junit.MockitoJUnitRunner;
 
 import java.util.Arrays;
 
+import static io.egia.mqi.job.JobStatus.FAILURE;
+import static io.egia.mqi.job.JobStatus.RUNNING;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 @RunWith(MockitoJUnitRunner.class)
 public class JobServiceTest {
@@ -29,7 +29,7 @@ public class JobServiceTest {
         jobService.addMeasuresToJob(Arrays.asList(1L, 2L));
         verify(jobRepo).save(jobCaptor.capture());
         verify(jobMeasureRepo, times(2)).save(jobMeasureCaptor.capture());
-        assertThat(jobCaptor.getValue().getJobStatus()).isEqualTo(JobStatus.RUNNING);
+        assertThat(jobCaptor.getValue().getJobStatus()).isEqualTo(RUNNING);
         assertThat(jobMeasureCaptor.getAllValues().get(0).getJobId()).isEqualTo(1L);
         assertThat(jobMeasureCaptor.getAllValues().get(0).getMeasureId()).isEqualTo(1L);
         assertThat(jobMeasureCaptor.getAllValues().get(1).getJobId()).isEqualTo(1L);
@@ -42,6 +42,6 @@ public class JobServiceTest {
         JobService jobService = new JobService(jobRepo, jobMeasureRepo);
         jobService.addMeasuresToJob(Arrays.asList(1L, 2L));
         jobService.fail();
-        verify(jobRepo).save(Job.builder().jobId(1L).jobStatus(JobStatus.FAILURE).build());
+        verify(jobRepo).save(Job.builder().jobId(1L).jobStatus(FAILURE).build());
     }
 }

@@ -170,7 +170,7 @@ create table if not exists job_status (
 insert into job_status (id, job_status)
 values(0, 'PENDING'),
     (1, 'RUNNING'),
-    (2, 'DONE'),
+    (2, 'PROCESSED'),
     (3, 'FAILURE');
 
 drop table if exists code_system;

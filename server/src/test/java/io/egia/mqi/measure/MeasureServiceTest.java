@@ -3,13 +3,11 @@ package io.egia.mqi.measure;
 import io.egia.mqi.chunk.ChunkRepo;
 import io.egia.mqi.chunk.ChunkStatus;
 import io.egia.mqi.job.Job;
-import io.egia.mqi.job.JobStatus;
 import io.egia.mqi.patient.Patient;
 import io.egia.mqi.patient.PatientMeasureLog;
 import io.egia.mqi.patient.PatientMeasureLogRepo;
 import io.egia.mqi.patient.PatientRepo;
 import io.egia.mqi.server.Server;
-import io.egia.mqi.server.SystemType;
 import io.egia.mqi.visit.*;
 import org.junit.Before;
 import org.junit.Test;
@@ -20,8 +18,12 @@ import org.mockito.junit.MockitoJUnitRunner;
 import java.io.IOException;
 import java.util.*;
 
+import static io.egia.mqi.chunk.ChunkStatus.PENDING;
+import static io.egia.mqi.chunk.ChunkStatus.PROCESSED;
 import static io.egia.mqi.helpers.Helpers.chunk;
 import static io.egia.mqi.helpers.Helpers.getMeasureFromResource;
+import static io.egia.mqi.job.JobStatus.RUNNING;
+import static io.egia.mqi.server.SystemType.PRIMARY;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.*;
 
@@ -45,7 +47,7 @@ public class MeasureServiceTest {
     private ProcessorSpy processorSpy;
     private Measure measure;
     private MeasureService measureService;
-    private Server server = Server.builder().serverId(11L).systemType(SystemType.PRIMARY).build();
+    private Server server = Server.builder().serverId(11L).systemType(PRIMARY).build();
     private Patient p77, p88, p99;
     private Visit v199;
 
@@ -64,7 +66,7 @@ public class MeasureServiceTest {
 
         Job job = new Job();
         job.setJobId(44L);
-        job.setJobStatus(JobStatus.RUNNING);
+        job.setJobStatus(RUNNING);
 
         p77 = new Patient();
         p77.setPatientId(77L);
@@ -87,10 +89,10 @@ public class MeasureServiceTest {
         List<Visit> visits = new ArrayList<>(Collections.singletonList(v199));
         when(visitRepo.findByServerIdAndChunkGroup(11L, 1)).thenReturn(visits);
 
-        when(chunkRepo.findTop1ByServerIdAndChunkStatus(11L, ChunkStatus.PENDING))
-                .thenReturn(chunk(11L, 99L, 1, ChunkStatus.PENDING))
-                .thenReturn(chunk(11L, 88L, 2, ChunkStatus.PENDING))
-                .thenReturn(chunk(11L, 77L, 3, ChunkStatus.PENDING))
+        when(chunkRepo.findTop1ByServerIdAndChunkStatus(11L, PENDING))
+                .thenReturn(chunk(11L, 99L, 1, PENDING))
+                .thenReturn(chunk(11L, 88L, 2, PENDING))
+                .thenReturn(chunk(11L, 77L, 3, PENDING))
                 .thenReturn(Optional.empty());
 
         measure = new Measure();
@@ -110,13 +112,13 @@ public class MeasureServiceTest {
         measureService.process(server, Collections.singletonList(measure));
 
         verify(chunkRepo, times(4))
-                .findTop1ByServerIdAndChunkStatus(11L, ChunkStatus.PENDING);
+                .findTop1ByServerIdAndChunkStatus(11L, PENDING);
         verify(chunkRepo, times(1))
-                .updateChunkStatusByServerIdAndChunkGroup(11L, 1, ChunkStatus.DONE);
+                .updateChunkStatusByServerIdAndChunkGroup(11L, 1, PROCESSED);
         verify(chunkRepo, times(1))
-                .updateChunkStatusByServerIdAndChunkGroup(11L, 2, ChunkStatus.DONE);
+                .updateChunkStatusByServerIdAndChunkGroup(11L, 2, PROCESSED);
         verify(chunkRepo, times(1))
-                .updateChunkStatusByServerIdAndChunkGroup(11L, 3, ChunkStatus.DONE);
+                .updateChunkStatusByServerIdAndChunkGroup(11L, 3, PROCESSED);
     }
 
     @Test

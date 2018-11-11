@@ -13,6 +13,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import static io.egia.mqi.visit.CodeSystem.ICD_10;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @RuleTest
@@ -32,11 +33,11 @@ public class HasCodeSetTest {
         ruleParams.add(ruleParam1);
 
         CodeSetGroup codeSetGroupA = CodeSetGroup.builder().groupName("CODE_SET_A").build();
-        CodeSet codeSetA = CodeSet.builder().codeSetGroup(codeSetGroupA).codeSystem(CodeSystem.ICD_10).codeValue("123").build();
+        CodeSet codeSetA = CodeSet.builder().codeSetGroup(codeSetGroupA).codeSystem(ICD_10).codeValue("123").build();
         codeSets.add(codeSetA);
 
         CodeSetGroup codeSetGroupB = CodeSetGroup.builder().groupName("CODE_SET_B").build();
-        CodeSet codeSetB = CodeSet.builder().codeSetGroup(codeSetGroupB).codeSystem(CodeSystem.ICD_10).codeValue("789").build();
+        CodeSet codeSetB = CodeSet.builder().codeSetGroup(codeSetGroupB).codeSystem(ICD_10).codeValue("789").build();
         codeSets.add(codeSetB);
 
         measureWorkspace = new MeasureWorkspace(1L, 11L);
@@ -44,14 +45,14 @@ public class HasCodeSetTest {
 
     @Test
     public void patient_has_code_set_A() {
-        PatientData patientData = getPatientData("123", CodeSystem.ICD_10);
+        PatientData patientData = getPatientData("123", ICD_10);
         hasCodeSet.evaluate(patientData, ruleParams, new MeasureMetaData(codeSets), measureWorkspace);
         assertThat(measureWorkspace.getContinueProcessing()).isEqualTo(true);
     }
 
     @Test
     public void patient_does_not_have_code_set_A() {
-        PatientData patientData = getPatientData("789", CodeSystem.ICD_10);
+        PatientData patientData = getPatientData("789", ICD_10);
         hasCodeSet.evaluate(patientData, ruleParams, new MeasureMetaData(codeSets), measureWorkspace);
         assertThat(measureWorkspace.getContinueProcessing()).isEqualTo(false);
     }

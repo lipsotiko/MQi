@@ -60,18 +60,14 @@ public class MeasureProcessorTest {
     @Test
     public void patient_data_hash_gets_built() {
         subject.process(measures, patients, visits, null, timeExecuted);
-        Hashtable<Long, PatientData> patientDataHash = subject.getPatientDataHash();
-        Set<Long> keys = patientDataHash.keySet();
-        Iterator<Long> itr = keys.iterator();
-        Long patientId;
+        subject.getPatientDataHash().forEach((k, v) -> assertThat(v.getVisitCount()).isEqualTo(20));
+        assertThat(subject.getPatientDataHash().size()).isEqualTo(5);
+    }
 
-        int patientCount = subject.getPatientDataHash().size();
-        assertThat(patientCount).isEqualTo(5);
-
-        while (itr.hasNext()) {
-            patientId = itr.next();
-            assertThat(patientDataHash.get(patientId).getVisitCount()).isEqualTo(20);
-        }
+    @Test
+    public void measure_stepper_returns_number_of_rules_evaluated() {
+        subject.process(measures, patients, visits, null, timeExecuted);
+        assertThat(subject.getRulesEvaluatedCount()).isEqualTo(15);
     }
 
     @Test
@@ -86,7 +82,7 @@ public class MeasureProcessorTest {
     public void measure_with_null_logic_throws_measure_processor_exception() {
         Measure measure = new Measure();
         catchThrowableOfType(() ->
-                subject.process(Collections.singletonList(measure), patients, visits, null, timeExecuted),
+                        subject.process(Collections.singletonList(measure), patients, visits, null, timeExecuted),
                 MeasureProcessorException.class);
     }
 

@@ -11,6 +11,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
+import static io.egia.mqi.job.JobStatus.RUNNING;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @ActiveProfiles("test")
@@ -24,14 +25,14 @@ public class JobRepoIntegrationTests {
     public void setUp() {
         for(int i = 2; i > 0; i--) {
             Job job = new Job();
-            job.setJobStatus(JobStatus.RUNNING);
+            job.setJobStatus(RUNNING);
             jobRepo.saveAndFlush(job);
         }
     }
 
     @Test
     public void jobRepo_updateJobStatus() {
-        jobRepo.updateJobStatus(1L, JobStatus.RUNNING);
-        assertThat(jobRepo.findById(1L).get().getJobStatus()).isEqualTo(JobStatus.RUNNING);
+        jobRepo.updateJobStatus(1L, RUNNING);
+        assertThat(jobRepo.findById(1L).get().getJobStatus()).isEqualTo(RUNNING);
     }
 }

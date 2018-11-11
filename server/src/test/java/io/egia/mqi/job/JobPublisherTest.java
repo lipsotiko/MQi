@@ -10,6 +10,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
+import static io.egia.mqi.job.JobStatus.RUNNING;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @ActiveProfiles("test")
@@ -30,8 +31,8 @@ public class JobPublisherTest {
 
     @Test
     public void publishes_job_updates() throws InterruptedException {
-        jobRepo.save(Job.builder().jobStatus(JobStatus.RUNNING).build());
+        jobRepo.save(Job.builder().jobStatus(RUNNING).build());
         Thread.sleep(1000);
-        assertThat(observer.values().get(0).getJobStatus()).isEqualTo(JobStatus.RUNNING);
+        assertThat(observer.values().get(0).getJobStatus()).isEqualTo(RUNNING);
     }
 }

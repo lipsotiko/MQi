@@ -1,6 +1,5 @@
 package io.egia.mqi.measure;
 
-import io.egia.mqi.helpers.Helpers;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;

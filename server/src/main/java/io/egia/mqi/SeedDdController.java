@@ -19,6 +19,8 @@ import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.Map;
 
+import static io.egia.mqi.visit.CodeSystem.*;
+
 @RestController
 public class SeedDdController {
 
@@ -65,35 +67,35 @@ public class SeedDdController {
             VisitCode code_1 = new VisitCode();
             code_1.setVisitId(savedVisit.getVisitId());
             code_1.setCodeValue("xyz");
-            code_1.setCodeSystem(CodeSystem.ICD_9);
+            code_1.setCodeSystem(ICD_9);
             visitCodeRepo.saveAndFlush(code_1);
 
             VisitCode code_2 = new VisitCode();
             code_2.setVisitId(savedVisit.getVisitId());
             code_2.setCodeValue("abc.defgh");
-            code_2.setCodeSystem(CodeSystem.ICD_10);
+            code_2.setCodeSystem(ICD_10);
             visitCodeRepo.saveAndFlush(code_2);
 
             VisitCode code_3 = new VisitCode();
             code_3.setVisitId(savedVisit.getVisitId());
             code_3.setCodeValue("99");
-            code_3.setCodeSystem(CodeSystem.POS);
+            code_3.setCodeSystem(POS);
             visitCodeRepo.saveAndFlush(code_3);
 
             VisitCode code_4 = new VisitCode();
             code_4.setVisitId(savedVisit.getVisitId());
             code_4.setCodeValue("22");
-            code_4.setCodeSystem(CodeSystem.REV);
+            code_4.setCodeSystem(REV);
             visitCodeRepo.saveAndFlush(code_4);
         }
 
         CodeSetGroup codeSetA = codeSetGroupRepo.save(CodeSetGroup.builder().groupName("CODE_SET_A").build());
         CodeSetGroup codeSetB = codeSetGroupRepo.save(CodeSetGroup.builder().groupName("CODE_SET_B").build());
 
-        codeSetRepo.save(buildCodeSet(codeSetA, CodeSystem.POS, "99"));
-        codeSetRepo.save(buildCodeSet(codeSetA, CodeSystem.REV, "22"));
-        codeSetRepo.save(buildCodeSet(codeSetB, CodeSystem.ICD_9, "xyz"));
-        codeSetRepo.save(buildCodeSet(codeSetB, CodeSystem.ICD_10, "abc.defgh"));
+        codeSetRepo.save(buildCodeSet(codeSetA, POS, "99"));
+        codeSetRepo.save(buildCodeSet(codeSetA, REV, "22"));
+        codeSetRepo.save(buildCodeSet(codeSetB, ICD_9, "xyz"));
+        codeSetRepo.save(buildCodeSet(codeSetB, ICD_10, "abc.defgh"));
 
         Map<String, Integer> results = new HashMap<>();
         results.put("Code Set Groups:", codeSetGroupRepo.findAll().size());

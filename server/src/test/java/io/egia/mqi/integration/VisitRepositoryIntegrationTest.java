@@ -15,6 +15,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import java.util.Collections;
 import java.util.List;
 
+import static io.egia.mqi.visit.CodeSystem.ICD_9;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @ActiveProfiles("test")
@@ -44,7 +45,7 @@ public class VisitRepositoryIntegrationTest {
             code.setVisitCodeId(i);
             code.setVisitId(i);
             code.setCodeValue("abc");
-            code.setCodeSystem(CodeSystem.ICD_9);
+            code.setCodeSystem(ICD_9);
             visitCodeRepo.saveAndFlush(code);
 
             savedVisit.setVisitCodes(Collections.singletonList(code));
@@ -56,7 +57,7 @@ public class VisitRepositoryIntegrationTest {
     public void visitRepo_findByServerIdAndChunkGroup() {
         List<Visit> subject = visitRepo.findByServerIdAndChunkGroup(1L,0);
         assertThat(subject.size()).isEqualTo(1);
-        assertThat(subject.get(0).getVisitCodes().get(0).getCodeSystem()).isEqualTo(CodeSystem.ICD_9);
+        assertThat(subject.get(0).getVisitCodes().get(0).getCodeSystem()).isEqualTo(ICD_9);
         assertThat(subject.get(0).getVisitCodes().get(0).getCodeValue()).isEqualTo("abc");
     }
 

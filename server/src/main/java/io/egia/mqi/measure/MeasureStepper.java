@@ -28,7 +28,7 @@ class MeasureStepper {
         this.measureMetaData = measureMetaData;
     }
 
-    void stepThroughMeasure() throws MeasureProcessorException {
+    int stepThroughMeasure() throws MeasureProcessorException {
         if(steps.size() == 0) {
             throw new MeasureProcessorException("Measure logic has no steps");
         }
@@ -65,6 +65,8 @@ class MeasureStepper {
 
             rulesEvaluatedCount++;
         }
+
+        return rulesEvaluatedCount;
     }
 
     private Step getNextStep(int currentStepId, int nextStepId) throws MeasureProcessorException {
@@ -102,10 +104,6 @@ class MeasureStepper {
         step.setRuleName("ExitMeasure");
         step.setStepId(99999);
         return step;
-    }
-
-    int getRulesEvaluatedCount() {
-        return rulesEvaluatedCount;
     }
 
     MeasureWorkspace getMeasureWorkspace() {

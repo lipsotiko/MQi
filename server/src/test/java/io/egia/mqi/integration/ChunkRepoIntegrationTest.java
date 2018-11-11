@@ -13,6 +13,8 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import java.util.Optional;
 
+import static io.egia.mqi.chunk.ChunkStatus.PENDING;
+import static io.egia.mqi.chunk.ChunkStatus.PROCESSED;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.fail;
 
@@ -28,14 +30,14 @@ public class ChunkRepoIntegrationTest {
         for (Long i = 1L; i <= 10; i++) {
             Chunk chunk = new Chunk();
             chunk.setServerId(i);
-            chunk.setChunkStatus(ChunkStatus.PENDING);
+            chunk.setChunkStatus(PENDING);
             chunkRepo.saveAndFlush(chunk);
         }
     }
 
     @Test
     public void chunkRepo_findTop1ByServerIdAndChunkStatus() {
-        Optional<Chunk> chunk =  chunkRepo.findTop1ByServerIdAndChunkStatus(1L, ChunkStatus.PENDING);
+        Optional<Chunk> chunk =  chunkRepo.findTop1ByServerIdAndChunkStatus(1L, PENDING);
         if(!chunk.isPresent()) {
             fail("Chunk was not present...");
         } else {
@@ -45,14 +47,14 @@ public class ChunkRepoIntegrationTest {
 
     @Test
     public void chunkRepo_updateChunkStatusByServerIdAndChunkGroup() {
-        assertThat(chunkRepo.findTop1ByServerIdAndChunkStatus(1L,ChunkStatus.DONE)).isNotPresent();
-        chunkRepo.updateChunkStatusByServerIdAndChunkGroup(1L, 0, ChunkStatus.DONE);
-        assertThat(chunkRepo.findTop1ByServerIdAndChunkStatus(1L,ChunkStatus.DONE)).isPresent();
+        assertThat(chunkRepo.findTop1ByServerIdAndChunkStatus(1L,PROCESSED)).isNotPresent();
+        chunkRepo.updateChunkStatusByServerIdAndChunkGroup(1L, 0, PROCESSED);
+        assertThat(chunkRepo.findTop1ByServerIdAndChunkStatus(1L, PROCESSED)).isPresent();
     }
 
     @Test
     public void chunkRepo_countByChunkStatus() {
-        assertThat(chunkRepo.countByChunkStatus(ChunkStatus.DONE)).isEqualTo(0L);
-        assertThat(chunkRepo.countByChunkStatus(ChunkStatus.PENDING)).isEqualTo(10L);
+        assertThat(chunkRepo.countByChunkStatus(PROCESSED)).isEqualTo(0L);
+        assertThat(chunkRepo.countByChunkStatus(PENDING)).isEqualTo(10L);
     }
 }

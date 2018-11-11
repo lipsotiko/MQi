@@ -13,6 +13,9 @@ import org.springframework.stereotype.Component;
 
 import java.net.UnknownHostException;
 
+import static io.egia.mqi.server.SystemType.PRIMARY;
+import static io.egia.mqi.server.SystemType.SECONDARY;
+
 @Component
 public class MqiInitializer implements ApplicationListener<ContextRefreshedEvent> {
 	private Logger log = LoggerFactory.getLogger(MqiInitializer.class);
@@ -62,7 +65,7 @@ public class MqiInitializer implements ApplicationListener<ContextRefreshedEvent
 			if (systemType.equals("primary")) {
 				if (thisServer != null && primaryServer != null) {
 					log.info("This server already exists in the server table, updating entry.");
-					serverService.updateSystemTypeAndVersion(thisServer, SystemType.PRIMARY, systemVersion);
+					serverService.updateSystemTypeAndVersion(thisServer, PRIMARY, systemVersion);
 				} else if (thisServer == null && primaryServer == null) {
 					log.info("Primary server does not exist in the server table, adding entry.");
 					serverService.saveServer(buildServer(ServerService.thisServersHostName()));
@@ -70,7 +73,7 @@ public class MqiInitializer implements ApplicationListener<ContextRefreshedEvent
 			} else if (systemType.equals("secondary")) {
 				if (thisServer != null) {
 					log.info("This server already exists in the server table, updating entry.");
-                    serverService.updateSystemTypeAndVersion(thisServer, SystemType.SECONDARY, systemVersion);
+                    serverService.updateSystemTypeAndVersion(thisServer, SECONDARY, systemVersion);
 				} else {
 					log.info("Secondary server does not exist in the server table, adding entry.");
                     serverService.saveServer(buildServer(ServerService.thisServersHostName()));
@@ -85,7 +88,7 @@ public class MqiInitializer implements ApplicationListener<ContextRefreshedEvent
         return Server.builder()
 				.serverName(hostName)
 				.serverPort(serverPort)
-				.systemType(SystemType.PRIMARY)
+				.systemType(PRIMARY)
 				.systemVersion(systemVersion)
 				.pageSize(5000)
 				.build();

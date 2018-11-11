@@ -21,6 +21,9 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import static io.egia.mqi.chunk.ChunkStatus.PENDING;
+import static io.egia.mqi.server.SystemType.PRIMARY;
+import static io.egia.mqi.server.SystemType.SECONDARY;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.*;
 
@@ -73,9 +76,9 @@ public class ChunkServiceTest {
         secondPatientRecordCounts.add(buildPatientRecordCount(17L, 200));
         secondPatientRecordCounts.add(buildPatientRecordCount(18L, 300));
 
-        servers.add(Server.builder().serverId(11L).systemType(SystemType.PRIMARY).pageSize(9).build());
-        servers.add(Server.builder().serverId(22L).systemType(SystemType.SECONDARY).build());
-        servers.add(Server.builder().serverId(33L).systemType(SystemType.SECONDARY).build());
+        servers.add(Server.builder().serverId(11L).systemType(PRIMARY).pageSize(9).build());
+        servers.add(Server.builder().serverId(22L).systemType(SECONDARY).build());
+        servers.add(Server.builder().serverId(33L).systemType(SECONDARY).build());
 
         when(serverRepo.findAll()).thenReturn(servers);
         when(patientRecordCountRepo.findBy(any()))
@@ -136,7 +139,7 @@ public class ChunkServiceTest {
     }
 
     private Chunk buildChunk(long l, long l2, long l3, int l4) {
-        return Chunk.builder().patientId(l).serverId(l2).recordCount(l3).chunkGroup(l4).chunkStatus(ChunkStatus.PENDING).build();
+        return Chunk.builder().patientId(l).serverId(l2).recordCount(l3).chunkGroup(l4).chunkStatus(PENDING).build();
     }
 
     private PatientRecordCount buildPatientRecordCount(long l, long l2) {

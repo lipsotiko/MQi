@@ -9,6 +9,10 @@ import org.springframework.stereotype.Service;
 
 import java.util.Optional;
 
+import static io.egia.mqi.chunk.ChunkStatus.PROCESSED;
+import static io.egia.mqi.job.JobStatus.DONE;
+import static io.egia.mqi.job.JobStatus.FAILURE;
+
 @Service
 class JobProgressMonitor {
     private Logger log = LoggerFactory.getLogger(JobProgressMonitor.class);
@@ -30,17 +34,17 @@ class JobProgressMonitor {
         while (optionalJob.isPresent()) {
             Job job = optionalJob.get();
 
-            if(job.getJobStatus().equals(JobStatus.FAILURE)) {
+            if(job.getJobStatus().equals(FAILURE)) {
                 return;
             }
 
-            processedPatientsCount = chunkRepo.countByChunkStatus(ChunkStatus.DONE);
+            processedPatientsCount = chunkRepo.countByChunkStatus(PROCESSED);
             job.setProcessedPatientCount(processedPatientsCount);
 
             log.info(String.format("Job#: %s, Progress: %s",jobId, job.getProgress()));
 
             if(job.getInitialPatientCount().equals(processedPatientsCount)) {
-                job.setJobStatus(JobStatus.DONE);
+                job.setJobStatus(DONE);
                 jobRepo.save(job);
                 return;
             }

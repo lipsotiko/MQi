@@ -20,6 +20,8 @@ import org.springframework.web.bind.annotation.RestController;
 import java.net.UnknownHostException;
 import java.util.List;
 
+import static io.egia.mqi.server.SystemType.PRIMARY;
+
 @RestController
 public class JobController {
     private Logger log = LoggerFactory.getLogger(JobController.class);
@@ -57,7 +59,7 @@ public class JobController {
     public void process(@RequestBody List<Long> measureIds) throws UnknownHostException {
         Server server = serverService.getServerFromHostNameAndPort(serverPort);
 
-        if (server.getSystemType().equals(SystemType.PRIMARY)) {
+        if (server.getSystemType().equals(PRIMARY)) {
             Job job = jobService.addMeasuresToJob(measureIds);
             log.info( String.format("Started processing Job#: %s ", job.getJobId()));
             chunkService.chunkData(job);

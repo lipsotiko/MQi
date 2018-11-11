@@ -5,6 +5,9 @@ import org.springframework.stereotype.Service;
 import java.util.Date;
 import java.util.List;
 
+import static io.egia.mqi.job.JobStatus.FAILURE;
+import static io.egia.mqi.job.JobStatus.RUNNING;
+
 @Service
 public class JobService {
     private Job job;
@@ -18,7 +21,7 @@ public class JobService {
 
     Job addMeasuresToJob(List<Long> measureIds) {
         job = jobRepo.save(
-                Job.builder().jobStatus(JobStatus.RUNNING).startTime(new Date()).build());
+                Job.builder().jobStatus(RUNNING).startTime(new Date()).build());
         for (Long measureId : measureIds) {
             jobMeasureRepo.save(
                     JobMeasure.builder().jobId(job.getJobId()).measureId(measureId).build()
@@ -29,7 +32,7 @@ public class JobService {
     }
 
     public void fail() {
-        job.setJobStatus(JobStatus.FAILURE);
+        job.setJobStatus(FAILURE);
         jobRepo.save(job);
     }
 }

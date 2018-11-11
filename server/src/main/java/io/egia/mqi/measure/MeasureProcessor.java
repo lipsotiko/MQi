@@ -1,6 +1,5 @@
 package io.egia.mqi.measure;
 
-import io.egia.mqi.job.JobRepo;
 import io.egia.mqi.job.JobService;
 import io.egia.mqi.patient.Patient;
 import io.egia.mqi.patient.PatientData;
@@ -116,8 +115,7 @@ public class MeasureProcessor implements Processor {
 
         MeasureWorkspace measureWorkspace = new MeasureWorkspace(patientData.getPatientId(), measure.getMeasureId());
         MeasureStepper measureStepper = new MeasureStepper(patientData, measure, measureWorkspace, measureMetaData);
-        measureStepper.stepThroughMeasure();
-        rulesEvaluatedCount = rulesEvaluatedCount + measureStepper.getRulesEvaluatedCount();
+        rulesEvaluatedCount = measureStepper.stepThroughMeasure() + rulesEvaluatedCount;
         this.measureWorkspaces.add(measureStepper.getMeasureWorkspace());
     }
 

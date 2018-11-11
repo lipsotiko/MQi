@@ -18,6 +18,9 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 
+import static io.egia.mqi.chunk.ChunkStatus.PENDING;
+import static io.egia.mqi.chunk.ChunkStatus.PROCESSED;
+
 @Service
 public class MeasureService {
     private Logger log = LoggerFactory.getLogger(MeasureService.class);
@@ -57,7 +60,7 @@ public class MeasureService {
         MeasureMetaData measureMetaData = new MeasureMetaData(getCodesSetsForMeasures(measures));
 
         Long serverId = server.getServerId();
-        Optional<Chunk> currentChunk = chunkRepo.findTop1ByServerIdAndChunkStatus(serverId, ChunkStatus.PENDING);
+        Optional<Chunk> currentChunk = chunkRepo.findTop1ByServerIdAndChunkStatus(serverId, PENDING);
         while (currentChunk.isPresent()) {
             int chunkGroup = currentChunk.get().getChunkGroup();
             log.debug(String.format("Processing chunk %s on server %s", chunkGroup, serverId));
@@ -67,8 +70,8 @@ public class MeasureService {
             processor.process(measures, patients, visits, measureMetaData, ZonedDateTime.now());
             saveMeasureResults(processor);
             processor.clear();
-            chunkRepo.updateChunkStatusByServerIdAndChunkGroup(serverId, chunkGroup, ChunkStatus.DONE);
-            currentChunk = chunkRepo.findTop1ByServerIdAndChunkStatus(serverId, ChunkStatus.PENDING);
+            chunkRepo.updateChunkStatusByServerIdAndChunkGroup(serverId, chunkGroup, PROCESSED);
+            currentChunk = chunkRepo.findTop1ByServerIdAndChunkStatus(serverId, PENDING);
         }
     }
 

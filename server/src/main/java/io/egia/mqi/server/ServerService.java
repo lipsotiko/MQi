@@ -5,6 +5,8 @@ import org.springframework.stereotype.Service;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 
+import static io.egia.mqi.server.SystemType.PRIMARY;
+
 @Service
 public class ServerService {
     private ServerRepo serverRepo;
@@ -26,7 +28,7 @@ public class ServerService {
     }
 
     public Server getPrimaryServer(){
-        return serverRepo.findOneBySystemType(SystemType.PRIMARY);
+        return serverRepo.findOneBySystemType(PRIMARY);
     }
 
     public void saveServer(Server server) {

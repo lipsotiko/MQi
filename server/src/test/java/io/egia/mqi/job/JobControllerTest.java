@@ -17,6 +17,8 @@ import java.net.UnknownHostException;
 import java.util.Arrays;
 import java.util.List;
 
+import static io.egia.mqi.server.SystemType.PRIMARY;
+import static io.egia.mqi.server.SystemType.SECONDARY;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
@@ -33,8 +35,8 @@ public class JobControllerTest {
     private JobController jobController;
     private List<Long> stubbedMeasureIds = Arrays.asList(1L, 2L);
     private Job job = Job.builder().jobId(1L).build();
-    private Server primaryServer = Server.builder().systemType(SystemType.PRIMARY).build();
-    private Server secondaryServer = Server.builder().systemType(SystemType.SECONDARY).build();
+    private Server primaryServer = Server.builder().systemType(PRIMARY).build();
+    private Server secondaryServer = Server.builder().systemType(SECONDARY).build();
     private List<Measure> measures;
 
     @Before

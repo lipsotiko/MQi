@@ -10,6 +10,7 @@ import org.mockito.junit.MockitoJUnitRunner;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 
+import static io.egia.mqi.server.SystemType.PRIMARY;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.anyString;
 
@@ -21,7 +22,7 @@ public class ServerServiceTest {
 
     private static Server server;
     static {
-        server = Server.builder().serverName("Fake Server").systemType(SystemType.PRIMARY).build();
+        server = Server.builder().serverName("Fake Server").systemType(PRIMARY).build();
     }
 
     @Before
@@ -43,7 +44,7 @@ public class ServerServiceTest {
 
     @Test
     public void returns_primary_server() {
-        Mockito.when(serverRepo.findOneBySystemType(SystemType.PRIMARY)).thenReturn(server);
+        Mockito.when(serverRepo.findOneBySystemType(PRIMARY)).thenReturn(server);
         assertThat(serverService.getPrimaryServer()).isEqualTo(server);
     }
 }

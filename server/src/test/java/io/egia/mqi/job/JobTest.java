@@ -2,8 +2,8 @@ package io.egia.mqi.job;
 
 import org.junit.Test;
 
-import static io.egia.mqi.job.JobStatus.RUNNING;
 import static io.egia.mqi.job.JobStatus.DONE;
+import static io.egia.mqi.job.JobStatus.RUNNING;
 import static org.assertj.core.api.Assertions.assertThat;
 
 public class JobTest {

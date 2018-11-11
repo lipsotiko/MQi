@@ -6,7 +6,6 @@ import io.egia.mqi.patient.PatientRecordCount;
 import io.egia.mqi.patient.PatientRecordCountRepo;
 import io.egia.mqi.server.Server;
 import io.egia.mqi.server.ServerRepo;
-import io.egia.mqi.server.SystemType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.PageRequest;
@@ -15,6 +14,10 @@ import org.springframework.stereotype.Service;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
+
+import static io.egia.mqi.chunk.ChunkStatus.PENDING;
+import static io.egia.mqi.chunk.ChunkStatus.PROCESSED;
+import static io.egia.mqi.server.SystemType.PRIMARY;
 
 @Service
 public class ChunkService {
@@ -64,7 +67,7 @@ public class ChunkService {
                     chunks.add(Chunk.builder().patientId(p.getPatientId())
                             .serverId(s.getServerId())
                             .chunkGroup(i)
-                            .chunkStatus(ChunkStatus.PENDING)
+                            .chunkStatus(PENDING)
                             .recordCount(p.getRecordCount()).build());
 
                     currentPatient++;
@@ -76,13 +79,9 @@ public class ChunkService {
         log.info("Completed chunking process");
     }
 
-    public Long getProcessedPatientCount() {
-        return chunkRepo.countByChunkStatus(ChunkStatus.DONE);
-    }
-
     private int getPageSize(List<Server> servers) {
         return servers.stream()
-                .filter(s -> s.getSystemType().equals(SystemType.PRIMARY))
+                .filter(s -> s.getSystemType().equals(PRIMARY))
                 .collect(Collectors.toList())
                 .get(0)
                 .getPageSize();
