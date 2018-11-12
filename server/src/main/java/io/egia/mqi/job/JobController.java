@@ -53,7 +53,6 @@ public class JobController {
         this.jobPublisher = jobPublisher;
     }
 
-
     @Async
     @PostMapping("/process")
     public void process(@RequestBody List<Long> measureIds) throws UnknownHostException {
@@ -69,7 +68,7 @@ public class JobController {
         }
     }
 
-    @GetMapping(produces = MediaType.TEXT_EVENT_STREAM_VALUE, value = "/job_subscription")
+    @GetMapping(produces = MediaType.TEXT_EVENT_STREAM_VALUE, value = "/jobs_subscription")
     public Publisher<Job> jobStatus() {
         return jobPublisher.getPublisher();
     }

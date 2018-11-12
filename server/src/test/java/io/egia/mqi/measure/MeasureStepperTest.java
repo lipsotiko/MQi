@@ -1,15 +1,14 @@
 package io.egia.mqi.measure;
 
-import io.egia.mqi.patient.Patient;
 import io.egia.mqi.patient.PatientData;
-import io.egia.mqi.visit.*;
 import org.junit.Test;
 
 import java.io.IOException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
-import static io.egia.mqi.helpers.Helpers.getMeasureFromResource;
-import static io.egia.mqi.visit.CodeSystem.ICD_10;
+import static io.egia.mqi.helpers.Helpers.*;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 
@@ -25,26 +24,11 @@ public class MeasureStepperTest {
         List<String> testMeasureRules = new ArrayList<>();
         measure.getMeasureLogic().getSteps().forEach((step -> testMeasureRules.add(step.getRuleName())));
 
-        PatientData patientData = new PatientData(PATIENT_ID);
-        Patient patient = new Patient();
-        Date dob = new GregorianCalendar(1986, Calendar.APRIL, 28).getTime();
-        patient.setDateOfBirth(dob);
-        patientData.addPatientRecord(patient);
-
-        VisitCode visitCode = new VisitCode();
-        visitCode.setCodeValue("123");
-        visitCode.setCodeSystem(ICD_10);
-        Visit visit = new Visit();
-        visit.setVisitCodes(Collections.singletonList(visitCode));
-        patientData.addPatientRecord(visit);
-
-        CodeSetGroup codeSetGroupA = CodeSetGroup.builder().groupName("CODE_SET_A").build();
-        CodeSet codeSetA = CodeSet.builder().codeSetGroup(codeSetGroupA).codeSystem(ICD_10).codeValue("123").build();
-        MeasureMetaData measureMetaData = new MeasureMetaData(Collections.singletonList(codeSetA));
-
+        PatientData patientData = patientData(PATIENT_ID, "sampleMeasure.json");
+        MeasureMetaData measureMetaData = measureMetaData("sampleMeasure.json");
         MeasureWorkspace measureWorkspace = new MeasureWorkspace(PATIENT_ID, MEASURE_ID);
         MeasureStepper subject = new MeasureStepper(patientData, measure, measureWorkspace, measureMetaData);
-        
+
         assertThat(subject.stepThroughMeasure()).isEqualTo(RULES_FIRED);
         assertThat(subject.getMeasureWorkspace().getRuleTrace().size()).isEqualTo(RULES_FIRED);
         testMeasureRules.forEach(rule -> assertThat(subject.getMeasureWorkspace().getRuleTrace()).contains(rule));
