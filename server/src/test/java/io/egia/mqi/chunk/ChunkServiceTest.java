@@ -138,6 +138,18 @@ public class ChunkServiceTest {
         assertThat(jobCaptor.getAllValues().get(0).getInitialPatientCount()).isEqualTo(18);
     }
 
+    @Test
+    public void page_size_is_rounded_up() {
+        List<Server> servers = Collections.singletonList(
+                Server.builder().systemType(PRIMARY).pageSize(5000).build());
+        when(serverRepo.findAll()).thenReturn(servers);
+        when(patientRecordCountRepo.count()).thenReturn(50L);
+        ChunkService chunkService =
+                new ChunkService(serverRepo, chunkRepo, jobRepo, patientRecordCountRepo);
+        chunkService.chunkData(Job.builder().build());
+        verify(patientRecordCountRepo,times(1)).findBy(any());
+    }
+
     private Chunk buildChunk(long l, long l2, long l3, int l4) {
         return Chunk.builder().patientId(l).serverId(l2).recordCount(l3).chunkGroup(l4).chunkStatus(PENDING).build();
     }

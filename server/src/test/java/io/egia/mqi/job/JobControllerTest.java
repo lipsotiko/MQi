@@ -6,7 +6,6 @@ import io.egia.mqi.measure.MeasureRepo;
 import io.egia.mqi.measure.MeasureService;
 import io.egia.mqi.server.Server;
 import io.egia.mqi.server.ServerService;
-import io.egia.mqi.server.SystemType;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -31,7 +30,6 @@ public class JobControllerTest {
     @Mock private MeasureService measureService;
     @Mock private ServerService serverService;
     @Mock private JobProgressMonitor jobProgressMonitor;
-    @Mock private JobPublisher jobPublisher;
     private JobController jobController;
     private List<Long> stubbedMeasureIds = Arrays.asList(1L, 2L);
     private Job job = Job.builder().jobId(1L).build();
@@ -47,8 +45,7 @@ public class JobControllerTest {
                 chunkService,
                 measureService,
                 serverService,
-                jobProgressMonitor,
-                jobPublisher);
+                jobProgressMonitor);
 
         when(jobService.addMeasuresToJob(stubbedMeasureIds)).thenReturn(job);
         Measure measureA = new Measure();

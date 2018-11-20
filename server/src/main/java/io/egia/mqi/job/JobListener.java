@@ -1,19 +1,25 @@
 package io.egia.mqi.job;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
+import org.springframework.stereotype.Component;
+
 import javax.persistence.PostPersist;
 import javax.persistence.PostUpdate;
 
+@Component
 public class JobListener {
 
-    private JobQueue jobQueue = JobQueue.getStreamInstance();
+    static private SimpMessagingTemplate template;
 
     @PostPersist
-    public void addSavedJobToQueue(Job job) {
-        jobQueue.add(job);
+    @PostUpdate
+    public void emit(Job job) {
+        template.convertAndSend("/topic/job", job);
     }
 
-    @PostUpdate
-    public void addUpdatedJobToQueue(Job job) {
-        jobQueue.add(job);
+    @Autowired
+    public void init(SimpMessagingTemplate template) {
+        JobListener.template = template;
     }
 }

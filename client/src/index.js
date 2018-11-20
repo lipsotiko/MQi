@@ -1,15 +1,12 @@
-'use strict';
-import './styles/main.scss'
-import './styles/fonts.scss'
-import './styles/colors.scss'
+import React from 'react';
+import ReactDOM from 'react-dom';
+import './index.css';
+import App from './App';
+import * as serviceWorker from './serviceWorker';
 
-// Require index.html so it gets copied to dist
-require('./index.html');
+ReactDOM.render(<App />, document.getElementById('root'));
 
-var Elm = require('./Main.elm');
-var mountNode = document.getElementById('main');
-
-// .embed() can take an optional second argument.
-// This would be an object describing the data we
-// need to start a program, i.e. a userID or some token
-var app = Elm.Main.embed(mountNode);
+// If you want your app to work offline and load faster, you can change
+// unregister() to register() below. Note this comes with some pitfalls.
+// Learn more about service workers: http://bit.ly/CRA-PWA
+serviceWorker.unregister();

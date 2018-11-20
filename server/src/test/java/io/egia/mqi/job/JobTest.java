@@ -22,7 +22,7 @@ public class JobTest {
 
     @Test
     public void progress_is_at_100_percent() {
-        Job job = Job.builder().jobStatus(DONE).build();
+        Job job = Job.builder().jobStatus(DONE).initialPatientCount(100L).processedPatientCount(100L).build();
         assertThat(job.getProgress()).isEqualTo(100);
     }
 
@@ -34,7 +34,19 @@ public class JobTest {
 
     @Test
     public void status_is_not_set() {
-        Job job = Job.builder().build();
+        Job job = Job.builder().initialPatientCount(100L).processedPatientCount(100L).build();
+        assertThat(job.getProgress()).isEqualTo(0);
+    }
+
+    @Test
+    public void initial_patient_count_is_not_set() {
+        Job job = Job.builder().jobStatus(RUNNING).processedPatientCount(100L).build();
+        assertThat(job.getProgress()).isEqualTo(0);
+    }
+
+    @Test
+    public void processed_patient_count_is_not_set() {
+        Job job = Job.builder().jobStatus(RUNNING).initialPatientCount(100L).build();
         assertThat(job.getProgress()).isEqualTo(0);
     }
 }

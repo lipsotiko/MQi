@@ -44,7 +44,7 @@ public class ChunkService {
 
         long count = patientRecordCountRepo.count();
         int pageSize = getPageSize(servers);
-        long pages = count / pageSize;
+        double pages = Math.ceil((float)count / pageSize);
 
         job.setInitialPatientCount(count);
         jobRepo.save(job);

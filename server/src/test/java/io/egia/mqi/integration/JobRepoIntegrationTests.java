@@ -2,12 +2,13 @@ package io.egia.mqi.integration;
 
 import io.egia.mqi.job.Job;
 import io.egia.mqi.job.JobRepo;
-import io.egia.mqi.job.JobStatus;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
@@ -20,6 +21,9 @@ import static org.assertj.core.api.Assertions.assertThat;
 public class JobRepoIntegrationTests {
 
     @Autowired private JobRepo jobRepo;
+
+    @MockBean
+    private SimpMessagingTemplate template;
 
     @Before
     public void setUp() {
