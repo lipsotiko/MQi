@@ -8,6 +8,7 @@ import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 import java.util.Date;
+import java.util.List;
 
 @Data
 @Entity
@@ -19,12 +20,15 @@ public class Job {
 
 	@Id
 	@GeneratedValue(strategy=GenerationType.IDENTITY)
-	private Long jobId;
+	private Long id;
 	private JobStatus jobStatus;
 	private Date startTime;
 	private Date endTime;
 	private Long initialPatientCount;
 	private Long processedPatientCount;
+
+	@ElementCollection
+	private List<Long> measureIds;
 
 	@Column(updatable=false,insertable=false) private Date lastUpdated;
 

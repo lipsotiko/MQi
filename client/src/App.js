@@ -1,47 +1,50 @@
 import React, { Component } from 'react';
 import './App.css';
-import Navigation from './Navigation.js'
 import Dashboard from './Dashboard';
 import MeasureEditor from './MeasureEditor';
 
-
 class App extends Component {
 
-  constructor(props) {
-    super(props);
-    this.state = { currentPage: 'Dashboard' };
-    this.setCurrentPage = this.setCurrentPage.bind(this);
+  pages = [
+    { name: 'Dashboard' },
+    { name: 'Measure Editor' }
+  ]
+
+  state = {
+    currentPageName: 'Measure Editor',
+    navigate: this.navigate.bind(this)
   }
 
-  componentDidMount() {
-    fetch('/measure_list')
-      .then((response) => response.json())
-      .then((json) => console.log(json));
-  }
-
-  setCurrentPage(page) {
-    this.setState({currentPage: page});
+  navigate(page) {
+    this.setState({ currentPageName: page });
   }
 
   render() {
-    return (
-      <div className="App">
-        <header className="App-header">
-          <Navigation navigate={this.setCurrentPage}/>
-        </header>
-        <div>
+    return <div className='container'>
+      <header className="header">
+        <div className='navigation'>
+          {this.pages.map(page => this.navigationMenuItem(page.name))}
+        </div>
+      </header>
+      <div className='content'>
         {(() => {
-          switch (this.state.currentPage) {
-            case "Dashboard":       return <Dashboard />;
-            case "MeasureEditor":   return <MeasureEditor />;
-            default:                return <Dashboard />;
+          switch (this.state.currentPageName) {
+            case "Dashboard": return <Dashboard />;
+            case "Measure Editor": return <MeasureEditor />;
+            default: return <Dashboard />;
           }
         })()}
-        </div>
       </div>
-    );
+    </div>
+  }
+
+  navigationMenuItem(pageName) {
+    return <nav
+      key={pageName}
+      onClick={() => this.navigate(pageName)}
+      className={this.state.currentPageName === pageName ? 'selected' : ''}>{pageName}
+    </nav>
   }
 }
-
 
 export default App;

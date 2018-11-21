@@ -23,7 +23,7 @@ public class ProcessorSpy implements Processor {
                         List<Patient> patients,
                         List<Visit> visits,
                         MeasureMetaData measureMetaData,
-                        ZonedDateTime timeExecuted) {
+                        ZonedDateTime timeExecuted, Long jobId) {
 
         processWasCalled = true;
 

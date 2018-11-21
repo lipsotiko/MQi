@@ -1,6 +1,8 @@
 package io.egia.mqi.measure;
 
-import io.egia.mqi.job.JobService;
+import io.egia.mqi.job.Job;
+import io.egia.mqi.job.JobRepo;
+import io.egia.mqi.job.JobStatus;
 import io.egia.mqi.patient.Patient;
 import io.egia.mqi.patient.PatientData;
 import io.egia.mqi.patient.PatientMeasureLog;
@@ -11,10 +13,9 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
 import java.time.ZonedDateTime;
-import java.util.ArrayList;
-import java.util.Hashtable;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+
+import static io.egia.mqi.job.JobStatus.FAILURE;
 
 @Component
 public class MeasureProcessor implements Processor {
@@ -23,10 +24,10 @@ public class MeasureProcessor implements Processor {
     private Hashtable<Long, PatientData> patientDataHash = new Hashtable<>();
     private int rulesEvaluatedCount;
     private List<MeasureWorkspace> measureWorkspaces = new ArrayList<>();
-    private JobService jobService;
+    private JobRepo jobRepo;
 
-    MeasureProcessor(JobService jobService) {
-        this.jobService = jobService;
+    MeasureProcessor(JobRepo jobRepo) {
+        this.jobRepo = jobRepo;
     }
 
     @Override
@@ -34,7 +35,7 @@ public class MeasureProcessor implements Processor {
                         List<Patient> patients,
                         List<Visit> visits,
                         MeasureMetaData measureMetaData,
-                        ZonedDateTime timeExecuted) {
+                        ZonedDateTime timeExecuted, Long jobId) {
         this.measures = measures;
         appendToPatientDataHash(patients);
         appendToPatientDataHash(visits);
@@ -48,7 +49,11 @@ public class MeasureProcessor implements Processor {
                 try {
                     evaluatePatientDataByMeasure(patientData, measure, measureMetaData);
                 } catch (MeasureProcessorException e) {
-                    jobService.fail();
+                    Optional<Job> optionalJob = jobRepo.findById(jobId);
+                    optionalJob.ifPresent(job -> {
+                        job.setJobStatus(FAILURE);
+                        jobRepo.save(job);
+                    });
                     e.printStackTrace();
                     return;
                 }

@@ -14,15 +14,17 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.net.UnknownHostException;
+import java.util.Date;
 import java.util.List;
 
+import static io.egia.mqi.job.JobStatus.RUNNING;
 import static io.egia.mqi.server.SystemType.PRIMARY;
 
 @RestController
 public class JobController {
     private Logger log = LoggerFactory.getLogger(JobController.class);
 
-    private JobService jobService;
+    private JobRepo jobRepo;
     private MeasureRepo measureRepo;
     private ChunkService chunkService;
     private MeasureService measureService;
@@ -32,13 +34,13 @@ public class JobController {
     @Value("${server.port}")
     private String serverPort;
 
-    JobController(JobService jobService,
+    JobController(JobRepo jobRepo,
                   MeasureRepo measureRepo,
                   ChunkService chunkService,
                   MeasureService measureService,
                   ServerService serverService,
                   JobProgressMonitor jobProgressMonitor) {
-        this.jobService = jobService;
+        this.jobRepo = jobRepo;
         this.measureRepo = measureRepo;
         this.chunkService = chunkService;
         this.measureService = measureService;
@@ -52,12 +54,16 @@ public class JobController {
         Server server = serverService.getServerFromHostNameAndPort(serverPort);
 
         if (server.getSystemType().equals(PRIMARY)) {
-            Job job = jobService.addMeasuresToJob(measureIds);
-            log.info( String.format("Started processing Job#: %s ", job.getJobId()));
+            Job job = jobRepo.save(
+                    Job.builder()
+                            .jobStatus(RUNNING)
+                            .measureIds(measureIds)
+                            .startTime(new Date()).build());
+            log.info( String.format("Started processing Job#: %s ", job.getId()));
             chunkService.chunkData(job);
-            jobProgressMonitor.startMonitoringJob(1000, job.getJobId());
-            measureService.process(server, measureRepo.findAllById(measureIds));
-            log.info( String.format("Completed processing Job#: %s ", job.getJobId()));
+            jobProgressMonitor.startMonitoringJob(1000, job.getId());
+            measureService.process(server, measureRepo.findAllById(measureIds), job.getId());
+            log.info( String.format("Completed processing Job#: %s ", job.getId()));
         }
     }
 

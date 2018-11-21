@@ -1,7 +1,6 @@
 package io.egia.mqi;
 
 import io.egia.mqi.chunk.ChunkRepo;
-import io.egia.mqi.job.JobMeasureRepo;
 import io.egia.mqi.job.JobRepo;
 import io.egia.mqi.measure.MeasureResultRepo;
 import io.egia.mqi.patient.Patient;
@@ -35,8 +34,6 @@ public class SeedDdController {
     @Autowired private CodeSetGroupRepo codeSetGroupRepo;
     @Autowired private MeasureResultRepo measureResultRepo;
     @Autowired private JobRepo jobRepo;
-    @Autowired private JobMeasureRepo jobMeasureRepo;
-
 
     @GetMapping("/seed")
     public Map<String, Integer> seedDb() {
@@ -49,10 +46,9 @@ public class SeedDdController {
         codeSetGroupRepo.deleteAll();
         patientMeasureLogRepo.deleteAll();
         measureResultRepo.deleteAll();
-        jobMeasureRepo.deleteAll();
         jobRepo.deleteAll();
 
-        for (long i = 1L; i <= 50; i++) {
+        for (long i = 1L; i <= 500; i++) {
             Patient patient = new Patient();
             patient.setFirstName("Vango");
             patient.setLastName("Laouto");

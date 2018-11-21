@@ -12,10 +12,9 @@ public interface Processor {
                  List<Patient> patients,
                  List<Visit> visits,
                  MeasureMetaData measureMetaData,
-                 ZonedDateTime timeExecuted);
+                 ZonedDateTime timeExecuted,
+                 Long jobId);
     void clear();
-
     List<PatientMeasureLog> getLog();
-
     List<MeasureResult> getResults();
 }

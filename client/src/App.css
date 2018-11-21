@@ -1,20 +1,35 @@
-.App {
-  text-align: center;
+body {
+  font-family: arial;
 }
 
-.App-logo {
-  animation: App-logo-spin infinite 20s linear;
-  height: 40vmin;
+p {
+  height: 10px;
+  margin: 12px;
+  font-size: 14px;
 }
 
-.App-header {
+.header {
   background-color: #282c34;
-  min-height: 50px;
+}
+
+.footer {
+  position: fixed;
+  bottom: 0;
+  width: 100%;
+  height: 50px;
+  background: #282c34;;
+  padding: 0px 0px 10px 0px;
+  z-index: 500;
   display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  font-size: calc(10px + 2vmin);
+  justify-content: space-between;
+}
+
+.footer-right-section {
+  padding-top: 12px;
+  padding-right: 10px;
+}
+
+.footer p {
   color: white;
 }
 
@@ -23,16 +38,134 @@
 }
 
 .navigation nav {
-  display: block;
   color: white;
-  text-align: center;
   padding: 14px 16px;
-  text-decoration: none;
-  justify-content: flex-start;
 }
 
-/* Change the link color to #111 (black) on hover */
 .navigation nav:hover {
   background-color: #111;
   cursor: pointer;
+}
+
+.navigation .selected {
+  border-bottom: #3097F3 5px solid;
+}
+
+.measure-editor {
+  z-index: 250px;
+}
+
+.measure {
+  margin: 0px 40px 50px 160px;
+  padding: 10px 10px 15px 10px;
+}
+
+.save-measure-button {
+  float: right;
+}
+
+.measure .measure-name {
+  width: 100%;
+}
+
+.measure .measure-description {
+  width: 100%;
+  height: 50px;
+}
+
+.measures-list {
+  width: 160px;
+  margin: 5px 0px 15px 0px;
+  position: absolute;
+  padding-bottom: 60px
+}
+
+.measures-list li {
+  list-style-type: none;
+  border: #282c34 1px solid;
+  padding: 1px 1px 0px 5px;
+  margin: 1px 1px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  height: 40px;
+}
+
+.measures-list li.selected {
+  border-right: #3097F3 5px solid;
+}
+
+.measures-list li:hover {
+  background-color:lightgray;
+  cursor: pointer;
+} 
+
+.measures-list .circular-progress svg {
+  margin: 5px;
+}
+
+.circular-progress.DONE {
+  color: #1aff1a;
+}
+
+.circular-progress.IDLE {
+  color: #e5ff00de;
+}
+
+.circular-progress.RUNNING {
+  color: rgb(34, 1, 219);
+}
+
+.param-editor {
+  display: flex;
+}
+
+.param-name {
+  width: 130px;
+}
+
+.step {
+  border: #282c34 1px solid;
+  border: 1px solid black;
+  transform-origin: 30% 50% 0px;
+  padding-left: 20px;
+  background: white;
+  padding-top: 10px;
+  width:100%;
+  max-height: 100%;
+  overflow: hidden;
+}
+
+.step .dragHandle {
+  visibility: hidden; 
+  position: absolute;
+  left: 0;
+  cursor: move;
+  width: 20px;
+  height: 20px;
+  background: url('grippy.png') 30% 50% no-repeat no-repeat;
+}
+
+.step:hover .dragHandle, .step.dragged .dragHandle {
+  visibility: visible;
+}
+
+::-webkit-scrollbar {
+  -webkit-appearance: none;
+  width: 7px;
+}
+
+::-webkit-scrollbar-thumb {
+  border-radius: 4px;
+  background-color: rgba(0, 0, 0, .5);
+  -webkit-box-shadow: 0 0 1px rgba(255, 255, 255, .5);
+}
+
+.delete-step-icon {
+  float: right;
+  cursor: pointer;
+}
+
+.parameters {
+  margin: 10px 0px 10px 0px;
 }

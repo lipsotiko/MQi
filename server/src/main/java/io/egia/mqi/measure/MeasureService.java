@@ -2,7 +2,6 @@ package io.egia.mqi.measure;
 
 import io.egia.mqi.chunk.Chunk;
 import io.egia.mqi.chunk.ChunkRepo;
-import io.egia.mqi.chunk.ChunkStatus;
 import io.egia.mqi.patient.Patient;
 import io.egia.mqi.patient.PatientMeasureLogRepo;
 import io.egia.mqi.patient.PatientRepo;
@@ -51,11 +50,9 @@ public class MeasureService {
         this.measureResultRepo = measureResultRepo;
     }
 
-    public void process(Server server, List<Measure> measures) {
+    public void process(Server server, List<Measure> measures, Long jobId) {
 
-        if (measures.size() == 0) {
-            return;
-        }
+        if (measures.size() == 0) return;
 
         MeasureMetaData measureMetaData = new MeasureMetaData(getCodesSetsForMeasures(measures));
 
@@ -67,7 +64,7 @@ public class MeasureService {
             deleteMeasureResults(measures, serverId, chunkGroup);
             List<Patient> patients = patientRepo.findByServerIdAndChunkGroup(serverId, chunkGroup);
             List<Visit> visits = visitRepo.findByServerIdAndChunkGroup(serverId, chunkGroup);
-            processor.process(measures, patients, visits, measureMetaData, ZonedDateTime.now());
+            processor.process(measures, patients, visits, measureMetaData, ZonedDateTime.now(), jobId);
             saveMeasureResults(processor);
             processor.clear();
             chunkRepo.updateChunkStatusByServerIdAndChunkGroup(serverId, chunkGroup, PROCESSED);

@@ -12,6 +12,10 @@ import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
+import java.sql.Date;
+import java.time.LocalDate;
+import java.util.Collections;
+
 import static io.egia.mqi.job.JobStatus.RUNNING;
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -27,9 +31,11 @@ public class JobRepoIntegrationTests {
 
     @Before
     public void setUp() {
-        for(int i = 2; i > 0; i--) {
+        for(int i = 1; i < 5; i++) {
             Job job = new Job();
             job.setJobStatus(RUNNING);
+            job.setMeasureIds(Collections.singletonList((long) 1));
+            job.setLastUpdated(Date.valueOf(LocalDate.now()));
             jobRepo.saveAndFlush(job);
         }
     }
@@ -38,5 +44,11 @@ public class JobRepoIntegrationTests {
     public void jobRepo_updateJobStatus() {
         jobRepo.updateJobStatus(1L, RUNNING);
         assertThat(jobRepo.findById(1L).get().getJobStatus()).isEqualTo(RUNNING);
+    }
+
+    @Test
+    public void jobRepo_findByMeasureIdsOrderByLastUpdatedDesc() {
+        Job job = jobRepo.findFirstByMeasureIdsOrderByLastUpdatedDesc(1L).get();
+        assertThat(job.getId()).isEqualTo(1);
     }
 }

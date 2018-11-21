@@ -1,5 +1,8 @@
 package io.egia.mqi.measure;
 
+import io.egia.mqi.job.Job;
+import io.egia.mqi.job.JobRepo;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.*;
 
@@ -12,6 +15,9 @@ import java.util.Optional;
 public class MeasureController {
     private MeasureRepo measureRepo;
     private RuleParamRepo ruleParamRepo;
+
+    @Autowired
+    JobRepo jobRepo;
 
     @Value("${mqi.properties.system.version}")
     private String systemVersion;
@@ -28,8 +34,8 @@ public class MeasureController {
     }
 
     @DeleteMapping("/measure")
-    public void deleteMeasure(@RequestParam(value = "measureId") Long measureId) {
-        measureRepo.deleteById(measureId);
+    public void deleteMeasure(@RequestBody List<Long> measureIds) {
+        measureRepo.deleteAll(measureRepo.findAllById(measureIds));
     }
 
     @PutMapping("/measure")
@@ -58,7 +64,15 @@ public class MeasureController {
 
     @GetMapping("/measure_list")
     public List<MeasureListItem> getMeasureList() {
-        return measureRepo.findAllMeasureListItems();
+        List<MeasureListItem> measureListItems = measureRepo.findAllMeasureListItems();
+        measureListItems.forEach(measureListItem -> {
+            Optional<Job> optionalJob = jobRepo.findFirstByMeasureIdsOrderByLastUpdatedDesc(measureListItem.getMeasureId());
+            optionalJob.ifPresent(job -> {
+                measureListItem.setJobStatus(job.getJobStatus());
+                measureListItem.setJobLastUpdated(job.getLastUpdated());
+            });
+        });
+        return measureListItems;
     }
 
     @GetMapping("/rules_params")

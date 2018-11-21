@@ -72,7 +72,7 @@ public class Helpers {
 
     public static Optional<Job> job(Long id, Long initialPatientCount, JobStatus jobStatus) {
         return Optional.of(Job.builder()
-                .jobId(id)
+                .id(id)
                 .initialPatientCount(initialPatientCount)
                 .jobStatus(jobStatus).build());
     }

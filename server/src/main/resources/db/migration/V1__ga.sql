@@ -75,7 +75,7 @@ create table if not exists measure (
 	last_updated timestamp not null
 );
 
-create unique index ux_measure on measure (LOWER(measure_name));
+--create unique index ux_measure on measure (LOWER(measure_name));
 
 drop table if exists chunk;
 create table if not exists chunk (
@@ -108,7 +108,7 @@ execute procedure fn_update_timestamp();
 
 drop table if exists job;
 create table if not exists job (
-	job_id bigserial primary key,
+	id bigserial primary key,
 	job_status integer,
 	start_time timestamp,
 	end_time timestamp,
@@ -122,14 +122,14 @@ before update on job
 for each row
 execute procedure fn_update_timestamp();
 
-drop table if exists job_measure;
-create table if not exists job_measure (
+drop table if exists job_measure_ids;
+create table if not exists job_measure_ids (
 	id bigserial primary key,
 	job_id bigint,
-	measure_id bigint
+	measure_ids bigint
 );
 
-create unique index ux_job_measure on job_measure (job_id, measure_id);
+create unique index ux_job_measure_ids on job_measure_ids (job_id, measure_ids);
 
 drop table if exists rule_param;
 create table if not exists rule_param (
@@ -203,9 +203,9 @@ from (
 	select patient_id, null from visit v inner join visit_code vc on v.visit_id = vc.visit_id ) a
 join measure m
     on 1=1
-join job_measure jm
-    on m.measure_id = jm.measure_id
-    and jm.id = (select max(id) from job_measure)
+join job_measure_ids jm
+    on m.measure_id = jm.measure_ids
+    and jm.id = (select max(id) from job_measure_ids)
 left join patient_measure_log lpm
     on a.patient_id = lpm.patient_id
     and lpm.measure_id = m.measure_id
@@ -301,6 +301,45 @@ values ('sample measure 1', '
         },
         {
           "stepId": 200,
+          "ruleName": "SetResultCode",
+          "parameters": [
+            {
+              "paramName": "RESULT_CODE",
+              "paramValue": "DENOMINATOR",
+              "paramType": "TEXT"
+            }
+          ],
+          "successStepId": 99999,
+          "failureStepId": 99999
+        },
+        {
+          "stepId": 300,
+          "ruleName": "SetResultCode",
+          "parameters": [
+            {
+              "paramName": "RESULT_CODE",
+              "paramValue": "DENOMINATOR",
+              "paramType": "TEXT"
+            }
+          ],
+          "successStepId": 99999,
+          "failureStepId": 99999
+        },
+        {
+          "stepId": 400,
+          "ruleName": "SetResultCode",
+          "parameters": [
+            {
+              "paramName": "RESULT_CODE",
+              "paramValue": "DENOMINATOR",
+              "paramType": "TEXT"
+            }
+          ],
+          "successStepId": 99999,
+          "failureStepId": 99999
+        },
+        {
+          "stepId": 500,
           "ruleName": "SetResultCode",
           "parameters": [
             {

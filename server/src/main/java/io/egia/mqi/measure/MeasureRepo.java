@@ -14,6 +14,4 @@ public interface MeasureRepo extends JpaRepository<Measure, Long> {
 			"from Measure m order by m.measureName")
 	List<MeasureListItem> findAllMeasureListItems();
 
-	@Query(value = "select m from Measure m join JobMeasure jm on m.measureId = jm.measureId where jm.jobId = :id")
-    List<Measure> findAllByJobId(@Param("id")Long jobId);
 }
