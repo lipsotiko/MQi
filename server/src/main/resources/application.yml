@@ -22,8 +22,9 @@ spring:
 mqi:
   properties:
     system:
-      type: primary
       version: 1.0.0
+      pageSize: 5
+
 
 logging:
   level:

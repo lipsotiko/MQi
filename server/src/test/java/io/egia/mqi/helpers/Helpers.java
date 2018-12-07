@@ -79,7 +79,6 @@ public class Helpers {
 
     public static Optional<Chunk> chunk(Long serverId, Long patientId, Integer chunkGroup, ChunkStatus chunkStatus) {
         return Optional.of(Chunk.builder()
-                .serverId(serverId)
                 .patientId(patientId)
                 .chunkGroup(chunkGroup)
                 .chunkStatus(chunkStatus).build());

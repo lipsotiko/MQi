@@ -2,7 +2,7 @@ spring:
   profiles:
     active: test
   jpa:
-    show-sql: true
+    show-sql: false
     format_sql: true
     properties:
       hibernate:
@@ -24,5 +24,5 @@ spring:
 mqi:
   properties:
     system:
-      type: primary
       version: 1.0.0
+      pageSize: 5

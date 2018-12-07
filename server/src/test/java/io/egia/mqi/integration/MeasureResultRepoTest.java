@@ -2,7 +2,6 @@ package io.egia.mqi.integration;
 
 import io.egia.mqi.chunk.Chunk;
 import io.egia.mqi.chunk.ChunkRepo;
-import io.egia.mqi.measure.MeasureCount;
 import io.egia.mqi.measure.MeasureResult;
 import io.egia.mqi.measure.MeasureResultRepo;
 import org.junit.After;
@@ -13,8 +12,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-
-import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -31,8 +28,8 @@ public class MeasureResultRepoTest {
 
     @Before
     public void setUp() {
-        chunkRepo.save(Chunk.builder().serverId(1L).chunkGroup(1).patientId(1L).build());
-        chunkRepo.save(Chunk.builder().serverId(2L).chunkGroup(2).patientId(2L).build());
+        chunkRepo.save(Chunk.builder().chunkGroup(1).patientId(1L).build());
+        chunkRepo.save(Chunk.builder().chunkGroup(2).patientId(2L).build());
         measureResultRepo.save(MeasureResult.builder().patientId(1L).measureId(1L).build());
         measureResultRepo.save(MeasureResult.builder().patientId(2L).measureId(2L).build());
         measureResultRepo.save(MeasureResult.builder().patientId(3L).measureId(1L).build());
@@ -43,7 +40,7 @@ public class MeasureResultRepoTest {
 
     @Test
     public void measureResultRepo_deleteByChunkGroupAndServerIdAndMeasureId() {
-        measureResultRepo.deleteByChunkGroupAndServerIdAndMeasureId(1, 1L, 1L);
+        measureResultRepo.deleteByChunkGroupAndMeasureId(1, 1L);
         assertThat(measureResultRepo.count()).isEqualTo(3);
     }
 

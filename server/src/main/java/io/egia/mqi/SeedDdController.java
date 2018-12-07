@@ -6,8 +6,6 @@ import io.egia.mqi.measure.MeasureResultRepo;
 import io.egia.mqi.patient.Patient;
 import io.egia.mqi.patient.PatientMeasureLogRepo;
 import io.egia.mqi.patient.PatientRepo;
-import io.egia.mqi.server.ServerRepo;
-import io.egia.mqi.server.ServerService;
 import io.egia.mqi.visit.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -27,8 +25,6 @@ public class SeedDdController {
     @Autowired private VisitRepo visitRepo;
     @Autowired private VisitCodeRepo visitCodeRepo;
     @Autowired private ChunkRepo chunkRepo;
-    @Autowired private ServerRepo serverRepo;
-    @Autowired private ServerService serverService;
     @Autowired private PatientMeasureLogRepo patientMeasureLogRepo;
     @Autowired private CodeSetRepo codeSetRepo;
     @Autowired private CodeSetGroupRepo codeSetGroupRepo;
@@ -99,7 +95,6 @@ public class SeedDdController {
         results.put("Visit Codes:", visitCodeRepo.findAll().size());
         results.put("Visits:", visitRepo.findAll().size());
         results.put("Patients:", patientRepo.findAll().size());
-        results.put("Servers:", serverRepo.findAll().size());
         return results;
     }
 

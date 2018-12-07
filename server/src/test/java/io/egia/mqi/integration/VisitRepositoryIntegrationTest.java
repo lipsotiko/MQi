@@ -2,7 +2,10 @@ package io.egia.mqi.integration;
 
 import io.egia.mqi.chunk.Chunk;
 import io.egia.mqi.chunk.ChunkRepo;
-import io.egia.mqi.visit.*;
+import io.egia.mqi.visit.Visit;
+import io.egia.mqi.visit.VisitCode;
+import io.egia.mqi.visit.VisitCodeRepo;
+import io.egia.mqi.visit.VisitRepo;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -29,11 +32,11 @@ public class VisitRepositoryIntegrationTest {
 
     @Before
     public void setUp() {
+        int chunkGroup = 0;
         for (Long i = 1L; i <= 2; i++) {
             Chunk chunk = new Chunk();
             chunk.setPatientId(i);
-            chunk.setServerId(i);
-            chunk.setChunkGroup(0);
+            chunk.setChunkGroup(chunkGroup);
             chunkRepo.saveAndFlush(chunk);
 
             Visit visit = new Visit();
@@ -50,12 +53,13 @@ public class VisitRepositoryIntegrationTest {
 
             savedVisit.setVisitCodes(Collections.singletonList(code));
             visitRepo.saveAndFlush(savedVisit);
+            chunkGroup++;
         }
     }
 
     @Test
-    public void visitRepo_findByServerIdAndChunkGroup() {
-        List<Visit> subject = visitRepo.findByServerIdAndChunkGroup(1L,0);
+    public void visitRepo_findByChunkGroup() {
+        List<Visit> subject = visitRepo.findByChunkGroup(0);
         assertThat(subject.size()).isEqualTo(1);
         assertThat(subject.get(0).getVisitCodes().get(0).getCodeSystem()).isEqualTo(ICD_9);
         assertThat(subject.get(0).getVisitCodes().get(0).getCodeValue()).isEqualTo("abc");

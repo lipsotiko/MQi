@@ -5,7 +5,6 @@ import io.egia.mqi.chunk.ChunkRepo;
 import io.egia.mqi.patient.Patient;
 import io.egia.mqi.patient.PatientMeasureLogRepo;
 import io.egia.mqi.patient.PatientRepo;
-import io.egia.mqi.server.Server;
 import io.egia.mqi.visit.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -50,32 +49,31 @@ public class MeasureService {
         this.measureResultRepo = measureResultRepo;
     }
 
-    public void process(Server server, List<Measure> measures, Long jobId) {
+    public void process(List<Measure> measures, Long jobId) {
 
         if (measures.size() == 0) return;
 
         MeasureMetaData measureMetaData = new MeasureMetaData(getCodesSetsForMeasures(measures));
 
-        Long serverId = server.getServerId();
-        Optional<Chunk> currentChunk = chunkRepo.findTop1ByServerIdAndChunkStatus(serverId, PENDING);
+        Optional<Chunk> currentChunk = chunkRepo.findTop1ByChunkStatus(PENDING);
         while (currentChunk.isPresent()) {
             int chunkGroup = currentChunk.get().getChunkGroup();
-            log.debug(String.format("Processing chunk %s on server %s", chunkGroup, serverId));
-            deleteMeasureResults(measures, serverId, chunkGroup);
-            List<Patient> patients = patientRepo.findByServerIdAndChunkGroup(serverId, chunkGroup);
-            List<Visit> visits = visitRepo.findByServerIdAndChunkGroup(serverId, chunkGroup);
+            log.debug(String.format("Processing chunk %s ", chunkGroup));
+            deleteMeasureResults(measures, chunkGroup);
+            List<Patient> patients = patientRepo.findByChunkGroup(chunkGroup);
+            List<Visit> visits = visitRepo.findByChunkGroup(chunkGroup);
             processor.process(measures, patients, visits, measureMetaData, ZonedDateTime.now(), jobId);
             saveMeasureResults(processor);
             processor.clear();
-            chunkRepo.updateChunkStatusByServerIdAndChunkGroup(serverId, chunkGroup, PROCESSED);
-            currentChunk = chunkRepo.findTop1ByServerIdAndChunkStatus(serverId, PENDING);
+            chunkRepo.updateChunkStatusByChunkGroup(chunkGroup, PROCESSED);
+            currentChunk = chunkRepo.findTop1ByChunkStatus(PENDING);
         }
     }
 
-    private void deleteMeasureResults(List<Measure> measures, Long serverId, int chunkGroup) {
+    private void deleteMeasureResults(List<Measure> measures, int chunkGroup) {
         for (Measure m : measures) {
-            patientMeasureLogRepo.deleteByChunkGroupAndServerIdAndMeasureId(chunkGroup, serverId, m.getMeasureId());
-            measureResultRepo.deleteByChunkGroupAndServerIdAndMeasureId(chunkGroup, serverId, m.getMeasureId());
+            patientMeasureLogRepo.deleteByChunkGroupAndMeasureId(chunkGroup, m.getMeasureId());
+            measureResultRepo.deleteByChunkGroupAndMeasureId(chunkGroup, m.getMeasureId());
         }
     }
 

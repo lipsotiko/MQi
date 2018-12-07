@@ -27,22 +27,23 @@ public class PatientRepoIntegrationTest {
 
     @Before
     public void setUp() {
+        int chunkGroup = 0;
         for (Long i = 1L; i <= 2; i++) {
             Chunk chunk = new Chunk();
             chunk.setPatientId(i);
-            chunk.setServerId(i);
-            chunk.setChunkGroup(0);
+            chunk.setChunkGroup(chunkGroup);
             chunkRepo.saveAndFlush(chunk);
 
             Patient patient = new Patient();
             patient.setPatientId(i);
             patientRepo.saveAndFlush(patient);
+            chunkGroup++;
         }
     }
 
     @Test
-    public void patientRepo_findByServerIdAndChunkGroup() {
-        List<Patient> subject = patientRepo.findByServerIdAndChunkGroup(1L,0);
+    public void patientRepo_findByChunkGroup() {
+        List<Patient> subject = patientRepo.findByChunkGroup(0);
         assertThat(subject.size()).isEqualTo(1);
     }
 

@@ -82,29 +82,11 @@ create table if not exists chunk (
     chunk_id bigserial primary key,
 	patient_id bigint,
 	record_count bigint,
-	server_id bigint,
 	chunk_status integer,
 	chunk_group integer
 );
 
-create unique index ux_chunk_patient_server on chunk (patient_id, server_id);
-
-drop table if exists server;
-create table if not exists server (
-	server_id bigserial primary key,
-	server_name varchar(100),
-	server_port varchar(5),
-	system_type integer,
-	page_size integer,
-	system_version varchar(8),
-	last_updated timestamp default current_timestamp
-);
-create unique index ux_server_name_port on server (server_name, server_port);
-
-create trigger tr_update_server_last_updated
-before update on server
-for each row
-execute procedure fn_update_timestamp();
+create unique index ux_chunk_patient on chunk (patient_id);
 
 drop table if exists job;
 create table if not exists job (
