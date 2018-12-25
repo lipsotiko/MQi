@@ -34,7 +34,6 @@ public class Job {
 
 	@JsonProperty("progress")
 	int getProgress() {
-		//todo: cover if with test
 		if (jobStatus == null || initialPatientCount == null || processedPatientCount == null)
 			return 0;
 		switch (jobStatus) {

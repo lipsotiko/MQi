@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import DraggableList from 'react-draggable-list';
 import MeasureList from './MeasureList';
 import Step from './Step';
-import { compare, distinct, ramdomInt, headers } from './Utilities';
+import { compare, distinct, ramdomInt } from './Utilities';
 import Button from '@material-ui/core/Button';
 import SockJsClient from 'react-stomp';
 
@@ -10,7 +10,7 @@ class MeasureEditor extends Component {
 
   state = {
     ruleParams: [],
-    measuresList: [],
+    measureList: [],
     measure: null,
     _changeStep: this._changeStep.bind(this),
     _changeName: this._changeName.bind(this),
@@ -23,20 +23,14 @@ class MeasureEditor extends Component {
     _processMeasures: this._processMeasures.bind(this),
   }
 
-  componentDidMount() {
-    fetch('/rules_params')
-      .then((response) => response.json())
-      .then((json) => this.setState({ ruleParams: json }))
-      .catch((e) => console.error(e));
-    fetch('/measure_list')
-      .then((response) => response.json())
-      .then((json) => this.setState({ measuresList: json }))
-      .catch((e) => console.error(e));
+  async componentDidMount() {
+    const ruleParams = await this.props.measureRepository._findAllRuleParams();
+    const measureList = await this.props.measureRepository._findAllMeasureListItems();
+    this.setState({ ruleParams, measureList });
   }
 
   render() {
-    const { measure, ruleParams, measuresList } = this.state;
-    console.log(measuresList);
+    const { measure, ruleParams, measureList } = this.state;
     const rules = this._getUniqueRuleNames(ruleParams);
     let hasSteps = measure && measure.measureLogic && measure.measureLogic.steps
     let steps;
@@ -58,7 +52,7 @@ class MeasureEditor extends Component {
     return <>
       <form className='content measure-editor'>
         <MeasureList
-          measuresList={measuresList}
+          measuresList={measureList}
           getMeasure={this._getMeasure()}
           selectMeasure={this._selectMeasure()}
           selectedMeasureId={measure ? measure.measureId : null}
@@ -111,8 +105,8 @@ class MeasureEditor extends Component {
       <SockJsClient url='http://localhost:8080/ws' topics={['/topic/job']}
         onMessage={(job) => {
           console.log(job);
-          let measuresList = this.state.measuresList;
-          measuresList.map(measureListItem => {
+          let measureList = this.state.measureList;
+          measureList.map(measureListItem => {
             if (job.measureIds.includes(measureListItem.measureId)) {
               measureListItem.progress = job.progress;
               measureListItem.jobStatus = job.jobStatus;
@@ -121,7 +115,7 @@ class MeasureEditor extends Component {
             return measureListItem;
           });
 
-          this.setState({ measuresList });
+          this.setState({ measureList });
         }} />
     </>
   }
@@ -173,26 +167,23 @@ class MeasureEditor extends Component {
 
   _getMeasure() {
     return async (id) => {
-      await fetch(`/measure?measureId=${id}`)
-        .then((response) => response.json())
-        .then((json) => this._formatMeasureJson(json))
-        .then((json) => this.setState({ measure: json }))
-        .catch((e) => console.error(e));
+      const measure = await this.props.measureRepository._findById(id);
+      this.setState({ measure });
     }
   }
 
   _selectMeasure() {
     return (id, event) => {
-      let measuresList = this.state.measuresList;
+      let measureList = this.state.measureList;
 
       if (event.shiftKey || event.ctrlKey) {
-        measuresList.map(m => this._selectMeasureById(m, id))
+        measureList.map(m => this._selectMeasureById(m, id))
       } else {
-        measuresList.map(m => m.selected = false)
-        measuresList.map(m => this._selectMeasureById(m, id))
+        measureList.map(m => m.selected = false)
+        measureList.map(m => this._selectMeasureById(m, id))
       }
 
-      this.setState({ measuresList });
+      this.setState({ measureList });
     }
   }
 
@@ -218,52 +209,30 @@ class MeasureEditor extends Component {
     }
 
     return async () => {
-      let measure = await this._fetchMeasure('/measure', 'PUT', JSON.stringify(DEFAULT_NEW_MEASURE));
-      let { measuresList } = this.state;
-      measuresList.push({
+      let measure = await this.props.measureRepository._saveMeasure(DEFAULT_NEW_MEASURE);
+      let { measureList } = this.state;
+      measureList.push({
         measureId: measure.measureId,
         measureName: measure.measureName,
         jobStatus: 'IDLE'
       });
-      measuresList.sort(compare);
-      this.setState({ measure, measuresList });
+      measureList.sort(compare);
+      this.setState({ measure, measureList });
     }
   }
 
   async _saveMeasure() {
-    let measure = await this._fetchMeasure('/measure', 'PUT', JSON.stringify(this.state.measure));
-    let measuresList = await fetch('/measure_list')
-      .then((response) => response.json())
-      .catch((e) => console.error(e));
-
-    this.setState({ measure, measuresList })
+    let measure = await this.props.measureRepository._saveMeasure(this.state.measure);
+    let measureList = await this.props.measureRepository._findAllMeasureListItems();
+    measureList.map(m => this._selectMeasureById(m, measure.measureId));
+    this.setState({ measure, measureList })
     return measure;
-  }
-
-  async _fetchMeasure(url, method, body) {
-    return await fetch(url, { headers, method, body })
-      .then((response) => response.json())
-      .then((json) => this._formatMeasureJson(json))
-      .catch((e) => console.error(e));
-  }
-
-  _formatMeasureJson(json) {
-    if (json.measureLogic.steps) {
-      json.measureLogic.steps.map(step => {
-        step.id = ramdomInt();
-        return step;
-      });
-      return json;
-    }
-    return json;
   }
 
   async _processMeasures() {
     let selectedMeasureIds = this._getSelectedMeasures();
-
-    await fetch(`/process`, { headers, method: 'POST', body: JSON.stringify(selectedMeasureIds) })
-      .catch((e) => console.error(e));
-    let measuresList = this.state.measuresList.map(m => {
+    await this.props.measureRepository._processMeasures(selectedMeasureIds);
+    let measureList = this.state.measureList.map(m => {
       if (selectedMeasureIds.includes(m.measureId)) {
         m.jobStatus = "RUNNING";
         m.selected = false;
@@ -271,16 +240,14 @@ class MeasureEditor extends Component {
       };
       return m;
     });
-    this.setState({ measuresList, measure: null });
+    this.setState({ measureList, measure: null });
   }
 
   async _deleteMeasures() {
     let selectedMeasureIds = this._getSelectedMeasures();
-
-    await fetch(`/measure`, { headers, method: 'DELETE', body: JSON.stringify(selectedMeasureIds) })
-      .catch((e) => console.error(e));
-    let measuresList = this.state.measuresList.filter(m => !selectedMeasureIds.includes(m.measureId));
-    this.setState({ measuresList, measure: null });
+    await this.props.measureRepository._deleteMeasures(selectedMeasureIds);
+    let measureList = this.state.measureList.filter(m => !selectedMeasureIds.includes(m.measureId));
+    this.setState({ measureList, measure: null });
   }
 
   _deleteStep() {
@@ -294,7 +261,7 @@ class MeasureEditor extends Component {
 
   _getSelectedMeasures() {
     let selectedMeasureIds = [];
-    this.state.measuresList.forEach(measureListItem => {
+    this.state.measureList.forEach(measureListItem => {
       if (measureListItem.selected) {
         selectedMeasureIds.push(measureListItem.measureId);
       }

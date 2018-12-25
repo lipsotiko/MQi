@@ -7,15 +7,14 @@ class MeasureList extends Component {
   render() {
     const { measuresList } = this.props;
 
-    console.log(measuresList);
-
-    return <div className='measures-list'>
+    return <div className='measure-list' data-testid='measure-list'>
       <Button onClick={async () => await this.props.addMeasure()}>+ Measure</Button>
       {measuresList && measuresList.sort().map((measureItem) => {
         const { measureId, measureName, selected, jobStatus } = measureItem;
 
         return <li
           key={measureId}
+          data-testid={`measure-id-${measureId}`}
           className={selected ? 'selected' : ''}
           onClick={(e) => {
             this.props.getMeasure(measureId);

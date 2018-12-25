@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import './App.css';
 import Dashboard from './Dashboard';
 import MeasureEditor from './MeasureEditor';
+import { WebMeasureRepository } from './repositories/WebMeasureRepository.js'
 
 class App extends Component {
 
@@ -22,15 +23,15 @@ class App extends Component {
   render() {
     return <div className='container'>
       <header className="header">
-        <div className='navigation'>
+        <nav className='navigation' data-testid='navigation'>
           {this.pages.map(page => this.navigationMenuItem(page.name))}
-        </div>
+        </nav>
       </header>
-      <div className='content'>
+      <div className='content' data-testid='content'>
         {(() => {
           switch (this.state.currentPageName) {
             case "Dashboard": return <Dashboard />;
-            case "Measure Editor": return <MeasureEditor />;
+            case "Measure Editor": return <MeasureEditor measureRepository={new WebMeasureRepository()} />;
             default: return <Dashboard />;
           }
         })()}
@@ -39,11 +40,12 @@ class App extends Component {
   }
 
   navigationMenuItem(pageName) {
-    return <nav
+    return <div
       key={pageName}
+      data-testid={pageName}
       onClick={() => this.navigate(pageName)}
       className={this.state.currentPageName === pageName ? 'selected' : ''}>{pageName}
-    </nav>
+    </div>
   }
 }
 

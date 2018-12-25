@@ -37,9 +37,10 @@ p {
   display: flex;
 }
 
-.navigation nav {
+.navigation div {
   color: white;
   padding: 14px 16px;
+  border-bottom: lightgray 5px solid;
 }
 
 .navigation nav:hover {
@@ -73,14 +74,14 @@ p {
   height: 50px;
 }
 
-.measures-list {
+.measure-list {
   width: 160px;
   margin: 5px 0px 15px 0px;
   position: absolute;
   padding-bottom: 60px
 }
 
-.measures-list li {
+.measure-list li {
   list-style-type: none;
   border: #282c34 1px solid;
   padding: 1px 1px 0px 5px;
@@ -89,18 +90,19 @@ p {
   justify-content: space-between;
   align-items: center;
   height: 40px;
+  border-right: lightgray 5px solid;
 }
 
-.measures-list li.selected {
+.measure-list li.selected {
   border-right: #3097F3 5px solid;
 }
 
-.measures-list li:hover {
+.measure-list li:hover {
   background-color:lightgray;
   cursor: pointer;
 } 
 
-.measures-list .circular-progress svg {
+.measure-list .circular-progress svg {
   margin: 5px;
 }
 
