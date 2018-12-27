@@ -8,7 +8,9 @@ class MeasureList extends Component {
     const { measuresList } = this.props;
 
     return <div className='measure-list' data-testid='measure-list'>
-      <Button onClick={async () => await this.props.addMeasure()}>+ Measure</Button>
+      <Button onClick={async () => await this.props.addMeasure()}>
+        + Measure
+      </Button>
       {measuresList && measuresList.sort().map((measureItem) => {
         const { measureId, measureName, selected, jobStatus } = measureItem;
 

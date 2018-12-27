@@ -55,6 +55,7 @@
     "react-testing-library": "^5.4.2",
     "resolve": "1.8.1",
     "sass-loader": "7.1.0",
+    "sinon": "^7.2.2",
     "style-loader": "0.23.0",
     "terser-webpack-plugin": "1.1.0",
     "typeface-roboto": "^0.0.54",
@@ -79,6 +80,7 @@
     "not op_mini all"
   ],
   "jest": {
+    "testEnvironment": "jsdom",
     "collectCoverageFrom": [
       "src/**/*.{js,jsx,ts,tsx}",
       "!src/**/*.d.ts"
@@ -91,7 +93,6 @@
       "<rootDir>/src/**/__tests__/**/*.{js,jsx,ts,tsx}",
       "<rootDir>/src/**/?(*.)(spec|test).{js,jsx,ts,tsx}"
     ],
-    "testEnvironment": "jsdom",
     "testURL": "http://localhost",
     "transform": {
       "^.+\\.(js|jsx|ts|tsx)$": "<rootDir>/node_modules/babel-jest",

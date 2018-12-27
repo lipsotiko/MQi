@@ -57,10 +57,10 @@ class MeasureEditor extends Component {
           selectMeasure={this._selectMeasure()}
           selectedMeasureId={measure ? measure.measureId : null}
           addMeasure={this._addMeasure()} />
-        <div className='measure'>
+        <div className='measure' data-testid='measure'>
           {measure &&
             <>
-              <input className='measure-name' type='text'
+              <input className='measure-name' type='text' data-testid='measure-name'
                 value={measure.measureName}
                 onChange={(e) => this._changeName(e)} />
               <textarea className='measure-description'

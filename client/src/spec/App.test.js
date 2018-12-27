@@ -13,14 +13,16 @@ describe('MQi GUI', () => {
     render(<App />);
   });
 
-  it('should navigate to the Dashboard', async () => {
-    const { getByTestId } = render(<App />);
+  describe('Navigation', () => {
+    it('should navigate to the Dashboard', async () => {
+      const { getByTestId } = render(<App />);
 
-    const dashboardTab = await waitForElement(() => getByTestId('Dashboard'));
-    fireEvent.click(dashboardTab);
+      const dashboardTab = await waitForElement(() => getByTestId('Dashboard'));
+      fireEvent.click(dashboardTab);
 
-    const navigation = await waitForElement(() => getByTestId('navigation'));
-    const selectedTab = navigation.querySelector('.selected');
-    expect(selectedTab.innerHTML).to.contain('Dashboard');
+      const navigation = await waitForElement(() => getByTestId('navigation'));
+      const selectedTab = navigation.querySelector('.selected');
+      expect(selectedTab.innerHTML).to.contain('Dashboard');
+    });
   });
 });

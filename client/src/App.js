@@ -2,7 +2,8 @@ import React, { Component } from 'react';
 import './App.css';
 import Dashboard from './Dashboard';
 import MeasureEditor from './MeasureEditor';
-import { WebMeasureRepository } from './repositories/WebMeasureRepository.js'
+import { MeasureRepository } from './repositories/WebMeasureRepository'
+// import { MeasureRepository } from './spec/repositories/FakeMeasureRepository'
 
 class App extends Component {
 
@@ -31,7 +32,7 @@ class App extends Component {
         {(() => {
           switch (this.state.currentPageName) {
             case "Dashboard": return <Dashboard />;
-            case "Measure Editor": return <MeasureEditor measureRepository={new WebMeasureRepository()} />;
+            case "Measure Editor": return <MeasureEditor measureRepository={new MeasureRepository()} />;
             default: return <Dashboard />;
           }
         })()}

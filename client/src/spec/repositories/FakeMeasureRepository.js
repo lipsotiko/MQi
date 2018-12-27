@@ -1,4 +1,10 @@
-export class FakeMeasureRepository {
+import { ramdomInt } from '../../Utilities';
+
+export class MeasureRepository {
+
+  constructor(spy) {
+    this.spy = spy;
+  }
 
   async _deleteMeasures(measureIds) {
     return Promise.resolve(() => { });
@@ -54,6 +60,7 @@ export class FakeMeasureRepository {
 
   async _saveMeasure(body) {
     if (body.id) {
+      this.spy(body);
       return Promise.resolve(body);
     } else {
       body.id = ramdomInt;

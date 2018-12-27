@@ -1,6 +1,6 @@
 import { headers, ramdomInt } from '../Utilities';
 
-export class WebMeasureRepository {
+export class MeasureRepository {
 
   async _deleteMeasures(measureIds) {
     fetch(`/measure`, { headers, method: 'DELETE', body: JSON.stringify(measureIds) })
