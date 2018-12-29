@@ -1,0 +1,9 @@
+setup:
+  addons:
+  - plan: heroku-postgresql
+    as: DATABASE
+build:
+  languages:
+  - java
+run:
+  web: java -jar target/mqi_server-1.0.0.jar --Dspring.profiles.active=production

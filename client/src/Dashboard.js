@@ -5,7 +5,7 @@ const Dashboard = props => {
   return (<>
     <div className='content'>Dashboard</div>
     <div className='footer'></div>
-    <SockJsClient url='http://localhost:8080/ws' topics={['/topic/job']}
+    <SockJsClient url='/ws' topics={['/topic/job']}
       onConnect={() => { console.log('CONNECTED!!!') }}
       onMessage={(msg) => { console.log(msg); }} />
   </>)

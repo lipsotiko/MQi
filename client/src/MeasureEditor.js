@@ -102,7 +102,7 @@ class MeasureEditor extends Component {
             </>}
         </div>
       </form>
-      <SockJsClient url='http://localhost:8080/ws' topics={['/topic/job']}
+      <SockJsClient url='/ws' topics={['/topic/job']}
         onMessage={(job) => {
           console.log(job);
           let measureList = this.state.measureList;

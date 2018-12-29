@@ -1,0 +1,18 @@
+{
+
+	"steps": [
+		{
+			"stepId": 100,
+			"ruleName": "ThisRuleDoesNotExist",
+			"parameters": [
+				{
+					"paramName": "WHATEVER",
+					"paramValue": "WOOT",
+					"paramType": "TEXT"
+				}
+			],
+			"successStepId": 99999,
+			"failureStepId": 99999
+		}
+	]
+}

@@ -1,0 +1,5 @@
+{
+  "name": "MQi",
+  "description": "Medical Quality Informatics",
+  "addons": [ "heroku-postgresql" ]
+}

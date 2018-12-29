@@ -1,0 +1,20 @@
+{
+	"steps": [
+		{
+			"stepId": 100,
+			"ruleName": "AgeWithinDateRange",
+			"parameters": [
+			],
+			"successStepId": 200,
+			"failureStepId": 99999
+		},
+		{
+			"stepId": 200,
+			"ruleName": "SetResultCode",
+			"parameters": [
+			],
+			"successStepId": 100,
+			"failureStepId": 99999
+		}
+	]
+}
