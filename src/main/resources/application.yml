@@ -24,7 +24,7 @@ logging:
         web: INFO
     io:
       egia:
-        mqi: DEBUG
+        mqi: INFO
 
 server:
   port: 8080
@@ -64,48 +64,7 @@ logging:
         web: INFO
     io:
       egia:
-        mqi: DEBUG
+        mqi: INFO
 
 server:
   port: 8080
-
----
-
-spring:
-  profiles: local
-  jpa:
-    show-sql: false
-    format_sql: true
-    properties:
-      hibernate:
-        hbm2ddl:
-          auto: validate
-        temp:
-          use_jdbc_metadata_defaults: false
-  datasource:
-    url: jdbc:postgresql://localhost:5432/mqi
-    username: mqi
-    password: mqi
-    driver-class-name: org.postgresql.Driver
-  devtools:
-    restart:
-      enabled: true
-
-mqi:
-  properties:
-    system:
-      version: 1.0.0
-      pageSize: 5
-
-logging:
-  level:
-    org:
-      springframework:
-        web: INFO
-    io:
-      egia:
-        mqi: DEBUG
-
-server:
-  port: 8080
-

@@ -6,4 +6,4 @@ build:
   languages:
   - java
 run:
-  web: java -jar target/mqi_server-1.0.0.jar --Dspring.profiles.active=production
+  web: java -jar target/mqi_server-1.0.0.jar

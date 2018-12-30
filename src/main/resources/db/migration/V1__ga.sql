@@ -197,141 +197,99 @@ group by a.patient_id
 order by record_count desc, a.patient_id desc;
 
 insert into measure (measure_name, measure_json, last_updated)
-values ('ABC', '
+values ('ABC','
     {
-      "description": "Patients that are two years of age on the first day of the reporting year with an occurrence of a broken leg at some time during the reporting year",
+      "description": "Patients that are between the ages of 28 and 32 with an occurrence of an ACUTE INPATIENT or MENTAL HEALTH visit.",
       "minimumSystemVersion": "1.0.0",
-      "traceRules": true,
       "steps": [
-        {
-          "stepId": 100,
-          "ruleName": "AgeWithinDateRange",
-          "parameters": [
-            {
-              "paramName": "FROM_AGE",
-              "paramValue": "28",
-              "paramType": "INTEGER"
-            },
-            {
-              "paramName": "TO_AGE",
-              "paramValue": "32",
-              "paramType": "INTEGER"
-            },
-            {
-              "paramName": "START_DATE",
-              "paramValue": "19880428",
-              "paramType": "DATE"
-            },
-            {
-              "paramName": "END_DATE",
-              "paramValue": "19880428",
-              "paramType": "DATE"
-            }
-          ],
-          "successStepId": 200,
-          "failureStepId": 99999
-        },
-        {
-          "stepId": 200,
-          "ruleName": "SetResultCode",
-          "parameters": [
-            {
+      {
+        "stepId": 100,
+        "ruleName": "AgeWithinDateRange",
+        "parameters": [
+          {
+            "ruleParamId": null,
+            "ruleName": "AgeWithinDateRange",
+            "paramName": "FROM_AGE",
+            "paramType": "INTEGER",
+            "paramValue": "28"
+          },
+          {
+            "ruleParamId": null,
+            "ruleName": "AgeWithinDateRange",
+            "paramName": "TO_AGE",
+            "paramType": "INTEGER",
+            "paramValue": "32"
+          },
+          {
+            "ruleParamId": null,
+            "ruleName": "AgeWithinDateRange",
+            "paramName": "START_DATE",
+            "paramType": "DATE",
+            "paramValue": "19880428"
+          },
+          {
+            "ruleParamId": null,
+            "ruleName": "AgeWithinDateRange",
+            "paramName": "END_DATE",
+            "paramType": "DATE",
+            "paramValue": "19880428"
+          }
+        ],
+        "successStepId": 200,
+        "failureStepId": 99999
+      },
+      {
+        "stepId": 200,
+        "ruleName": "HasCodeSet",
+        "parameters": [
+          {
+            "ruleParamId": null,
+            "ruleName": "HasCodeSet",
+            "paramName": "CODE_SET",
+            "paramType": "TEXT",
+            "paramValue": "ACUTE INPATIENT"
+          }
+        ],
+        "successStepId": 400,
+        "failureStepId": 300
+      },
+      {
+        "stepId": 300,
+        "ruleName": "HasCodeSet",
+        "parameters": [
+          {
+            "ruleParamId": null,
+            "ruleName": "HasCodeSet",
+            "paramName": "CODE_SET",
+            "paramType": "TEXT",
+            "paramValue": "MENTAL HEALTH"
+          }
+        ],
+        "successStepId": 400,
+        "failureStepId": 99999
+      },
+      {
+        "stepId": 400,
+        "ruleName": "SetResultCode",
+        "parameters": [
+          {
+            "ruleParamId": null,
+            "ruleName": "SetResultCode",
             "paramName": "RESULT_CODE",
-            "paramValue": "DENOMINATOR",
-            "paramType": "TEXT"
-            }
-          ],
-          "successStepId": 99999,
-          "failureStepId": 99999
-        }
+            "paramType": "TEXT",
+            "paramValue": "DENOMINATOR"
+          }
+        ],
+        "successStepId": 99999,
+        "failureStepId": 99999
+      },
+      {
+        "stepId": 500,
+        "ruleName": "ExitMeasure",
+        "parameters": [],
+        "successStepId": 99999,
+        "failureStepId": 99999
+      }
       ]
-    }
-', current_timestamp)
-, ('XYZ','
-    {
-      "description": "Patients that are between the ages of 25 and 65 on the 12th day of the reporting year with an occurrence of a broken arm at some time during the reporting year",
-      "minimumSystemVersion": "1.0.0",
-      "traceRules": true,
-      "steps": [
-        {
-          "stepId": 100,
-          "ruleName": "AgeWithinDateRange",
-          "parameters": [
-            {
-              "paramName": "FROM_AGE",
-              "paramValue": "28",
-              "paramType": "INTEGER"
-            },
-            {
-              "paramName": "TO_AGE",
-              "paramValue": "32",
-              "paramType": "INTEGER"
-            },
-            {
-              "paramName": "START_DATE",
-              "paramValue": "19880428",
-              "paramType": "DATE"
-            },
-            {
-              "paramName": "END_DATE",
-              "paramValue": "19880428",
-              "paramType": "DATE"
-            }
-          ],
-          "successStepId": 200,
-          "failureStepId": 99999
-        },
-        {
-          "stepId": 200,
-          "ruleName": "SetResultCode",
-          "parameters": [
-            {
-              "paramName": "RESULT_CODE",
-              "paramValue": "DENOMINATOR",
-              "paramType": "TEXT"
-            }
-          ],
-          "successStepId": 99999,
-          "failureStepId": 99999
-        },
-        {
-          "stepId": 300,
-          "ruleName": "SetResultCode",
-          "parameters": [
-            {
-              "paramName": "RESULT_CODE",
-              "paramValue": "DENOMINATOR",
-              "paramType": "TEXT"
-            }
-          ],
-          "successStepId": 99999,
-          "failureStepId": 99999
-        },
-        {
-          "stepId": 400,
-          "ruleName": "SetResultCode",
-          "parameters": [
-            {
-              "paramName": "RESULT_CODE",
-              "paramValue": "DENOMINATOR",
-              "paramType": "TEXT"
-            }
-          ],
-          "successStepId": 99999,
-          "failureStepId": 99999
-        },
-        {
-          "stepId": 500,
-          "ruleName": "SetResultCode",
-          "parameters": [
-            {
-              "paramName": "RESULT_CODE",
-              "paramValue": "DENOMINATOR",
-              "paramType": "TEXT"
-            }
-          ],
-          "successStepId": 99999,
-          "failureStepId": 99999
-        }
-      ]
-    }', current_timestamp);
+   }'
+  , current_timestamp);
