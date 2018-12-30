@@ -81,8 +81,8 @@ public class SeedDdController {
             visitCodeRepo.saveAndFlush(code_4);
         }
 
-        CodeSetGroup codeSetA = codeSetGroupRepo.save(CodeSetGroup.builder().groupName("CODE_SET_A").build());
-        CodeSetGroup codeSetB = codeSetGroupRepo.save(CodeSetGroup.builder().groupName("CODE_SET_B").build());
+        CodeSetGroup codeSetA = codeSetGroupRepo.save(CodeSetGroup.builder().groupName("MENTAL HEALTH").build());
+        CodeSetGroup codeSetB = codeSetGroupRepo.save(CodeSetGroup.builder().groupName("BIKE ACCIDENT").build());
 
         codeSetRepo.save(buildCodeSet(codeSetA, POS, "99"));
         codeSetRepo.save(buildCodeSet(codeSetA, REV, "22"));

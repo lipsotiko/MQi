@@ -13,7 +13,7 @@ public interface Processor {
                  List<Visit> visits,
                  MeasureMetaData measureMetaData,
                  ZonedDateTime timeExecuted,
-                 Long jobId);
+                 Long jobId) throws MeasureProcessorException;
     void clear();
     List<PatientMeasureLog> getLog();
     List<MeasureResult> getResults();

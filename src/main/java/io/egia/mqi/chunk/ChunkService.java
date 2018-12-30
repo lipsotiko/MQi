@@ -41,7 +41,7 @@ public class ChunkService {
         double pages = Math.ceil((float) count / pageSize);
 
         job.setInitialPatientCount(count);
-        jobRepo.save(job);
+        jobRepo.saveAndFlush(job);
 
         for (int i = 0; i < pages; i++) {
             int currentPatient = 0;

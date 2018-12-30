@@ -17,7 +17,7 @@ public class MqiInitializerTest {
     @Mock private ContextRefreshedEvent contextRefreshedEvent;
 
     @Test
-    public void save_rule_params_is_called() throws ClassNotFoundException {
+    public void save_rule_params_is_called() throws Exception {
         MqiInitializer subject = new MqiInitializer(ruleParamUtility);
         subject.onApplicationEvent(contextRefreshedEvent);
         verify(ruleParamUtility, times(1)).saveRuleParams();

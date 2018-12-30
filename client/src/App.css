@@ -107,6 +107,10 @@ nav {
   color: rgb(34, 1, 219);
 }
 
+.circular-progress.FAILURE {
+  color: red;
+}
+
 .param-editor {
   display: flex;
 }

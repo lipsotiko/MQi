@@ -27,7 +27,7 @@ public class Job {
 	private Long initialPatientCount;
 	private Long processedPatientCount;
 
-	@ElementCollection
+	@ElementCollection(fetch = FetchType.EAGER)
 	private List<Long> measureIds;
 
 	@Column(updatable=false,insertable=false) private Date lastUpdated;

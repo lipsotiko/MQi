@@ -21,10 +21,10 @@ logging:
   level:
     org:
       springframework:
-        web: INFO
+        web: DEBUG
     io:
       egia:
-        mqi: INFO
+        mqi: DEBUG
 
 server:
   port: 8080
@@ -49,7 +49,7 @@ spring:
     driver-class-name: org.postgresql.Driver
   devtools:
     restart:
-      enabled: true
+      enabled: false
 
 mqi:
   properties:
@@ -61,10 +61,10 @@ logging:
   level:
     org:
       springframework:
-        web: INFO
+        web: DEBUG
     io:
       egia:
-        mqi: INFO
+        mqi: DEBUG
 
 server:
   port: 8080

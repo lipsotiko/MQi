@@ -102,12 +102,14 @@ class MeasureEditor extends Component {
             </>}
         </div>
       </form>
-      <SockJsClient url='/ws' topics={['/topic/job']}
+      <SockJsClient url={process.env.REACT_APP_WS_URL} topics={['/topic/job']}
         onMessage={(job) => {
           console.log(job);
           let measureList = this.state.measureList;
           measureList.map(measureListItem => {
-            if (job.measureIds.includes(measureListItem.measureId)) {
+            if (job.measureIds.includes(measureListItem.measureId) &&
+              !(job.jobStatus === 'RUNNING' && measureListItem.jobStatus !== 'RUNNING')
+            ) {
               measureListItem.progress = job.progress;
               measureListItem.jobStatus = job.jobStatus;
               measureListItem.jobLastUpdated = job.lastUpdated;

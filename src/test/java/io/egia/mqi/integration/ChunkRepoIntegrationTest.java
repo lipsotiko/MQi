@@ -16,7 +16,6 @@ import java.util.Optional;
 import static io.egia.mqi.chunk.ChunkStatus.PENDING;
 import static io.egia.mqi.chunk.ChunkStatus.PROCESSED;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.fail;
 
 @ActiveProfiles("test")
 @RunWith(SpringJUnit4ClassRunner.class)

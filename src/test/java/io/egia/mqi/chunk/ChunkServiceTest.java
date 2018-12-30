@@ -123,7 +123,7 @@ public class ChunkServiceTest {
     @Test
     public void initial_patient_count_is_saved_to_job() {
         chunkService.chunkData(job);
-        verify(jobRepo).save(jobCaptor.capture());
+        verify(jobRepo).saveAndFlush(jobCaptor.capture());
         assertThat(jobCaptor.getAllValues().get(0).getInitialPatientCount()).isEqualTo(18);
     }
 

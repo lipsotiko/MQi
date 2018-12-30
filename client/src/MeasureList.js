@@ -14,6 +14,17 @@ class MeasureList extends Component {
       {measuresList && measuresList.sort().map((measureItem) => {
         const { measureId, measureName, selected, jobStatus } = measureItem;
 
+        let progress;
+
+        if (measureItem.jobStatus === 'RUNNING' && measureItem.progress === 0) {
+          progress = <CircularProgress className={`circular-progress ${jobStatus ? jobStatus : 'IDLE'}`} />
+        } else {
+          progress = <CircularProgress
+            className={`circular-progress ${jobStatus ? jobStatus : 'IDLE'}`}
+            variant="determinate"
+            value={jobStatus === 'RUNNING' ? measureItem.progress : 100}
+          />
+        }
         return <li
           key={measureId}
           data-testid={`measure-id-${measureId}`}
@@ -23,17 +34,7 @@ class MeasureList extends Component {
             this.props.selectMeasure(measureId, e);
           }}>
           <span>{measureName}</span>
-          {measureItem.progress === 0 &&
-            <CircularProgress
-              className={`circular-progress ${jobStatus ? jobStatus : 'IDLE'}`}
-            />
-          }
-          {measureItem.progress !== 0 &&
-            <CircularProgress
-              className={`circular-progress ${jobStatus ? jobStatus : 'IDLE'}`}
-              variant="determinate"
-              value={jobStatus === 'RUNNING' ? measureItem.progress : 100}
-            />}
+          {progress}
         </li>
       })}
     </div>

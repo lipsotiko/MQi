@@ -96,7 +96,7 @@ public class MeasureServiceTest {
     }
 
     @Test
-    public void measure_process_was_called_with_patient_data() {
+    public void measure_process_was_called_with_patient_data() throws Exception {
         measureService.process(Collections.singletonList(measure), null);
         assertThat(processorSpy.processWasCalled).isEqualTo(true);
         assertThat(processorSpy.processWasCalledWithPatients).containsExactly(p77, p88, p99);
@@ -104,7 +104,7 @@ public class MeasureServiceTest {
     }
 
     @Test
-    public void data_was_chunked() {
+    public void data_was_chunked() throws Exception {
         measureService.process(Collections.singletonList(measure), null);
 
         verify(chunkRepo, times(4))
@@ -118,20 +118,20 @@ public class MeasureServiceTest {
     }
 
     @Test
-    public void measure_processor_was_cleared() {
+    public void measure_processor_was_cleared() throws Exception {
         measureService.process(Collections.singletonList(measure), null);
         assertThat(processorSpy.clearWasCalled).isEqualTo(true);
     }
 
     @Test
-    public void nothing_is_proessed_when_no_measures_are_supplied() {
+    public void nothing_is_proessed_when_no_measures_are_supplied() throws Exception {
         List<Measure> measures = Collections.emptyList();
         measureService.process(measures, null);
         assertThat(processorSpy.processWasCalled).isEqualTo(false);
     }
 
     @Test
-    public void measure_codesets_are_passed_to_processor() throws IOException {
+    public void measure_codesets_are_passed_to_processor() throws Exception {
         CodeSetGroup codeSetGroupA = CodeSetGroup.builder().id(1L).groupName("CODE_SET_A").build();
         List<CodeSetGroup> codeSetGroups = new ArrayList<CodeSetGroup>() {{
             add(codeSetGroupA);
@@ -152,7 +152,7 @@ public class MeasureServiceTest {
     }
 
     @Test
-    public void measure_results_are_removed() throws IOException {
+    public void measure_results_are_removed() throws Exception {
         Measure measure = getMeasureFromResource("fixtures", "sampleMeasure2.json");
         measureService.process(Collections.singletonList(measure), null);
 
@@ -165,7 +165,7 @@ public class MeasureServiceTest {
     }
 
     @Test
-    public void measure_results_are_saved() throws IOException {
+    public void measure_results_are_saved() throws Exception {
         Measure measure = getMeasureFromResource("fixtures", "sampleMeasure2.json");
         measureService.process(Collections.singletonList(measure), null);
 
@@ -179,7 +179,7 @@ public class MeasureServiceTest {
     }
 
     @Test
-    public void measure_patient_logs_are_removed() throws IOException {
+    public void measure_patient_logs_are_removed() throws Exception {
         Measure measure = getMeasureFromResource("fixtures", "sampleMeasure2.json");
         measureService.process(Collections.singletonList(measure), null);
 
@@ -192,7 +192,7 @@ public class MeasureServiceTest {
     }
 
     @Test
-    public void patient_measure_logs_are_saved() throws IOException {
+    public void patient_measure_logs_are_saved() throws Exception {
         Measure measure = getMeasureFromResource("fixtures", "sampleMeasure2.json");
         measureService.process(Collections.singletonList(measure), null);
 

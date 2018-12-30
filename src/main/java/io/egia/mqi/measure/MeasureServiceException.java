@@ -1,8 +1,8 @@
 package io.egia.mqi.measure;
 
-public class MeasureProcessorException extends Exception {
+public class MeasureServiceException extends Exception {
 
-    MeasureProcessorException(String msg) {
+    MeasureServiceException(String msg) {
         super(msg);
         System.err.println("Error: " + msg);
     }

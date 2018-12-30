@@ -49,7 +49,7 @@ public class MeasureService {
         this.measureResultRepo = measureResultRepo;
     }
 
-    public void process(List<Measure> measures, Long jobId) {
+    public void process(List<Measure> measures, Long jobId) throws MeasureServiceException {
 
         if (measures.size() == 0) return;
 
@@ -62,7 +62,11 @@ public class MeasureService {
             deleteMeasureResults(measures, chunkGroup);
             List<Patient> patients = patientRepo.findByChunkGroup(chunkGroup);
             List<Visit> visits = visitRepo.findByChunkGroup(chunkGroup);
-            processor.process(measures, patients, visits, measureMetaData, ZonedDateTime.now(), jobId);
+            try {
+                processor.process(measures, patients, visits, measureMetaData, ZonedDateTime.now(), jobId);
+            } catch (MeasureProcessorException e) {
+                throw new MeasureServiceException("Error: Could not execute measure processor");
+            }
             saveMeasureResults(processor);
             processor.clear();
             chunkRepo.updateChunkStatusByChunkGroup(chunkGroup, PROCESSED);

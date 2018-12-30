@@ -15,6 +15,8 @@ import org.mockito.junit.MockitoJUnitRunner;
 import java.util.Arrays;
 import java.util.List;
 
+import static io.egia.mqi.job.JobStatus.DONE;
+import static io.egia.mqi.job.JobStatus.RUNNING;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
@@ -56,7 +58,7 @@ public class JobControllerTest {
 
         measures = Arrays.asList(measureA, measureB);
 
-        when(jobRepo.save(any())).thenReturn(Job.builder().id(1L).build());
+        when(jobRepo.saveAndFlush(any())).thenReturn(job);
 
         when(measureRepo.findAllById(stubbedMeasureIds)).thenReturn(measures);
     }
@@ -64,8 +66,10 @@ public class JobControllerTest {
     @Test
     public void adds_measures_to_job_service() {
         jobController.process(stubbedMeasureIds);
-        verify(jobRepo, times(1)).save(jobArgumentCaptor.capture());
-        assertThat(jobArgumentCaptor.getValue().getMeasureIds()).isEqualTo(stubbedMeasureIds);
+        verify(jobRepo, times(2)).saveAndFlush(jobArgumentCaptor.capture());
+        assertThat(jobArgumentCaptor.getAllValues().get(0).getMeasureIds()).isEqualTo(stubbedMeasureIds);
+        assertThat(jobArgumentCaptor.getAllValues().get(0).getJobStatus()).isEqualTo(RUNNING);
+        assertThat(jobArgumentCaptor.getAllValues().get(1).getJobStatus()).isEqualTo(DONE);
     }
 
     @Test
@@ -81,7 +85,7 @@ public class JobControllerTest {
     }
 
     @Test
-    public void starts_measure_service_process() {
+    public void starts_measure_service_process() throws Exception {
         jobController.process(stubbedMeasureIds);
         verify(measureService).process(measures, 1L);
     }

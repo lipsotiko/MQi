@@ -41,7 +41,7 @@ public class RuleParamUtilityTest {
             , new TypeAnnotationsScanner());
 
     @Test
-    public void rulesInsertTheirMetaDataInMqiDb() throws ClassNotFoundException {
+    public void rulesInsertTheirMetaDataInMqiDb() throws Exception {
         RuleParamUtility subject = new RuleParamUtility(ruleParamRepo);
         subject.saveRuleParams();
         verify(ruleParamRepo, times(expected.length)).save(captor.capture());

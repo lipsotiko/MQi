@@ -28,10 +28,8 @@ class MeasureStepper {
         this.measureMetaData = measureMetaData;
     }
 
-    int stepThroughMeasure() throws MeasureProcessorException {
-        if(steps.size() == 0) {
-            throw new MeasureProcessorException("Measure logic has no steps");
-        }
+    int stepThroughMeasure() throws MeasureStepperException {
+        if(steps == null) throw new MeasureStepperException("Measure logic has no steps");
 
         int firstStepId = getInitialStepId();
         Step currentStep = getStepById(firstStepId);
@@ -47,13 +45,13 @@ class MeasureStepper {
                 ruleClass = Class.forName("io.egia.mqi.measure.rules." + rule);
                 ruleMethod = ruleClass.getMethod("evaluate", PatientData.class, List.class, MeasureMetaData.class, MeasureWorkspace.class);
             } catch (NoSuchMethodException | ClassNotFoundException e) {
-                throw new MeasureProcessorException(String.format("Could not find method %s", rule), e);
+                throw new MeasureStepperException(String.format("Could not find method %s", rule), e);
             }
 
             try {
                 measureWorkspace = (MeasureWorkspace) ruleMethod.invoke(ruleClass.newInstance(), patientData, parameters, measureMetaData, measureWorkspace);
             } catch (IllegalAccessException | InvocationTargetException | InstantiationException e) {
-                throw new MeasureProcessorException(String.format("Could not invoke method %s",rule), e);
+                throw new MeasureStepperException(String.format("Could not invoke method %s",rule), e);
             }
 
             measureWorkspace.writeRuleTrace(rule);
@@ -69,14 +67,14 @@ class MeasureStepper {
         return rulesEvaluatedCount;
     }
 
-    private Step getNextStep(int currentStepId, int nextStepId) throws MeasureProcessorException {
+    private Step getNextStep(int currentStepId, int nextStepId) throws MeasureStepperException {
         preventInfiniteLoops(currentStepId, nextStepId);
         return getStepById(nextStepId);
     }
 
-    private void preventInfiniteLoops(int currentStepId, int nextStepId) throws MeasureProcessorException {
+    private void preventInfiniteLoops(int currentStepId, int nextStepId) throws MeasureStepperException {
         if ((nextStepId <= currentStepId) && (currentStepId != 99999)) {
-            throw new MeasureProcessorException("Measure steps configured for infinite loop");
+            throw new MeasureStepperException("Measure steps configured for infinite loop");
         }
     }
 

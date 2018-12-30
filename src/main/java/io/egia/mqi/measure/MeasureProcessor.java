@@ -2,7 +2,6 @@ package io.egia.mqi.measure;
 
 import io.egia.mqi.job.Job;
 import io.egia.mqi.job.JobRepo;
-import io.egia.mqi.job.JobStatus;
 import io.egia.mqi.patient.Patient;
 import io.egia.mqi.patient.PatientData;
 import io.egia.mqi.patient.PatientMeasureLog;
@@ -24,10 +23,9 @@ public class MeasureProcessor implements Processor {
     private Hashtable<Long, PatientData> patientDataHash = new Hashtable<>();
     private int rulesEvaluatedCount;
     private List<MeasureWorkspace> measureWorkspaces = new ArrayList<>();
-    private JobRepo jobRepo;
 
-    MeasureProcessor(JobRepo jobRepo) {
-        this.jobRepo = jobRepo;
+    MeasureProcessor() {
+
     }
 
     @Override
@@ -35,7 +33,7 @@ public class MeasureProcessor implements Processor {
                         List<Patient> patients,
                         List<Visit> visits,
                         MeasureMetaData measureMetaData,
-                        ZonedDateTime timeExecuted, Long jobId) {
+                        ZonedDateTime timeExecuted, Long jobId) throws MeasureProcessorException {
         this.measures = measures;
         appendToPatientDataHash(patients);
         appendToPatientDataHash(visits);
@@ -46,17 +44,7 @@ public class MeasureProcessor implements Processor {
                 log.debug(String.format("Processing patient id: %s, measure: %s",
                         patientId,
                         measure.getMeasureName()));
-                try {
-                    evaluatePatientDataByMeasure(patientData, measure, measureMetaData);
-                } catch (MeasureProcessorException e) {
-                    Optional<Job> optionalJob = jobRepo.findById(jobId);
-                    optionalJob.ifPresent(job -> {
-                        job.setJobStatus(FAILURE);
-                        jobRepo.save(job);
-                    });
-                    e.printStackTrace();
-                    return;
-                }
+                evaluatePatientDataByMeasure(patientData, measure, measureMetaData);
             }
         }
     }
@@ -120,7 +108,11 @@ public class MeasureProcessor implements Processor {
 
         MeasureWorkspace measureWorkspace = new MeasureWorkspace(patientData.getPatientId(), measure.getMeasureId());
         MeasureStepper measureStepper = new MeasureStepper(patientData, measure, measureWorkspace, measureMetaData);
-        rulesEvaluatedCount = measureStepper.stepThroughMeasure() + rulesEvaluatedCount;
+        try {
+            rulesEvaluatedCount = measureStepper.stepThroughMeasure() + rulesEvaluatedCount;
+        } catch (MeasureStepperException e) {
+            throw new MeasureProcessorException("Faulty logic was Supplied for measure: " + measure.getMeasureName());
+        }
         this.measureWorkspaces.add(measureStepper.getMeasureWorkspace());
     }
 

@@ -5,7 +5,6 @@ import org.junit.Test;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 import static io.egia.mqi.helpers.Helpers.*;
@@ -19,7 +18,7 @@ public class MeasureStepperTest {
     private static final int RULES_FIRED = 4;
 
     @Test
-    public void measure_is_stepped_through() throws IOException, MeasureProcessorException {
+    public void measure_is_stepped_through() throws Exception {
         Measure measure = getMeasureFromResource("fixtures", "sampleMeasure.json");
         List<String> testMeasureRules = new ArrayList<>();
         measure.getMeasureLogic().getSteps().forEach((step -> testMeasureRules.add(step.getRuleName())));
@@ -35,35 +34,34 @@ public class MeasureStepperTest {
     }
 
     @Test
-    public void measure_with_infinite_loop_throws_exception() throws IOException {
+    public void measure_with_infinite_loop_throws_exception() throws Exception {
         Measure measure = getMeasureFromResource("fixtures", "measureWithInfiniteLoop.json");
         MeasureWorkspace measureWorkspace = new MeasureWorkspace(PATIENT_ID, MEASURE_ID);
         MeasureStepper subject =
                 new MeasureStepper(new PatientData(PATIENT_ID), measure, measureWorkspace, new MeasureMetaData());
 
-        assertThatExceptionOfType(MeasureProcessorException.class).isThrownBy(subject::stepThroughMeasure);
+        assertThatExceptionOfType(MeasureStepperException.class).isThrownBy(subject::stepThroughMeasure);
     }
 
     @Test
-    public void measure_with_invalid_rule_throws_exception() throws IOException {
+    public void measure_with_invalid_rule_throws_exception() throws Exception {
         Measure measure = getMeasureFromResource("fixtures", "measureWithRuleThatDoesNotExist.json");
         MeasureWorkspace measureWorkspace = new MeasureWorkspace(PATIENT_ID, MEASURE_ID);
         MeasureStepper subject =
                 new MeasureStepper(new PatientData(PATIENT_ID), measure, measureWorkspace, new MeasureMetaData());
 
-        assertThatExceptionOfType(MeasureProcessorException.class).isThrownBy(subject::stepThroughMeasure);
+        assertThatExceptionOfType(MeasureStepperException.class).isThrownBy(subject::stepThroughMeasure);
     }
 
     @Test
     public void measure_with_no_steps_throws_exception() {
         Measure measure = new Measure();
         MeasureLogic measureLogic = new MeasureLogic();
-        measureLogic.setSteps(Collections.emptyList());
         measure.setMeasureLogic(measureLogic);
         MeasureWorkspace measureWorkspace = new MeasureWorkspace(PATIENT_ID, MEASURE_ID);
         MeasureStepper subject =
                 new MeasureStepper(new PatientData(PATIENT_ID), measure, measureWorkspace, new MeasureMetaData());
 
-        assertThatExceptionOfType(MeasureProcessorException.class).isThrownBy(subject::stepThroughMeasure);
+        assertThatExceptionOfType(MeasureStepperException.class).isThrownBy(subject::stepThroughMeasure);
     }
 }

@@ -199,7 +199,7 @@ order by record_count desc, a.patient_id desc;
 insert into measure (measure_name, measure_json, last_updated)
 values ('ABC','
     {
-      "description": "Patients that are between the ages of 28 and 32 with an occurrence of an ACUTE INPATIENT or MENTAL HEALTH visit.",
+      "description": "Patients that are between the ages of 28 and 32 with an occurrence of a BIKE ACCIDENT or CRAZY IN-LAWS",
       "minimumSystemVersion": "1.0.0",
       "steps": [
       {
@@ -247,7 +247,7 @@ values ('ABC','
             "ruleName": "HasCodeSet",
             "paramName": "CODE_SET",
             "paramType": "TEXT",
-            "paramValue": "ACUTE INPATIENT"
+            "paramValue": "CRAZY IN-LAWS"
           }
         ],
         "successStepId": 400,
@@ -262,7 +262,7 @@ values ('ABC','
             "ruleName": "HasCodeSet",
             "paramName": "CODE_SET",
             "paramType": "TEXT",
-            "paramValue": "MENTAL HEALTH"
+            "paramValue": "BIKE ACCIDENT"
           }
         ],
         "successStepId": 400,
