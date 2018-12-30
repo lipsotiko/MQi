@@ -1,6 +1,7 @@
 import React from 'react';
 import App from '../App';
 import { expect } from 'chai';
+import { forIt } from './Helpers'
 import { render, cleanup, waitForElement, fireEvent } from 'react-testing-library'
 
 describe('MQi GUI', () => {
@@ -15,14 +16,13 @@ describe('MQi GUI', () => {
 
   describe('Navigation', () => {
     it('should navigate to the Dashboard', async () => {
-      const { getByTestId } = render(<App />);
+      const { getByTestId, container } = render(<App />);
 
-      const dashboardTab = await waitForElement(() => getByTestId('Dashboard'));
+      const dashboardTab = await waitForElement(() => getByTestId('dashboard'));
       fireEvent.click(dashboardTab);
+      await forIt();
 
-      const navigation = await waitForElement(() => getByTestId('navigation'));
-      const selectedTab = navigation.querySelector('.selected');
-      expect(selectedTab.innerHTML).to.contain('Dashboard');
+      expect(container.innerHTML).to.contain('Dashboard');
     });
   });
 });

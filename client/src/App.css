@@ -33,23 +33,12 @@ p {
   color: white;
 }
 
+nav {
+  margin-bottom: 50px;
+}
+
 .navigation {
-  display: flex;
-}
-
-.navigation div {
-  color: white;
-  padding: 14px 16px;
-  border-bottom: lightgray 5px solid;
-}
-
-.navigation nav:hover {
-  background-color: #111;
-  cursor: pointer;
-}
-
-.navigation .selected {
-  border-bottom: #3097F3 5px solid;
+  background-color: #282c34;
 }
 
 .measure-editor {
@@ -90,11 +79,11 @@ p {
   justify-content: space-between;
   align-items: center;
   height: 40px;
-  border-right: lightgray 5px solid;
+  border-right: lightgray 2px solid;
 }
 
 .measure-list li.selected {
-  border-right: #3097F3 5px solid;
+  border-right: #FF0045 2px solid;
 }
 
 .measure-list li:hover {

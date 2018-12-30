@@ -197,7 +197,7 @@ group by a.patient_id
 order by record_count desc, a.patient_id desc;
 
 insert into measure (measure_name, measure_json, last_updated)
-values ('sample measure 1', '
+values ('ABC', '
     {
       "description": "Patients that are two years of age on the first day of the reporting year with an occurrence of a broken leg at some time during the reporting year",
       "minimumSystemVersion": "1.0.0",
@@ -247,7 +247,7 @@ values ('sample measure 1', '
       ]
     }
 ', current_timestamp)
-, ('sample measure 2','
+, ('XYZ','
     {
       "description": "Patients that are between the ages of 25 and 65 on the 12th day of the reporting year with an occurrence of a broken arm at some time during the reporting year",
       "minimumSystemVersion": "1.0.0",
