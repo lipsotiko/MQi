@@ -46,35 +46,27 @@ nav {
 }
 
 .measure {
-  margin: 0px 40px 50px 160px;
-  padding: 10px 10px 15px 10px;
+  margin: 0px 40px 50px 180px;
+  padding: 0px 10px 15px 10px;
 }
 
 .save-measure-button {
   float: right;
 }
 
-.measure .measure-name {
-  width: 100%;
-}
-
-.measure .measure-description {
-  width: 100%;
-  height: 50px;
-}
-
 .measure-list {
   width: 160px;
-  margin: 5px 0px 15px 0px;
+  margin: 10px 0px 15px 0px;
   position: absolute;
-  padding-bottom: 60px
+  padding-bottom: 60px;
+  padding-left: 10px;
 }
 
 .measure-list li {
   list-style-type: none;
   border: #282c34 1px solid;
-  padding: 1px 1px 0px 5px;
-  margin: 1px 1px;
+  padding: 1px 1px 0px 8px;
+  margin: 9px 1px;
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -145,6 +137,32 @@ nav {
   visibility: visible;
 }
 
+.step input {
+  width: 100px;
+  margin-right: 25px;
+}
+
+.step select {
+  width: 200px;
+  margin-right: 20px;
+}
+
+.step .param-value {
+  width: 200px;
+}
+
+.add-step {
+  margin-top: 8px;
+}
+
+.step-header-1 {
+  width: 50px;
+}
+
+.step-header-2 {
+  width: 140px;
+}
+
 ::-webkit-scrollbar {
   -webkit-appearance: none;
   width: 7px;
@@ -163,4 +181,20 @@ nav {
 
 .parameters {
   margin: 10px 0px 10px 0px;
+}
+
+.content {
+  /* position: relative;: flex; */
+}
+
+.left-aside {
+  float: left;
+}
+.center-content {
+  float: left;
+}
+.right-aside {
+  float: right;
+  position: relative;
+  width: 250px;
 }

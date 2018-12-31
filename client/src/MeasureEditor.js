@@ -4,6 +4,10 @@ import MeasureList from './MeasureList';
 import Step from './Step';
 import { compare, distinct, ramdomInt } from './Utilities';
 import Button from '@material-ui/core/Button';
+import TableHead from '@material-ui/core/TableHead';
+import TableRow from '@material-ui/core/TableRow';
+import TableCell from '@material-ui/core/TableCell';
+import TextField from '@material-ui/core/TextField';
 import SockJsClient from 'react-stomp';
 
 class MeasureEditor extends Component {
@@ -51,22 +55,28 @@ class MeasureEditor extends Component {
 
     return <>
       <form className='content measure-editor'>
-        <MeasureList
-          measuresList={measureList}
-          getMeasure={this._getMeasure()}
-          selectMeasure={this._selectMeasure()}
-          selectedMeasureId={measure ? measure.measureId : null}
-          addMeasure={this._addMeasure()} />
-        <div className='measure' data-testid='measure'>
+        <aside className='left-aside'>
+          <MeasureList
+            measuresList={measureList}
+            getMeasure={this._getMeasure()}
+            selectMeasure={this._selectMeasure()}
+            selectedMeasureId={measure ? measure.measureId : null}
+            addMeasure={this._addMeasure()} />
+        </aside>
+        <div className='measure center-content' data-testid='measure'>
           {measure &&
             <>
-              <input className='measure-name' type='text' data-testid='measure-name'
-                value={measure.measureName}
-                onChange={(e) => this._changeName(e)} />
-              <textarea className='measure-description'
-                value={measure.measureLogic.description}
-                onChange={(e) => this._changeDescription(e)} />
-              <Button onClick={async () => { await this._addStep(rules) }}>+ Step</Button>
+              <TableHead>
+                <TableRow>
+                  <TableCell className='step-header-1' align="right">Step ID</TableCell>
+                  <TableCell className='step-header-2' align="right">Rule</TableCell>
+                  <TableCell className='step-header-1' align="right">Success Step ID</TableCell>
+                  <TableCell className='step-header-1'align="right">Failure Step ID</TableCell>
+                  <div className='add-step'>
+                    <Button onClick={async () => { await this._addStep(rules) }}>+ Step</Button>
+                  </div>
+                </TableRow>
+              </TableHead>
             </>}
           <div>
             {hasSteps &&
@@ -81,6 +91,26 @@ class MeasureEditor extends Component {
               />}
           </div>
         </div>
+        {measure &&
+          <div>
+            <aside className='right-aside'>
+              <TextField
+                label="Measure Name"
+                data-testid='measure-name'
+                value={measure.measureName}
+                onChange={(e) => this._changeName(e)}
+                margin="normal" />
+              <TextField
+                label="Description"
+                multiline
+                rowsMax="20"
+                value={measure.measureLogic.description}
+                onChange={(e) => this._changeDescription(e)}
+                margin="normal"
+                variant="outlined"
+              />
+            </aside>
+          </div>}
         <div className='footer'>
           {measure &&
             <>
@@ -182,7 +212,7 @@ class MeasureEditor extends Component {
         measureList.map(measureListItem => {
           if (measureListItem.measureId === measureId) {
             measureListItem.selected = true;
-            return measureListItem;            
+            return measureListItem;
           }
           return measureListItem;
         })
