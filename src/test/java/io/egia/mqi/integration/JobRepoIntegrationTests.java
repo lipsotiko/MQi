@@ -14,6 +14,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import java.sql.Date;
 import java.time.LocalDate;
+import java.time.ZonedDateTime;
 import java.util.Collections;
 
 import static io.egia.mqi.job.JobStatus.RUNNING;
@@ -35,7 +36,7 @@ public class JobRepoIntegrationTests {
             Job job = new Job();
             job.setJobStatus(RUNNING);
             job.setMeasureIds(Collections.singletonList((long) 1));
-            job.setLastUpdated(Date.valueOf(LocalDate.now()));
+            job.setLastUpdated(ZonedDateTime.now());
             jobRepo.saveAndFlush(job);
         }
     }

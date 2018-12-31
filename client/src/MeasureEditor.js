@@ -175,23 +175,29 @@ class MeasureEditor extends Component {
   }
 
   _selectMeasure() {
-    return (id, event) => {
+    return (measureId, event) => {
       let measureList = this.state.measureList;
 
       if (event.shiftKey || event.ctrlKey) {
-        measureList.map(m => this._selectMeasureById(m, id))
+        measureList.map(measureListItem => {
+          if (measureListItem.measureId === measureId) {
+            measureListItem.selected = true;
+            return measureListItem;            
+          }
+          return measureListItem;
+        })
       } else {
-        measureList.map(m => m.selected = false)
-        measureList.map(m => this._selectMeasureById(m, id))
+        measureList.map(measureListItem => measureListItem.selected = false)
+        measureList.map(measureListItem => {
+          if (measureListItem.measureId === measureId) {
+            measureListItem.selected = true;
+            return measureListItem;
+          }
+          return measureListItem;
+        })
       }
 
       this.setState({ measureList });
-    }
-  }
-
-  _selectMeasureById(m, id) {
-    if (m.measureId === id) {
-      m.selected = true;
     }
   }
 
@@ -226,7 +232,13 @@ class MeasureEditor extends Component {
   async _saveMeasure() {
     let measure = await this.props.measureRepository._saveMeasure(this.state.measure);
     let measureList = await this.props.measureRepository._findAllMeasureListItems();
-    measureList.map(m => this._selectMeasureById(m, measure.measureId));
+    measureList.map(measureListItem => {
+      if (measureListItem.measureId === measure.measureId) {
+        measureListItem.selected = true;
+        return measureListItem;
+      }
+      return measureListItem;
+    });
     this.setState({ measure, measureList })
     return measure;
   }

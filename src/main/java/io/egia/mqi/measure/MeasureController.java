@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.*;
 
+import java.sql.Date;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.util.List;
@@ -17,7 +18,7 @@ public class MeasureController {
     private RuleParamRepo ruleParamRepo;
 
     @Autowired
-    JobRepo jobRepo;
+    private JobRepo jobRepo;
 
     @Value("${mqi.properties.system.version}")
     private String systemVersion;
@@ -68,8 +69,10 @@ public class MeasureController {
         measureListItems.forEach(measureListItem -> {
             Optional<Job> optionalJob = jobRepo.findFirstByMeasureIdsOrderByLastUpdatedDesc(measureListItem.getMeasureId());
             optionalJob.ifPresent(job -> {
-                measureListItem.setJobStatus(job.getJobStatus());
-                measureListItem.setJobLastUpdated(job.getLastUpdated());
+                if(job.getLastUpdated().isAfter(measureListItem.getMeasureLastUpdated())) {
+                    measureListItem.setJobStatus(job.getJobStatus());
+                    measureListItem.setJobLastUpdated(job.getLastUpdated());
+                }
             });
         });
         return measureListItems;

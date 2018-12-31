@@ -7,6 +7,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import java.time.ZonedDateTime;
 import java.util.Date;
 import java.util.List;
 
@@ -30,7 +31,7 @@ public class Job {
 	@ElementCollection(fetch = FetchType.EAGER)
 	private List<Long> measureIds;
 
-	@Column(updatable=false,insertable=false) private Date lastUpdated;
+	private ZonedDateTime lastUpdated;
 
 	@JsonProperty("progress")
 	int getProgress() {

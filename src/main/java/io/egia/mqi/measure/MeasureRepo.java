@@ -9,7 +9,7 @@ import java.util.List;
 @Repository
 public interface MeasureRepo extends JpaRepository<Measure, Long> {
 
-	@Query(value="select new io.egia.mqi.measure.MeasureListItem(m.measureId, m.measureName) " +
+	@Query(value="select new io.egia.mqi.measure.MeasureListItem(m.measureId, m.measureName, m.lastUpdated) " +
 			"from Measure m order by m.measureName")
 	List<MeasureListItem> findAllMeasureListItems();
 
