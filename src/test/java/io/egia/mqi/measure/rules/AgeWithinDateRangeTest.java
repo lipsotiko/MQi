@@ -11,6 +11,7 @@ import org.junit.Test;
 
 import java.util.*;
 
+import static io.egia.mqi.helpers.Helpers.UUID1;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @RuleTest
@@ -44,7 +45,7 @@ public class AgeWithinDateRangeTest {
         ruleParam4.setParamValue("19901109");
         ruleParams.add(ruleParam4);
 
-        measureWorkspace = new MeasureWorkspace(1L, 11L);
+        measureWorkspace = new MeasureWorkspace(1L, UUID1);
     }
 
     @Test

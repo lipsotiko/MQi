@@ -237,7 +237,6 @@ class MeasureEditor extends Component {
 
   _addMeasure() {
     const DEFAULT_NEW_MEASURE = {
-      measureId: -1,
       measureName: 'New Measure',
       measureLogic: {
         description: 'Describe...'

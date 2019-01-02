@@ -1,7 +1,5 @@
 package io.egia.mqi.measure;
 
-import io.egia.mqi.job.Job;
-import io.egia.mqi.job.JobRepo;
 import io.egia.mqi.patient.Patient;
 import io.egia.mqi.patient.PatientData;
 import io.egia.mqi.patient.PatientMeasureLog;
@@ -12,9 +10,10 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
 import java.time.ZonedDateTime;
-import java.util.*;
-
-import static io.egia.mqi.job.JobStatus.FAILURE;
+import java.util.ArrayList;
+import java.util.Hashtable;
+import java.util.List;
+import java.util.Map;
 
 @Component
 public class MeasureProcessor implements Processor {

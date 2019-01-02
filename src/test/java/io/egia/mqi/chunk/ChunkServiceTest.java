@@ -20,6 +20,8 @@ import java.util.Collections;
 import java.util.List;
 
 import static io.egia.mqi.chunk.ChunkStatus.PENDING;
+import static io.egia.mqi.helpers.Helpers.UUID1;
+import static io.egia.mqi.helpers.Helpers.UUID2;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.*;
 
@@ -77,11 +79,11 @@ public class ChunkServiceTest {
                 .thenReturn(Collections.emptyList());
 
         Measure measureUpdatedYesterday = new Measure();
-        measureUpdatedYesterday.setMeasureId(111L);
+        measureUpdatedYesterday.setMeasureId(UUID1);
         measureUpdatedYesterday.setLastUpdated(ZonedDateTime.now().minusDays(1));
 
         Measure measureUpdatedToday = new Measure();
-        measureUpdatedToday.setMeasureId(222L);
+        measureUpdatedToday.setMeasureId(UUID2);
         measureUpdatedToday.setLastUpdated(ZonedDateTime.now());
 
         //Expected results

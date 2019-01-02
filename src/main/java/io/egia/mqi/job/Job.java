@@ -10,6 +10,7 @@ import javax.persistence.*;
 import java.time.ZonedDateTime;
 import java.util.Date;
 import java.util.List;
+import java.util.UUID;
 
 @Data
 @Entity
@@ -22,6 +23,7 @@ public class Job {
 	@Id
 	@GeneratedValue(strategy=GenerationType.IDENTITY)
 	private Long id;
+	private UUID uuid;
 	private JobStatus jobStatus;
 	private Date startTime;
 	private Date endTime;
@@ -29,7 +31,7 @@ public class Job {
 	private Long processedPatientCount;
 
 	@ElementCollection(fetch = FetchType.EAGER)
-	private List<Long> measureIds;
+	private List<UUID> measureIds;
 
 	private ZonedDateTime lastUpdated;
 

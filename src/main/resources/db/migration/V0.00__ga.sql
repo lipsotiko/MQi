@@ -1,3 +1,5 @@
+CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
+
 create or replace function fn_update_timestamp()
 returns trigger as $$
 	begin
@@ -32,7 +34,7 @@ drop table if exists patient_measure_log;
 create table if not exists patient_measure_log (
     id bigserial primary key,
 	patient_id bigint,
-	measure_id bigint,
+	measure_id uuid,
 	last_updated timestamp default current_timestamp
 );
 create unique index ux_patient_measure_log on patient_measure_log (patient_id, measure_id);
@@ -69,13 +71,11 @@ create table if not exists visit_code (
 
 drop table if exists measure;
 create table if not exists measure (
-	measure_id bigserial primary key,
+	measure_id uuid primary key DEFAULT uuid_generate_v1(),
 	measure_name varchar(100) not null,
 	measure_json text,
 	last_updated timestamp not null
 );
-
---create unique index ux_measure on measure (LOWER(measure_name));
 
 drop table if exists chunk;
 create table if not exists chunk (
@@ -91,6 +91,7 @@ create unique index ux_chunk_patient on chunk (patient_id);
 drop table if exists job;
 create table if not exists job (
 	id bigserial primary key,
+	uuid uuid DEFAULT uuid_generate_v1(),
 	job_status integer,
 	start_time timestamp,
 	end_time timestamp,
@@ -108,7 +109,7 @@ drop table if exists job_measure_ids;
 create table if not exists job_measure_ids (
 	id bigserial primary key,
 	job_id bigint,
-	measure_ids bigint
+	measure_ids uuid
 );
 
 create unique index ux_job_measure_ids on job_measure_ids (job_id, measure_ids);
@@ -124,14 +125,14 @@ create table if not exists rule_param (
 drop view if exists code_set;
 create table code_set (
     id bigserial primary key,
-	code_set_group_id bigint,
+	code_set_group_id uuid,
 	code_system integer,
     code_value varchar(255)
 );
 
 drop table if exists code_set_group;
 create table if not exists code_set_group (
-	id bigserial primary key,
+	id uuid primary key DEFAULT uuid_generate_v1(),
 	group_name varchar(255)
 );
 
@@ -139,7 +140,7 @@ drop table if exists measure_result;
 create table if not exists measure_result (
 	id bigserial primary key,
 	patient_id bigint,
-	measure_id bigint,
+	measure_id uuid,
 	result_code varchar(255)
 );
 
@@ -197,7 +198,7 @@ group by a.patient_id
 order by record_count desc, a.patient_id desc;
 
 insert into measure (measure_name, measure_json, last_updated)
-values ('ABC','
+values ('BIKE','
     {
       "description": "Patients that are between the ages of 28 and 32 with an occurrence of a BIKE ACCIDENT or CRAZY IN-LAWS",
       "minimumSystemVersion": "1.0.0",

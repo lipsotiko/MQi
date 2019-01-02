@@ -13,13 +13,11 @@ import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 
-import java.io.IOException;
 import java.util.*;
 
 import static io.egia.mqi.chunk.ChunkStatus.PENDING;
 import static io.egia.mqi.chunk.ChunkStatus.PROCESSED;
-import static io.egia.mqi.helpers.Helpers.chunk;
-import static io.egia.mqi.helpers.Helpers.getMeasureFromResource;
+import static io.egia.mqi.helpers.Helpers.*;
 import static io.egia.mqi.job.JobStatus.RUNNING;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.*;
@@ -86,9 +84,9 @@ public class MeasureServiceTest {
         when(visitRepo.findByChunkGroup(1)).thenReturn(visits);
 
         when(chunkRepo.findTop1ByChunkStatus(PENDING))
-                .thenReturn(chunk(11L, 99L, 1, PENDING))
-                .thenReturn(chunk(11L, 88L, 2, PENDING))
-                .thenReturn(chunk(11L, 77L, 3, PENDING))
+                .thenReturn(chunk(99L, 1, PENDING))
+                .thenReturn(chunk(88L, 2, PENDING))
+                .thenReturn(chunk(77L, 3, PENDING))
                 .thenReturn(Optional.empty());
 
         measure = new Measure();
@@ -132,7 +130,7 @@ public class MeasureServiceTest {
 
     @Test
     public void measure_codesets_are_passed_to_processor() throws Exception {
-        CodeSetGroup codeSetGroupA = CodeSetGroup.builder().id(1L).groupName("CODE_SET_A").build();
+        CodeSetGroup codeSetGroupA = CodeSetGroup.builder().id(UUID1).groupName("CODE_SET_A").build();
         List<CodeSetGroup> codeSetGroups = new ArrayList<CodeSetGroup>() {{
             add(codeSetGroupA);
             add(codeSetGroupA);
@@ -141,8 +139,8 @@ public class MeasureServiceTest {
         when(codeSetGroupRepo.findAll()).thenReturn(codeSetGroups);
 
         CodeSet codeSetA = CodeSet.builder().codeSetGroup(codeSetGroupA).build();
-        when(codeSetRepo.findByCodeSetGroupIdIn(new HashSet<Long>() {{
-            add(1L);
+        when(codeSetRepo.findByCodeSetGroupIdIn(new HashSet<UUID>() {{
+            add(UUID1);
         }}))
                 .thenReturn(Collections.singletonList(codeSetA));
         Measure measure = getMeasureFromResource("fixtures", "sampleMeasure.json");
@@ -157,11 +155,11 @@ public class MeasureServiceTest {
         measureService.process(Collections.singletonList(measure), null);
 
         verify(measureResultRepo, times(1))
-                .deleteByChunkGroupAndMeasureId(1, 11L);
+                .deleteByChunkGroupAndMeasureId(1, UUID1);
         verify(measureResultRepo, times(1))
-                .deleteByChunkGroupAndMeasureId(2, 11L);
+                .deleteByChunkGroupAndMeasureId(2, UUID1);
         verify(measureResultRepo, times(1))
-                .deleteByChunkGroupAndMeasureId(3, 11L);
+                .deleteByChunkGroupAndMeasureId(3, UUID1);
     }
 
     @Test
@@ -171,9 +169,9 @@ public class MeasureServiceTest {
 
         verify(measureResultRepo, times(1)).saveAll(
                 Arrays.asList(
-                        MeasureResult.builder().patientId(77L).measureId(11L).resultCode("DENOMINATOR").build(),
-                        MeasureResult.builder().patientId(88L).measureId(11L).resultCode("DENOMINATOR").build(),
-                        MeasureResult.builder().patientId(99L).measureId(11L).resultCode("DENOMINATOR").build()
+                        MeasureResult.builder().patientId(77L).measureId(UUID1).resultCode("DENOMINATOR").build(),
+                        MeasureResult.builder().patientId(88L).measureId(UUID1).resultCode("DENOMINATOR").build(),
+                        MeasureResult.builder().patientId(99L).measureId(UUID1).resultCode("DENOMINATOR").build()
                 )
         );
     }
@@ -184,11 +182,11 @@ public class MeasureServiceTest {
         measureService.process(Collections.singletonList(measure), null);
 
         verify(patientMeasureLogRepo, times(1))
-                .deleteByChunkGroupAndMeasureId(1, 11L);
+                .deleteByChunkGroupAndMeasureId(1, UUID1);
         verify(patientMeasureLogRepo, times(1))
-                .deleteByChunkGroupAndMeasureId(2, 11L);
+                .deleteByChunkGroupAndMeasureId(2, UUID1);
         verify(patientMeasureLogRepo, times(1))
-                .deleteByChunkGroupAndMeasureId(3, 11L);
+                .deleteByChunkGroupAndMeasureId(3, UUID1);
     }
 
     @Test
@@ -198,9 +196,9 @@ public class MeasureServiceTest {
 
         verify(patientMeasureLogRepo, times(1)).saveAll(
                 Arrays.asList(
-                        PatientMeasureLog.builder().patientId(77L).measureId(11L).build(),
-                        PatientMeasureLog.builder().patientId(88L).measureId(11L).build(),
-                        PatientMeasureLog.builder().patientId(99L).measureId(11L).build()
+                        PatientMeasureLog.builder().patientId(77L).measureId(UUID1).build(),
+                        PatientMeasureLog.builder().patientId(88L).measureId(UUID1).build(),
+                        PatientMeasureLog.builder().patientId(99L).measureId(UUID1).build()
                 )
         );
     }

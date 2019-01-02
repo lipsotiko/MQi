@@ -45,7 +45,7 @@ public class MeasureProcessorTest {
         }
 
         Measure measure = getMeasureFromResource("fixtures", "sampleMeasure2.json");
-        measure.setMeasureId(1L);
+        measure.setMeasureId(UUID.randomUUID());
         measures.add(measure);
     }
 

@@ -6,11 +6,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.*;
 
-import java.sql.Date;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 @RestController
 public class MeasureController {
@@ -29,22 +29,22 @@ public class MeasureController {
     }
 
     @GetMapping("/measure")
-    public Measure getMeasure(@RequestParam(value = "measureId") Long measureId) {
+    public Measure getMeasure(@RequestParam(value = "measureId") UUID measureId) {
         Optional<Measure> optionalMeasure = measureRepo.findById(measureId);
         return optionalMeasure.orElse(null);
     }
 
     @DeleteMapping("/measure")
-    public void deleteMeasure(@RequestBody List<Long> measureIds) {
+    public void deleteMeasure(@RequestBody List<UUID> measureIds) {
         measureRepo.deleteAll(measureRepo.findAllById(measureIds));
     }
 
     @PutMapping("/measure")
     Measure putMeasure(@RequestBody Measure newMeasure) {
         ZonedDateTime now = ZonedDateTime.now(ZoneId.of("America/New_York"));
-        Optional<Measure> measure = measureRepo.findById(newMeasure.getMeasureId());
         MeasureLogic measureLogic;
-        if (measure.isPresent()) {
+        if (newMeasure.getMeasureId() != null) {
+            Optional<Measure> measure = measureRepo.findById(newMeasure.getMeasureId());
             Measure existingMeasure = measure.get();
             if (existingMeasure.getMeasureLogic().equals(newMeasure.getMeasureLogic())) {
                 existingMeasure.setMeasureName(newMeasure.getMeasureName());

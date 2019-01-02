@@ -2,15 +2,16 @@ package io.egia.mqi.measure;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 public class MeasureWorkspace {
     private Long patientId;
-    private Long measureId;
+    private UUID measureId;
     private boolean continueProcessing = true;
     private List<String> ruleTrace = new ArrayList<>();
     private String resultCode;
 
-    public MeasureWorkspace(Long patientId, Long measureId) {
+    public MeasureWorkspace(Long patientId, UUID measureId) {
         this.patientId = patientId;
         this.measureId = measureId;
     }
@@ -23,11 +24,11 @@ public class MeasureWorkspace {
         this.patientId = patientId;
     }
 
-    public Long getMeasureId() {
+    public UUID getMeasureId() {
         return measureId;
     }
 
-    public void setMeasureId(Long measureId) {
+    public void setMeasureId(UUID measureId) {
         this.measureId = measureId;
     }
 

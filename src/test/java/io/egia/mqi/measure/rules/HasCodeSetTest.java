@@ -13,6 +13,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import static io.egia.mqi.helpers.Helpers.UUID1;
 import static io.egia.mqi.visit.CodeSystem.ICD_10;
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -40,7 +41,7 @@ public class HasCodeSetTest {
         CodeSet codeSetB = CodeSet.builder().codeSetGroup(codeSetGroupB).codeSystem(ICD_10).codeValue("789").build();
         codeSets.add(codeSetB);
 
-        measureWorkspace = new MeasureWorkspace(1L, 11L);
+        measureWorkspace = new MeasureWorkspace(1L, UUID1);
     }
 
     @Test

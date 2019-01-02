@@ -35,7 +35,7 @@ public class Helpers {
         String measureLogicString = FileUtils.readFileToString(sampleMeasureJsonFile, "UTF-8");
         ObjectMapper mapper = new ObjectMapper();
         MeasureLogic measureLogic = mapper.readValue(measureLogicString, MeasureLogic.class);
-        measure.setMeasureId(11L);
+        measure.setMeasureId(UUID1);
         measure.setMeasureLogic(measureLogic);
         measure.setLastUpdated(ZonedDateTime.parse("2007-12-03T10:15:30+01:00[Europe/Paris]"));
         measure.setMeasureJson(measureLogicString);
@@ -77,10 +77,13 @@ public class Helpers {
                 .jobStatus(jobStatus).build());
     }
 
-    public static Optional<Chunk> chunk(Long serverId, Long patientId, Integer chunkGroup, ChunkStatus chunkStatus) {
+    public static Optional<Chunk> chunk(Long patientId, Integer chunkGroup, ChunkStatus chunkStatus) {
         return Optional.of(Chunk.builder()
                 .patientId(patientId)
                 .chunkGroup(chunkGroup)
                 .chunkStatus(chunkStatus).build());
     }
+
+    public static UUID UUID1 = UUID.fromString("11111111-1111-1111-1111-111111111111");
+    public static UUID UUID2 = UUID.fromString("22222222-1111-1111-1111-111111111111");
 }

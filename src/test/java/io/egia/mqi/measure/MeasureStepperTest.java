@@ -3,7 +3,6 @@ package io.egia.mqi.measure;
 import io.egia.mqi.patient.PatientData;
 import org.junit.Test;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -14,7 +13,6 @@ import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 public class MeasureStepperTest {
 
     private static final long PATIENT_ID = 1L;
-    private static final long MEASURE_ID = 11L;
     private static final int RULES_FIRED = 4;
 
     @Test
@@ -25,7 +23,7 @@ public class MeasureStepperTest {
 
         PatientData patientData = patientData(PATIENT_ID, "sampleMeasure.json");
         MeasureMetaData measureMetaData = measureMetaData("sampleMeasure.json");
-        MeasureWorkspace measureWorkspace = new MeasureWorkspace(PATIENT_ID, MEASURE_ID);
+        MeasureWorkspace measureWorkspace = new MeasureWorkspace(PATIENT_ID, UUID1);
         MeasureStepper subject = new MeasureStepper(patientData, measure, measureWorkspace, measureMetaData);
 
         assertThat(subject.stepThroughMeasure()).isEqualTo(RULES_FIRED);
@@ -36,7 +34,7 @@ public class MeasureStepperTest {
     @Test
     public void measure_with_infinite_loop_throws_exception() throws Exception {
         Measure measure = getMeasureFromResource("fixtures", "measureWithInfiniteLoop.json");
-        MeasureWorkspace measureWorkspace = new MeasureWorkspace(PATIENT_ID, MEASURE_ID);
+        MeasureWorkspace measureWorkspace = new MeasureWorkspace(PATIENT_ID, UUID1);
         MeasureStepper subject =
                 new MeasureStepper(new PatientData(PATIENT_ID), measure, measureWorkspace, new MeasureMetaData());
 
@@ -46,7 +44,7 @@ public class MeasureStepperTest {
     @Test
     public void measure_with_invalid_rule_throws_exception() throws Exception {
         Measure measure = getMeasureFromResource("fixtures", "measureWithRuleThatDoesNotExist.json");
-        MeasureWorkspace measureWorkspace = new MeasureWorkspace(PATIENT_ID, MEASURE_ID);
+        MeasureWorkspace measureWorkspace = new MeasureWorkspace(PATIENT_ID, UUID1);
         MeasureStepper subject =
                 new MeasureStepper(new PatientData(PATIENT_ID), measure, measureWorkspace, new MeasureMetaData());
 
@@ -58,7 +56,7 @@ public class MeasureStepperTest {
         Measure measure = new Measure();
         MeasureLogic measureLogic = new MeasureLogic();
         measure.setMeasureLogic(measureLogic);
-        MeasureWorkspace measureWorkspace = new MeasureWorkspace(PATIENT_ID, MEASURE_ID);
+        MeasureWorkspace measureWorkspace = new MeasureWorkspace(PATIENT_ID, UUID1);
         MeasureStepper subject =
                 new MeasureStepper(new PatientData(PATIENT_ID), measure, measureWorkspace, new MeasureMetaData());
 

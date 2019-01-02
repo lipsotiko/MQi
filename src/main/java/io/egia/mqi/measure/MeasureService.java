@@ -11,10 +11,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import java.time.ZonedDateTime;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 
 import static io.egia.mqi.chunk.ChunkStatus.PENDING;
 import static io.egia.mqi.chunk.ChunkStatus.PROCESSED;
@@ -88,7 +85,7 @@ public class MeasureService {
 
     private List<CodeSet> getCodesSetsForMeasures(List<Measure> measures) {
         List<CodeSetGroup> allCodeSetGroups = codeSetGroupRepo.findAll();
-        Set<Long> relevantCodeSetGroupIds = new HashSet<>();
+        Set<UUID> relevantCodeSetGroupIds = new HashSet<>();
 
         for (Measure m : measures) {
             for (CodeSetGroup csg : allCodeSetGroups) {

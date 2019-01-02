@@ -14,7 +14,10 @@ import org.mockito.junit.MockitoJUnitRunner;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.UUID;
 
+import static io.egia.mqi.helpers.Helpers.UUID1;
+import static io.egia.mqi.helpers.Helpers.UUID2;
 import static io.egia.mqi.job.JobStatus.DONE;
 import static io.egia.mqi.job.JobStatus.RUNNING;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -35,7 +38,7 @@ public class JobControllerTest {
     @Mock
     private JobProgressMonitor jobProgressMonitor;
     private JobController jobController;
-    private List<Long> stubbedMeasureIds = Arrays.asList(1L, 2L);
+    private List<UUID> stubbedMeasureIds = Arrays.asList(UUID1, UUID2);
     private Job job = Job.builder().id(1L).build();
     private List<Measure> measures;
 
@@ -52,9 +55,9 @@ public class JobControllerTest {
                 jobProgressMonitor);
 
         Measure measureA = new Measure();
-        measureA.setMeasureId(1L);
+        measureA.setMeasureId(UUID1);
         Measure measureB = new Measure();
-        measureB.setMeasureId(2L);
+        measureB.setMeasureId(UUID2);
 
         measures = Arrays.asList(measureA, measureB);
 

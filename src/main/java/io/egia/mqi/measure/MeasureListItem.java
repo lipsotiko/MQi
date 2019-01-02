@@ -4,17 +4,17 @@ import io.egia.mqi.job.JobStatus;
 import lombok.Data;
 
 import java.time.ZonedDateTime;
-import java.util.Date;
+import java.util.UUID;
 
 @Data
 public class MeasureListItem {
-    private Long measureId;
+    private UUID measureId;
     private String measureName;
     private ZonedDateTime measureLastUpdated;
     private JobStatus jobStatus;
     private ZonedDateTime jobLastUpdated;
 
-    public MeasureListItem(Long measureId, String measureName, ZonedDateTime measureLastUpdated) {
+    public MeasureListItem(UUID measureId, String measureName, ZonedDateTime measureLastUpdated) {
         this.measureId = measureId;
         this.measureName = measureName;
         this.measureLastUpdated = measureLastUpdated;

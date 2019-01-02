@@ -8,6 +8,7 @@ import lombok.NoArgsConstructor;
 import javax.persistence.*;
 import java.io.Serializable;
 import java.time.ZonedDateTime;
+import java.util.UUID;
 
 @Data
 @Entity
@@ -20,6 +21,6 @@ public class PatientMeasureLog implements Serializable {
     @GeneratedValue(strategy= GenerationType.IDENTITY)
     Long id;
     Long patientId;
-    Long measureId;
+    UUID measureId;
     @Column(updatable=false,insertable=false) private ZonedDateTime lastUpdated;
 }

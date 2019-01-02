@@ -1,7 +1,6 @@
 package io.egia.mqi.job;
 
 import io.egia.mqi.chunk.ChunkService;
-import io.egia.mqi.measure.MeasureProcessorException;
 import io.egia.mqi.measure.MeasureRepo;
 import io.egia.mqi.measure.MeasureService;
 import io.egia.mqi.measure.MeasureServiceException;
@@ -14,10 +13,9 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.Date;
 import java.util.List;
+import java.util.UUID;
 
-import static io.egia.mqi.job.JobStatus.DONE;
-import static io.egia.mqi.job.JobStatus.FAILURE;
-import static io.egia.mqi.job.JobStatus.RUNNING;
+import static io.egia.mqi.job.JobStatus.*;
 
 @RestController
 public class JobController {
@@ -43,7 +41,7 @@ public class JobController {
 
     @Async
     @PostMapping("/process")
-    public void process(@RequestBody List<Long> measureIds) {
+    public void process(@RequestBody List<UUID> measureIds) {
         Job job = jobRepo.saveAndFlush(
                 Job.builder()
                         .jobStatus(RUNNING)

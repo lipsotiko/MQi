@@ -3,7 +3,6 @@ package io.egia.mqi.job;
 import io.egia.mqi.chunk.ChunkRepo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
@@ -11,7 +10,7 @@ import org.springframework.stereotype.Service;
 import java.util.Optional;
 
 import static io.egia.mqi.chunk.ChunkStatus.PROCESSED;
-import static io.egia.mqi.job.JobStatus.*;
+import static io.egia.mqi.job.JobStatus.RUNNING;
 
 @Service
 class JobProgressMonitor {

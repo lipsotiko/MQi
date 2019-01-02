@@ -13,6 +13,8 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
+import static io.egia.mqi.helpers.Helpers.UUID1;
+import static io.egia.mqi.helpers.Helpers.UUID2;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @ActiveProfiles("test")
@@ -30,17 +32,17 @@ public class MeasureResultRepoTest {
     public void setUp() {
         chunkRepo.save(Chunk.builder().chunkGroup(1).patientId(1L).build());
         chunkRepo.save(Chunk.builder().chunkGroup(2).patientId(2L).build());
-        measureResultRepo.save(MeasureResult.builder().patientId(1L).measureId(1L).build());
-        measureResultRepo.save(MeasureResult.builder().patientId(2L).measureId(2L).build());
-        measureResultRepo.save(MeasureResult.builder().patientId(3L).measureId(1L).build());
-        measureResultRepo.save(MeasureResult.builder().patientId(4L).measureId(2L).build());
+        measureResultRepo.save(MeasureResult.builder().patientId(1L).measureId(UUID1).build());
+        measureResultRepo.save(MeasureResult.builder().patientId(2L).measureId(UUID2).build());
+        measureResultRepo.save(MeasureResult.builder().patientId(3L).measureId(UUID1).build());
+        measureResultRepo.save(MeasureResult.builder().patientId(4L).measureId(UUID2).build());
         assertThat(chunkRepo.count()).isEqualTo(2L);
         assertThat(measureResultRepo.count()).isEqualTo(4L);
     }
 
     @Test
     public void measureResultRepo_deleteByChunkGroupAndServerIdAndMeasureId() {
-        measureResultRepo.deleteByChunkGroupAndMeasureId(1, 1L);
+        measureResultRepo.deleteByChunkGroupAndMeasureId(1, UUID1);
         assertThat(measureResultRepo.count()).isEqualTo(3);
     }
 

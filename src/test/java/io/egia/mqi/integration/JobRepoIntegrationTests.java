@@ -7,16 +7,13 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
-import java.sql.Date;
-import java.time.LocalDate;
 import java.time.ZonedDateTime;
 import java.util.Collections;
 
+import static io.egia.mqi.helpers.Helpers.UUID1;
 import static io.egia.mqi.job.JobStatus.RUNNING;
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -27,15 +24,12 @@ public class JobRepoIntegrationTests {
 
     @Autowired private JobRepo jobRepo;
 
-    @MockBean
-    private SimpMessagingTemplate template;
-
     @Before
     public void setUp() {
         for(int i = 1; i < 5; i++) {
             Job job = new Job();
             job.setJobStatus(RUNNING);
-            job.setMeasureIds(Collections.singletonList((long) 1));
+            job.setMeasureIds(Collections.singletonList(UUID1));
             job.setLastUpdated(ZonedDateTime.now());
             jobRepo.saveAndFlush(job);
         }
@@ -49,7 +43,7 @@ public class JobRepoIntegrationTests {
 
     @Test
     public void jobRepo_findByMeasureIdsOrderByLastUpdatedDesc() {
-        Job job = jobRepo.findFirstByMeasureIdsOrderByLastUpdatedDesc(1L).get();
-        assertThat(job.getId()).isEqualTo(1);
+        Job job = jobRepo.findFirstByMeasureIdsOrderByLastUpdatedDesc(UUID1).get();
+        assertThat(job.getId()).isEqualTo(4);
     }
 }

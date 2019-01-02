@@ -14,9 +14,9 @@ import java.util.Optional;
 
 import static io.egia.mqi.chunk.ChunkStatus.PROCESSED;
 import static io.egia.mqi.helpers.Helpers.job;
-import static io.egia.mqi.job.JobStatus.*;
+import static io.egia.mqi.job.JobStatus.FAILURE;
+import static io.egia.mqi.job.JobStatus.RUNNING;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
 @RunWith(MockitoJUnitRunner.class)

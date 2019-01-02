@@ -14,6 +14,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -35,9 +36,9 @@ public class CodeSetRepoTest {
         codeSetGroupRepo.save(csg2);
         codeSetRepo.save(CodeSet.builder().codeSetGroup(csg2).build());
 
-        Set<Long> codeSetGroupIds = new HashSet<Long>(){{
-            add(1L);
-            add(2L);
+        Set<UUID> codeSetGroupIds = new HashSet<UUID>(){{
+            add(csg1.getId());
+            add(csg2.getId());
         }};
 
         List<CodeSet> byCodeSetGroupId = codeSetRepo.findByCodeSetGroupIdIn(codeSetGroupIds);

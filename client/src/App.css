@@ -63,6 +63,7 @@ nav {
 }
 
 .measure-list {
+  width: 160px;
   margin: 10px 0px 15px 0px;
   position: absolute;
   padding-bottom: 60px;
