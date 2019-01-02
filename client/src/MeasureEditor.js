@@ -71,7 +71,7 @@ class MeasureEditor extends Component {
                   <TableCell className='step-header-1' align="right">Step ID</TableCell>
                   <TableCell className='step-header-2' align="right">Rule</TableCell>
                   <TableCell className='step-header-1' align="right">Success Step ID</TableCell>
-                  <TableCell className='step-header-1'align="right">Failure Step ID</TableCell>
+                  <TableCell className='step-header-1' align="right">Failure Step ID</TableCell>
                   <div className='add-step'>
                     <Button onClick={async () => { await this._addStep(rules) }}>+ Step</Button>
                   </div>
@@ -92,25 +92,23 @@ class MeasureEditor extends Component {
           </div>
         </div>
         {measure &&
-          <div>
-            <aside className='right-aside'>
-              <TextField
-                label="Measure Name"
-                data-testid='measure-name'
-                value={measure.measureName}
-                onChange={(e) => this._changeName(e)}
-                margin="normal" />
-              <TextField
-                label="Description"
-                multiline
-                rowsMax="20"
-                value={measure.measureLogic.description}
-                onChange={(e) => this._changeDescription(e)}
-                margin="normal"
-                variant="outlined"
-              />
-            </aside>
-          </div>}
+          <aside className='right-aside'>
+            <TextField
+              label="Measure Name"
+              data-testid='measure-name'
+              value={measure.measureName}
+              onChange={(e) => this._changeName(e)}
+              margin="normal" />
+            <TextField
+              label="Description"
+              multiline
+              rowsMax="20"
+              value={measure.measureLogic.description}
+              onChange={(e) => this._changeDescription(e)}
+              margin="normal"
+              variant="outlined"
+            />
+          </aside>}
         <div className='footer'>
           {measure &&
             <>
