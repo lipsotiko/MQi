@@ -5,10 +5,12 @@ import lombok.Data;
 
 import java.util.List;
 import java.util.Objects;
+import java.util.UUID;
 
 @Data
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class MeasureLogic {
+    private UUID uuid;
     private String description;
     private String minimumSystemVersion;
     private List<Step> steps;

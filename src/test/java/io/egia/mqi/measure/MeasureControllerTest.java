@@ -11,8 +11,8 @@ import org.mockito.junit.MockitoJUnitRunner;
 import java.io.IOException;
 import java.util.Optional;
 
-import static io.egia.mqi.helpers.Helpers.getMeasureFromResource;
 import static io.egia.mqi.helpers.Helpers.UUID1;
+import static io.egia.mqi.helpers.Helpers.getMeasureFromResource;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.*;
 

@@ -16,6 +16,7 @@ mqi:
     system:
       version: 1.0.0
       pageSize: 5
+      measureBucketUrl: https://www.googleapis.com/storage/v1/b/mqi-measures/o
 
 logging:
   level:
