@@ -9,10 +9,11 @@ import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 
 import java.io.IOException;
+import java.util.Collections;
+import java.util.List;
 import java.util.Optional;
 
-import static io.egia.mqi.helpers.Helpers.UUID1;
-import static io.egia.mqi.helpers.Helpers.getMeasureFromResource;
+import static io.egia.mqi.helpers.Helpers.*;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.*;
 
@@ -20,6 +21,8 @@ import static org.mockito.Mockito.*;
 public class MeasureControllerTest {
 
     @Mock private MeasureRepo measureRepo;
+    @Mock private GoogleBackedPublicMeasureRepo googleBackedPublicMeasureRepo;
+
     private Measure existingMeasure;
     private Measure updatedMeasureDescription;
     private Measure updatedMeasureLogic;
@@ -39,7 +42,7 @@ public class MeasureControllerTest {
 
     @Test
     public void saving_measures_with_new_description_does_not_update_its_timestamp() {
-        MeasureController measureController = new MeasureController(measureRepo, null);
+        MeasureController measureController = new MeasureController(measureRepo, null, null);
         measureController.putMeasure(updatedMeasureDescription);
         verify(measureRepo, times(1)).saveAndFlush(captor.capture());
         assertThat(captor.getValue().getMeasureLogic()).isEqualTo(updatedMeasureDescription.getMeasureLogic());
@@ -48,7 +51,7 @@ public class MeasureControllerTest {
 
     @Test
     public void saving_measures_with_new_logic_updates_its_timestamp() {
-        MeasureController measureController = new MeasureController(measureRepo, null);
+        MeasureController measureController = new MeasureController(measureRepo, null, null);
         measureController.putMeasure(updatedMeasureLogic);
         verify(measureRepo, times(1)).saveAndFlush(captor.capture());
         assertThat(captor.getValue().getMeasureLogic().getDescription()).isEqualTo(
@@ -56,4 +59,29 @@ public class MeasureControllerTest {
         assertThat(captor.getValue().getMeasureLogic()).isNotEqualTo(existingMeasure.getMeasureLogic());
         assertThat(captor.getValue().getLastUpdated()).isNotEqualTo(existingMeasure.getLastUpdated());
     }
+
+    @Test
+    public void uninstalled_public_measures_are_available_to_be_installed() {
+        PublicMeasureListItem uninstalledMeasure = new PublicMeasureListItem("22222222-1111-1111-1111-111111111111_DIAS.json");
+        when(googleBackedPublicMeasureRepo.getMeasureList()).thenReturn(Collections.singletonList(uninstalledMeasure));
+
+        MeasureController measureController = new MeasureController(measureRepo, null, googleBackedPublicMeasureRepo);
+        List<PublicMeasureListItem> publicMeasureList = measureController.getPublicMeasureList();
+
+        PublicMeasureListItem expectedMeasureListItem = new PublicMeasureListItem(UUID2, "DIAS.json", false);
+        assertThat(publicMeasureList.get(0)).isEqualTo(expectedMeasureListItem);
+    }
+
+    @Test
+    public void installed_public_measures_are_NOT_available_to_be_installed() {
+        PublicMeasureListItem installedMeasureListItem = new PublicMeasureListItem("11111111-1111-1111-1111-111111111111_sampleMeasure.json");
+        when(googleBackedPublicMeasureRepo.getMeasureList()).thenReturn(Collections.singletonList(installedMeasureListItem));
+
+        MeasureController measureController = new MeasureController(measureRepo, null, googleBackedPublicMeasureRepo);
+        List<PublicMeasureListItem> publicMeasureList = measureController.getPublicMeasureList();
+
+        PublicMeasureListItem expectedMeasureListItem = new PublicMeasureListItem(UUID1, "sampleMeasure.json", true);
+        assertThat(publicMeasureList.get(0)).isEqualTo(expectedMeasureListItem);
+    }
+
 }

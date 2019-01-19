@@ -1,0 +1,94 @@
+{
+  "description": "Patients that are between the ages of 28 and 32 with an occurrence of a BIKE ACCIDENT or CRAZY IN-LAWS",
+  "minimumSystemVersion": "1.0.0",
+  "steps": [
+    {
+      "stepId": 100,
+      "ruleName": "AgeWithinDateRange",
+      "parameters": [
+        {
+          "ruleParamId": null,
+          "ruleName": "AgeWithinDateRange",
+          "paramName": "FROM_AGE",
+          "paramType": "INTEGER",
+          "paramValue": "28"
+        },
+        {
+          "ruleParamId": null,
+          "ruleName": "AgeWithinDateRange",
+          "paramName": "TO_AGE",
+          "paramType": "INTEGER",
+          "paramValue": "32"
+        },
+        {
+          "ruleParamId": null,
+          "ruleName": "AgeWithinDateRange",
+          "paramName": "START_DATE",
+          "paramType": "DATE",
+          "paramValue": "19880428"
+        },
+        {
+          "ruleParamId": null,
+          "ruleName": "AgeWithinDateRange",
+          "paramName": "END_DATE",
+          "paramType": "DATE",
+          "paramValue": "19880428"
+        }
+      ],
+      "successStepId": 200,
+      "failureStepId": 99999
+    },
+    {
+      "stepId": 200,
+      "ruleName": "HasCodeSet",
+      "parameters": [
+        {
+          "ruleParamId": null,
+          "ruleName": "HasCodeSet",
+          "paramName": "CODE_SET",
+          "paramType": "TEXT",
+          "paramValue": "CRAZY IN-LAWS"
+        }
+      ],
+      "successStepId": 400,
+      "failureStepId": 300
+    },
+    {
+      "stepId": 300,
+      "ruleName": "HasCodeSet",
+      "parameters": [
+        {
+          "ruleParamId": null,
+          "ruleName": "HasCodeSet",
+          "paramName": "CODE_SET",
+          "paramType": "TEXT",
+          "paramValue": "BIKE ACCIDENT"
+        }
+      ],
+      "successStepId": 400,
+      "failureStepId": 99999
+    },
+    {
+      "stepId": 400,
+      "ruleName": "SetResultCode",
+      "parameters": [
+        {
+          "ruleParamId": null,
+          "ruleName": "SetResultCode",
+          "paramName": "RESULT_CODE",
+          "paramType": "TEXT",
+          "paramValue": "DENOMINATOR"
+        }
+      ],
+      "successStepId": 99999,
+      "failureStepId": 99999
+    },
+    {
+      "stepId": 500,
+      "ruleName": "ExitMeasure",
+      "parameters": [],
+      "successStepId": 99999,
+      "failureStepId": 99999
+    }
+  ]
+}

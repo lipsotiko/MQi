@@ -11,11 +11,13 @@ import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @RestController
 public class MeasureController {
     private MeasureRepo measureRepo;
     private RuleParamRepo ruleParamRepo;
+    private GoogleBackedPublicMeasureRepo googleBackedPublicMeasureRepo;
 
     @Autowired
     private JobRepo jobRepo;
@@ -23,9 +25,10 @@ public class MeasureController {
     @Value("${mqi.properties.system.version}")
     private String systemVersion;
 
-    MeasureController(MeasureRepo measureRepo, RuleParamRepo ruleParamRepo) {
+    MeasureController(MeasureRepo measureRepo, RuleParamRepo ruleParamRepo, GoogleBackedPublicMeasureRepo googleBackedPublicMeasureRepo) {
         this.measureRepo = measureRepo;
         this.ruleParamRepo = ruleParamRepo;
+        this.googleBackedPublicMeasureRepo = googleBackedPublicMeasureRepo;
     }
 
     @GetMapping("/measure")
@@ -69,13 +72,22 @@ public class MeasureController {
         measureListItems.forEach(measureListItem -> {
             Optional<Job> optionalJob = jobRepo.findFirstByMeasureIdsOrderByLastUpdatedDesc(measureListItem.getMeasureId());
             optionalJob.ifPresent(job -> {
-                if(job.getLastUpdated().isAfter(measureListItem.getMeasureLastUpdated())) {
+                if (job.getLastUpdated().isAfter(measureListItem.getMeasureLastUpdated())) {
                     measureListItem.setJobStatus(job.getJobStatus());
                     measureListItem.setJobLastUpdated(job.getLastUpdated());
                 }
             });
         });
         return measureListItems;
+    }
+
+    @GetMapping("/public_measure_list")
+    public List<PublicMeasureListItem> getPublicMeasureList() {
+        List<PublicMeasureListItem> measureList = googleBackedPublicMeasureRepo.getMeasureList();
+        measureList = measureList.stream().peek(m -> {
+            m.setInstalled(measureRepo.findById(m.getMeasureId()).isPresent());
+        }).collect(Collectors.toList());
+        return measureList;
     }
 
     @GetMapping("/rules_params")

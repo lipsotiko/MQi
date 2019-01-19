@@ -24,7 +24,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 @ActiveProfiles("test")
 @RunWith(SpringJUnit4ClassRunner.class)
 @SpringBootTest
-public class MeasureControllerIntegrationTest {
+public class MeasureControllerContractTest {
 
     @Autowired
     private MeasureRepo measureRepo;
