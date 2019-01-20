@@ -7,6 +7,7 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
 import java.util.UUID;
 
 @Repository
@@ -18,4 +19,5 @@ public interface MeasureResultRepo extends JpaRepository<MeasureResult, Long> {
             "and p.measureId = :m")
     void deleteByChunkGroupAndMeasureId(@Param("c") Integer chunkGroup, @Param("m") UUID measureId);
 
+    List<MeasureResult> findAllByMeasureId(UUID measureId);
 }

@@ -1,5 +1,5 @@
 {
-  "description": "Patients that are between the ages of 28 and 32 with an occurrence of a BIKE ACCIDENT or CRAZY IN-LAWS",
+  "description": "Patients that are between the ages of 28 and 32 with an occurrence of a BIKE ACCIDENT",
   "minimumSystemVersion": "1.0.0",
   "steps": [
     {
@@ -47,29 +47,14 @@
           "ruleName": "HasCodeSet",
           "paramName": "CODE_SET",
           "paramType": "TEXT",
-          "paramValue": "CRAZY IN-LAWS"
-        }
-      ],
-      "successStepId": 400,
-      "failureStepId": 300
-    },
-    {
-      "stepId": 300,
-      "ruleName": "HasCodeSet",
-      "parameters": [
-        {
-          "ruleParamId": null,
-          "ruleName": "HasCodeSet",
-          "paramName": "CODE_SET",
-          "paramType": "TEXT",
           "paramValue": "BIKE ACCIDENT"
         }
       ],
-      "successStepId": 400,
+      "successStepId": 300,
       "failureStepId": 99999
     },
     {
-      "stepId": 400,
+      "stepId": 300,
       "ruleName": "SetResultCode",
       "parameters": [
         {
@@ -80,11 +65,11 @@
           "paramValue": "DENOMINATOR"
         }
       ],
-      "successStepId": 99999,
+      "successStepId": 400,
       "failureStepId": 99999
     },
     {
-      "stepId": 500,
+      "stepId": 400,
       "ruleName": "ExitMeasure",
       "parameters": [],
       "successStepId": 99999,
