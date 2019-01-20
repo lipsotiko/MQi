@@ -17,4 +17,5 @@ public interface Processor {
     void clear();
     List<PatientMeasureLog> getLog();
     List<MeasureResult> getResults();
+    List<RuleTrace> getRuleTrace();
 }

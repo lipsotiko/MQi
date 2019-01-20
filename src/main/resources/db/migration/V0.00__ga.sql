@@ -144,6 +144,15 @@ create table if not exists measure_result (
 	result_code varchar(255)
 );
 
+drop view if exists rule_trace;
+create table rule_trace (
+    id bigserial primary key,
+	measure_id uuid,
+	patient_id bigint,
+    rule_name varchar(255)
+);
+
+
 drop table if exists job_status;
 create table if not exists job_status (
 	id serial primary key,
@@ -279,3 +288,4 @@ values ('BIKE','
       ]
    }'
   , current_timestamp);
+

@@ -6,6 +6,7 @@ import io.egia.mqi.visit.Visit;
 
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class ProcessorSpy implements Processor {
@@ -98,6 +99,23 @@ public class ProcessorSpy implements Processor {
         }
 
         return stubbedResults;
+    }
+
+    @Override
+    public List<RuleTrace> getRuleTrace() {
+        List<RuleTrace> ruleTraceList = new ArrayList<>();
+        this.processWasCalledWithMeasures.forEach(m -> {
+            this.processWasCalledWithPatients.forEach(p -> {
+                RuleTrace ruleTrace = RuleTrace.builder()
+                        .measureId(m.getMeasureId())
+                        .patientId(p.getPatientId())
+                        .ruleName(null)
+                        .build();
+                ruleTraceList.add(ruleTrace);
+            });
+
+        });
+        return ruleTraceList;
     }
 
 }

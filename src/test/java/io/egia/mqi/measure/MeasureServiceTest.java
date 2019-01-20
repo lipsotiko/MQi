@@ -45,6 +45,9 @@ public class MeasureServiceTest {
     private Patient p77, p88, p99;
     private Visit v199;
 
+    @Mock
+    private RuleTraceRepo ruleTraceRepo;
+
     @Before
     public void setUp() {
         processorSpy = new ProcessorSpy();
@@ -56,7 +59,8 @@ public class MeasureServiceTest {
                 codeSetGroupRepo,
                 codeSetRepo,
                 patientMeasureLogRepo,
-                measureResultRepo);
+                measureResultRepo,
+                ruleTraceRepo);
 
         Job job = new Job();
         job.setId(44L);
@@ -199,6 +203,33 @@ public class MeasureServiceTest {
                         PatientMeasureLog.builder().patientId(77L).measureId(UUID1).build(),
                         PatientMeasureLog.builder().patientId(88L).measureId(UUID1).build(),
                         PatientMeasureLog.builder().patientId(99L).measureId(UUID1).build()
+                )
+        );
+    }
+
+    @Test
+    public void measure_rule_trace_is_removed() throws Exception {
+        Measure measure = getMeasureFromResource("fixtures", "sampleMeasure2.json");
+        measureService.process(Collections.singletonList(measure), null);
+
+        verify(ruleTraceRepo, times(1))
+                .deleteByChunkGroupAndMeasureId(1, UUID1);
+        verify(ruleTraceRepo, times(1))
+                .deleteByChunkGroupAndMeasureId(2, UUID1);
+        verify(ruleTraceRepo, times(1))
+                .deleteByChunkGroupAndMeasureId(3, UUID1);
+    }
+
+    @Test
+    public void measure_rule_trace_is_saved() throws Exception {
+        Measure measure = getMeasureFromResource("fixtures", "sampleMeasure2.json");
+        measureService.process(Collections.singletonList(measure), null);
+
+        verify(ruleTraceRepo, times(1)).saveAll(
+                Arrays.asList(
+                        RuleTrace.builder().patientId(77L).measureId(UUID1).build(),
+                        RuleTrace.builder().patientId(88L).measureId(UUID1).build(),
+                        RuleTrace.builder().patientId(99L).measureId(UUID1).build()
                 )
         );
     }

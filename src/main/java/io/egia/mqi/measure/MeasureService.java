@@ -27,6 +27,7 @@ public class MeasureService {
     private CodeSetRepo codeSetRepo;
     private final PatientMeasureLogRepo patientMeasureLogRepo;
     private final MeasureResultRepo measureResultRepo;
+    private RuleTraceRepo ruleTraceRepo;
 
     MeasureService(ChunkRepo chunkRepo,
                    PatientRepo patientRepo,
@@ -35,7 +36,8 @@ public class MeasureService {
                    CodeSetGroupRepo codeSetGroupRepo,
                    CodeSetRepo codeSetRepo,
                    PatientMeasureLogRepo patientMeasureLogRepo,
-                   MeasureResultRepo measureResultRepo) {
+                   MeasureResultRepo measureResultRepo,
+                   RuleTraceRepo ruleTraceRepo) {
         this.chunkRepo = chunkRepo;
         this.patientRepo = patientRepo;
         this.visitRepo = visitRepo;
@@ -44,6 +46,7 @@ public class MeasureService {
         this.codeSetRepo = codeSetRepo;
         this.patientMeasureLogRepo = patientMeasureLogRepo;
         this.measureResultRepo = measureResultRepo;
+        this.ruleTraceRepo = ruleTraceRepo;
     }
 
     public void process(List<Measure> measures, Long jobId) throws MeasureServiceException {
@@ -75,12 +78,14 @@ public class MeasureService {
         for (Measure m : measures) {
             patientMeasureLogRepo.deleteByChunkGroupAndMeasureId(chunkGroup, m.getMeasureId());
             measureResultRepo.deleteByChunkGroupAndMeasureId(chunkGroup, m.getMeasureId());
+            ruleTraceRepo.deleteByChunkGroupAndMeasureId(chunkGroup, m.getMeasureId());
         }
     }
 
     private void saveMeasureResults(Processor processor) {
         patientMeasureLogRepo.saveAll(processor.getLog());
         measureResultRepo.saveAll(processor.getResults());
+        ruleTraceRepo.saveAll(processor.getRuleTrace());
     }
 
     private List<CodeSet> getCodesSetsForMeasures(List<Measure> measures) {

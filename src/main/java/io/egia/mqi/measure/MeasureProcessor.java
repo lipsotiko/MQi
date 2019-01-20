@@ -86,6 +86,21 @@ public class MeasureProcessor implements Processor {
         return results;
     }
 
+    @Override
+    public List<RuleTrace> getRuleTrace() {
+        List<RuleTrace> ruleTraceList = new ArrayList<>();
+        this.measureWorkspaces.forEach(mw -> mw.getRuleTrace().forEach(r -> {
+            RuleTrace ruleTrace = RuleTrace.builder()
+                    .measureId(mw.getMeasureId())
+                    .patientId(mw.getPatientId())
+                    .ruleName(r)
+                    .build();
+            ruleTraceList.add(ruleTrace);
+        }));
+
+        return ruleTraceList;
+    }
+
     private <T extends PatientRecordInterface> void appendToPatientDataHash(List<T> patientRecords) {
         for (T patientRecord : patientRecords) {
             PatientData patientData = this.patientDataHash.get(patientRecord.getPatientId());
