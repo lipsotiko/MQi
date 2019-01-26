@@ -29,19 +29,19 @@ public class AgeWithinDateRangeTest {
 
         patientData = new PatientData(1L);
 
-        RuleParam ruleParam1 = new RuleParam("", "FROM_AGE","");
+        RuleParam ruleParam1 = new RuleParam("", "FROM_AGE", "");
         ruleParam1.setParamValue("28");
         ruleParams.add(ruleParam1);
 
-        RuleParam ruleParam2 = new RuleParam("", "TO_AGE","");
+        RuleParam ruleParam2 = new RuleParam("", "TO_AGE", "");
         ruleParam2.setParamValue("32");
         ruleParams.add(ruleParam2);
 
-        RuleParam ruleParam3 = new RuleParam("", "START_DATE","");
+        RuleParam ruleParam3 = new RuleParam("", "START_DATE", "");
         ruleParam3.setParamValue("19850122");
         ruleParams.add(ruleParam3);
 
-        RuleParam ruleParam4 = new RuleParam("", "END_DATE","");
+        RuleParam ruleParam4 = new RuleParam("", "END_DATE", "");
         ruleParam4.setParamValue("19901109");
         ruleParams.add(ruleParam4);
 

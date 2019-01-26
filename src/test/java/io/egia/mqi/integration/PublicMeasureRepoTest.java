@@ -17,7 +17,9 @@ abstract class PublicMeasureRepoTest {
 
     private PublicMeasureRepo<Measure> publicMeasureRepo;
     private String objectName = "2ec8c7b1-81da-4e44-8fc5-2cb0a4f0bf94_BIKE.json";
+
     abstract void setMeasureBucketUrl(PublicMeasureRepo publicMeasureRepo);
+
     abstract PublicMeasureRepo<Measure> getPublicMeasureRepo();
 
     @Before

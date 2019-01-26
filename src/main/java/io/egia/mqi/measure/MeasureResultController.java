@@ -34,7 +34,7 @@ public class MeasureResultController {
 
     @GetMapping("/rule_trace")
     public List<RuleTrace> getRuleTrace(@RequestParam(value = "measureId") UUID measureId,
-                                     @RequestParam(value = "patientId") Long patientId) {
+                                        @RequestParam(value = "patientId") Long patientId) {
         return ruleTraceRepo.findAllByMeasureIdAndPatientId(measureId, patientId);
     }
 

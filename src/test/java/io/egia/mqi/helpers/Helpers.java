@@ -70,7 +70,7 @@ public class Helpers {
         return null;
     }
 
-    public static Optional<Job> job(Long id, Long initialPatientCount, JobStatus jobStatus) {
+    public static Optional<Job> job(UUID id, Long initialPatientCount, JobStatus jobStatus) {
         return Optional.of(Job.builder()
                 .id(id)
                 .initialPatientCount(initialPatientCount)
@@ -86,4 +86,6 @@ public class Helpers {
 
     public static UUID UUID1 = UUID.fromString("11111111-1111-1111-1111-111111111111");
     public static UUID UUID2 = UUID.fromString("22222222-1111-1111-1111-111111111111");
+    public static UUID UUID3 = UUID.fromString("33333333-1111-1111-1111-111111111111");
+
 }

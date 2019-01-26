@@ -6,6 +6,7 @@ import io.egia.mqi.visit.Visit;
 
 import java.time.ZonedDateTime;
 import java.util.List;
+import java.util.UUID;
 
 public interface Processor {
     void process(List<Measure> measures,
@@ -13,9 +14,13 @@ public interface Processor {
                  List<Visit> visits,
                  MeasureMetaData measureMetaData,
                  ZonedDateTime timeExecuted,
-                 Long jobId) throws MeasureProcessorException;
+                 UUID jobId) throws MeasureProcessorException;
+
     void clear();
+
     List<PatientMeasureLog> getLog();
+
     List<MeasureResult> getResults();
+
     List<RuleTrace> getRuleTrace();
 }

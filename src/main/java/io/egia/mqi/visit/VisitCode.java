@@ -12,7 +12,7 @@ import javax.persistence.Id;
 public class VisitCode {
 
     @Id
-    @GeneratedValue(strategy=GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long visitCodeId;
     private Long visitId;
     private CodeSystem codeSystem;

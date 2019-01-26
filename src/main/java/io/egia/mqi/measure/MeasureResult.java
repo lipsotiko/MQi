@@ -18,7 +18,7 @@ import java.util.UUID;
 @AllArgsConstructor
 public class MeasureResult {
     @Id
-    @GeneratedValue(strategy= GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private Long patientId;
     private UUID measureId;

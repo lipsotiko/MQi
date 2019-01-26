@@ -31,7 +31,7 @@ public class RuleParamUtility {
         for (Class c : annotated) {
             ruleClass = Class.forName(c.getName());
             RuleParams rule = ruleClass.getAnnotation(RuleParams.class);
-            String ruleName = c.getName().substring(packagePrefix.length()+1);
+            String ruleName = c.getName().substring(packagePrefix.length() + 1);
 
             if (rule.params().length == 0) {
                 ruleParamRepo.save(new RuleParam(ruleName, null, null));
@@ -39,7 +39,7 @@ public class RuleParamUtility {
             }
 
             for (Param param : rule.params()) {
-                ruleParamRepo.save(new RuleParam(ruleName,param.name(), param.type()));
+                ruleParamRepo.save(new RuleParam(ruleName, param.name(), param.type()));
             }
         }
     }

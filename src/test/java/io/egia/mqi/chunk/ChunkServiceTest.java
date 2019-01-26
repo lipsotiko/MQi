@@ -133,7 +133,7 @@ public class ChunkServiceTest {
     public void page_size_is_rounded_up() {
         when(patientRecordCountRepo.count()).thenReturn(50L);
         chunkService.chunkData(mock(Job.class));
-        verify(patientRecordCountRepo,times(5)).findBy(any());
+        verify(patientRecordCountRepo, times(5)).findBy(any());
     }
 
     private Chunk buildChunk(long patientId, long recordCount, int chunkGroup) {

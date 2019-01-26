@@ -18,9 +18,10 @@ import java.util.UUID;
 public class PatientMeasureLog implements Serializable {
 
     @Id
-    @GeneratedValue(strategy= GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     Long id;
     Long patientId;
     UUID measureId;
-    @Column(updatable=false,insertable=false) private ZonedDateTime lastUpdated;
+    @Column(updatable = false, insertable = false)
+    private ZonedDateTime lastUpdated;
 }

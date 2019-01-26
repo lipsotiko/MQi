@@ -29,7 +29,7 @@ public class PatientData {
         return this.patientId;
     }
 
-    public int getVisitCount(){
+    public int getVisitCount() {
         return this.visits.size();
     }
 

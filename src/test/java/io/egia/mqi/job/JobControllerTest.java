@@ -39,7 +39,7 @@ public class JobControllerTest {
     private JobProgressMonitor jobProgressMonitor;
     private JobController jobController;
     private List<UUID> stubbedMeasureIds = Arrays.asList(UUID1, UUID2);
-    private Job job = Job.builder().id(1L).build();
+    private Job job = Job.builder().id(UUID1).build();
     private List<Measure> measures;
 
     @Captor
@@ -90,7 +90,7 @@ public class JobControllerTest {
     @Test
     public void starts_measure_service_process() throws Exception {
         jobController.process(stubbedMeasureIds);
-        verify(measureService).process(measures, 1L);
+        verify(measureService).process(measures, UUID1);
     }
 
 }

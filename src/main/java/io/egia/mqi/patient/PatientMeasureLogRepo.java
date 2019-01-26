@@ -13,7 +13,7 @@ import java.util.UUID;
 public interface PatientMeasureLogRepo extends JpaRepository<PatientMeasureLog, Long> {
     @Modifying
     @Transactional
-    @Query(value="delete from PatientMeasureLog p where p.patientId in (" +
+    @Query(value = "delete from PatientMeasureLog p where p.patientId in (" +
             "select patientId from Chunk c where c. chunkGroup = :c) " +
             "and p.measureId = :m")
     void deleteByChunkGroupAndMeasureId(@Param("c") Integer chunkGroup, @Param("m") UUID measureId);

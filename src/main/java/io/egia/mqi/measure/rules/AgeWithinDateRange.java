@@ -13,11 +13,11 @@ import static io.egia.mqi.measure.helpers.ParamHelper.getDate;
 import static io.egia.mqi.measure.helpers.ParamHelper.getInt;
 import static java.util.Calendar.*;
 
-@RuleParams(params={
-        @Param(name="FROM_AGE", type = "INTEGER")
-        , @Param(name="TO_AGE", type = "INTEGER")
-        , @Param(name="START_DATE", type = "DATE")
-        , @Param(name="END_DATE", type = "DATE")
+@RuleParams(params = {
+        @Param(name = "FROM_AGE", type = "INTEGER")
+        , @Param(name = "TO_AGE", type = "INTEGER")
+        , @Param(name = "START_DATE", type = "DATE")
+        , @Param(name = "END_DATE", type = "DATE")
 })
 public class AgeWithinDateRange implements Rule {
     public MeasureWorkspace evaluate(PatientData patientData,
@@ -25,7 +25,7 @@ public class AgeWithinDateRange implements Rule {
                                      MeasureMetaData measureMetaData,
                                      MeasureWorkspace measureWorkspace) {
 
-        if(patientData.getPatient().getDateOfBirth() == null) {
+        if (patientData.getPatient().getDateOfBirth() == null) {
             measureWorkspace.setContinueProcessing(false);
             return measureWorkspace;
         }
@@ -47,7 +47,7 @@ public class AgeWithinDateRange implements Rule {
         Integer ageAtStartDate = getDiffYears(patientData.getPatient().getDateOfBirth(), startDate);
         Integer ageAtEndDate = getDiffYears(patientData.getPatient().getDateOfBirth(), endDate);
 
-        if(ageAtStartDate.equals(fromAge) || toAge.equals(ageAtEndDate)) {
+        if (ageAtStartDate.equals(fromAge) || toAge.equals(ageAtEndDate)) {
             return measureWorkspace;
         }
 

@@ -19,7 +19,7 @@ import java.util.UUID;
 public class RuleTrace {
 
     @Id
-    @GeneratedValue(strategy= GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private UUID measureId;
     private Long patientId;

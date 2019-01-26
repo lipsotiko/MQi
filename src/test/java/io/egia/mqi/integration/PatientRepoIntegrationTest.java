@@ -22,8 +22,10 @@ import static org.assertj.core.api.Assertions.assertThat;
 @SpringBootTest
 public class PatientRepoIntegrationTest {
 
-    @Autowired private PatientRepo patientRepo;
-    @Autowired private ChunkRepo chunkRepo;
+    @Autowired
+    private PatientRepo patientRepo;
+    @Autowired
+    private ChunkRepo chunkRepo;
 
     @Before
     public void setUp() {

@@ -21,15 +21,24 @@ import static io.egia.mqi.visit.CodeSystem.*;
 @RestController
 public class SeedDdController {
 
-    @Autowired private PatientRepo patientRepo;
-    @Autowired private VisitRepo visitRepo;
-    @Autowired private VisitCodeRepo visitCodeRepo;
-    @Autowired private ChunkRepo chunkRepo;
-    @Autowired private PatientMeasureLogRepo patientMeasureLogRepo;
-    @Autowired private CodeSetRepo codeSetRepo;
-    @Autowired private CodeSetGroupRepo codeSetGroupRepo;
-    @Autowired private MeasureResultRepo measureResultRepo;
-    @Autowired private JobRepo jobRepo;
+    @Autowired
+    private PatientRepo patientRepo;
+    @Autowired
+    private VisitRepo visitRepo;
+    @Autowired
+    private VisitCodeRepo visitCodeRepo;
+    @Autowired
+    private ChunkRepo chunkRepo;
+    @Autowired
+    private PatientMeasureLogRepo patientMeasureLogRepo;
+    @Autowired
+    private CodeSetRepo codeSetRepo;
+    @Autowired
+    private CodeSetGroupRepo codeSetGroupRepo;
+    @Autowired
+    private MeasureResultRepo measureResultRepo;
+    @Autowired
+    private JobRepo jobRepo;
 
     @GetMapping("/seed")
     public Map<String, Integer> seedDb() {

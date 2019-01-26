@@ -5,7 +5,7 @@ import io.egia.mqi.patient.PatientData;
 
 import java.util.List;
 
-@RuleParams(params={
+@RuleParams(params = {
         @Param(type = "INVISIBLE")
 })
 public class ExitMeasure implements Rule {

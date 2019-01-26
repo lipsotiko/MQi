@@ -13,11 +13,12 @@ import java.time.ZonedDateTime;
 @Builder
 @AllArgsConstructor
 public class PatientRecordCount {
-    @Id Long patientId;
+    @Id
+    Long patientId;
     ZonedDateTime lastUpdated;
     Long recordCount;
 
-    public PatientRecordCount () {
+    public PatientRecordCount() {
 
     }
 }

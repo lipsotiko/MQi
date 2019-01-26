@@ -13,6 +13,7 @@ import org.springframework.messaging.simp.SimpMessagingTemplate;
 import java.util.Optional;
 
 import static io.egia.mqi.chunk.ChunkStatus.PROCESSED;
+import static io.egia.mqi.helpers.Helpers.UUID1;
 import static io.egia.mqi.helpers.Helpers.job;
 import static io.egia.mqi.job.JobStatus.FAILURE;
 import static io.egia.mqi.job.JobStatus.RUNNING;
@@ -33,11 +34,11 @@ public class JobProgressMonitorTest {
 
     @Before
     public void setUp() {
-        when(jobRepo.findById(1L))
-                .thenReturn(job(1L, 30L, RUNNING))
-                .thenReturn(job(1L, 30L, RUNNING))
-                .thenReturn(job(1L, 30L, RUNNING))
-                .thenReturn(job(1L, 30L, FAILURE))
+        when(jobRepo.findById(UUID1))
+                .thenReturn(job(UUID1, 30L, RUNNING))
+                .thenReturn(job(UUID1, 30L, RUNNING))
+                .thenReturn(job(UUID1, 30L, RUNNING))
+                .thenReturn(job(UUID1, 30L, FAILURE))
                 .thenReturn(Optional.empty());
     }
 
@@ -45,7 +46,7 @@ public class JobProgressMonitorTest {
     public void updates_job_with_processed_patients_count() {
         when(chunkRepo.countByChunkStatus(PROCESSED)).thenReturn(10L).thenReturn(20L).thenReturn(30L);
         JobProgressMonitor jobProgressMonitor = new JobProgressMonitor(jobRepo, chunkRepo, template);
-        jobProgressMonitor.startMonitoringJob(1, 1L);
+        jobProgressMonitor.startMonitoringJob(1, UUID1);
 
         verify(template, times(3)).convertAndSend(eq("/topic/job"), messageCaptor.capture());
         assertThat(messageCaptor.getAllValues().get(0).getProcessedPatientCount()).isEqualTo(10L);

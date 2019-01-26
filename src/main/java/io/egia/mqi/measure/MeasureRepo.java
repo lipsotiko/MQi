@@ -10,8 +10,8 @@ import java.util.UUID;
 @Repository
 public interface MeasureRepo extends JpaRepository<Measure, UUID> {
 
-	@Query(value="select new io.egia.mqi.measure.MeasureListItem(m.measureId, m.measureName, m.lastUpdated) " +
-			"from Measure m order by m.measureName")
-	List<MeasureListItem> findAllMeasureListItems();
+    @Query(value = "select new io.egia.mqi.measure.MeasureListItem(m.measureId, m.measureName, m.lastUpdated) " +
+            "from Measure m order by m.measureName")
+    List<MeasureListItem> findAllMeasureListItems();
 
 }

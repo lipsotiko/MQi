@@ -8,6 +8,7 @@ import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
+import java.util.UUID;
 
 import static io.egia.mqi.chunk.ChunkStatus.PROCESSED;
 import static io.egia.mqi.job.JobStatus.RUNNING;
@@ -27,7 +28,7 @@ class JobProgressMonitor {
     }
 
     @Async
-    void startMonitoringJob(Integer pollInterval, Long jobId) {
+    void startMonitoringJob(Integer pollInterval, UUID jobId) {
         log.info(String.format("Started Job Progress Monitoring process on Job#: %s ", jobId));
         Long processedPatientsCount;
 

@@ -29,7 +29,7 @@ class MeasureStepper {
     }
 
     int stepThroughMeasure() throws MeasureStepperException {
-        if(steps == null) throw new MeasureStepperException("Measure logic has no steps");
+        if (steps == null) throw new MeasureStepperException("Measure logic has no steps");
 
         int firstStepId = getInitialStepId();
         Step currentStep = getStepById(firstStepId);
@@ -51,7 +51,7 @@ class MeasureStepper {
             try {
                 measureWorkspace = (MeasureWorkspace) ruleMethod.invoke(ruleClass.newInstance(), patientData, parameters, measureMetaData, measureWorkspace);
             } catch (IllegalAccessException | InvocationTargetException | InstantiationException e) {
-                throw new MeasureStepperException(String.format("Could not invoke method %s",rule), e);
+                throw new MeasureStepperException(String.format("Could not invoke method %s", rule), e);
             }
 
             measureWorkspace.writeRuleTrace(rule);

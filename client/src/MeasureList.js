@@ -1,16 +1,16 @@
 import React, { Component } from 'react';
-import Button from '@material-ui/core/Button';
 import CircularProgress from '@material-ui/core/CircularProgress';
 
 class MeasureList extends Component {
+
+  state = {
+    measureList: this.props.measureList
+  }
 
   render() {
     const { measuresList } = this.props;
 
     return <div className='measure-list' data-testid='measure-list'>
-      <Button onClick={async () => await this.props.addMeasure()}>
-        + Measure
-      </Button>
       {measuresList && measuresList.sort().map((measureItem) => {
         const { measureId, measureName, selected, jobStatus } = measureItem;
 

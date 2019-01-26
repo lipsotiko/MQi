@@ -10,10 +10,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
 import java.time.ZonedDateTime;
-import java.util.ArrayList;
-import java.util.Hashtable;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Component
 public class MeasureProcessor implements Processor {
@@ -32,7 +29,8 @@ public class MeasureProcessor implements Processor {
                         List<Patient> patients,
                         List<Visit> visits,
                         MeasureMetaData measureMetaData,
-                        ZonedDateTime timeExecuted, Long jobId) throws MeasureProcessorException {
+                        ZonedDateTime timeExecuted,
+                        UUID jobId) throws MeasureProcessorException {
         this.measures = measures;
         appendToPatientDataHash(patients);
         appendToPatientDataHash(visits);
@@ -125,7 +123,7 @@ public class MeasureProcessor implements Processor {
         try {
             rulesEvaluatedCount = measureStepper.stepThroughMeasure() + rulesEvaluatedCount;
         } catch (MeasureStepperException e) {
-            throw new MeasureProcessorException("Faulty logic was Supplied for measure: " + measure.getMeasureName());
+            throw new MeasureProcessorException("Faulty logic was supplied for measure: " + measure.getMeasureName());
         }
         this.measureWorkspaces.add(measureStepper.getMeasureWorkspace());
     }

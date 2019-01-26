@@ -30,9 +30,9 @@ public class HasCodeSet implements Rule {
         List<CodeSet> codeSets = measureMetaData.getCodeSets().stream()
                 .filter(cs -> cs.getCodeSetGroup().getGroupName().equals(codeSet)).collect(Collectors.toList());
 
-        for(Visit v: patientData.getVisits()) {
-            for(VisitCode vc: v.getVisitCodes()) {
-                for(CodeSet cs: codeSets) {
+        for (Visit v : patientData.getVisits()) {
+            for (VisitCode vc : v.getVisitCodes()) {
+                for (CodeSet cs : codeSets) {
                     if (vc.getCodeSystem().equals(cs.getCodeSystem()) &&
                             vc.getCodeValue().equals(cs.getCodeValue())) {
                         return measureWorkspace;

@@ -12,8 +12,10 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import java.time.ZonedDateTime;
 import java.util.Collections;
+import java.util.UUID;
 
 import static io.egia.mqi.helpers.Helpers.UUID1;
+import static io.egia.mqi.helpers.Helpers.UUID3;
 import static io.egia.mqi.job.JobStatus.RUNNING;
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -22,28 +24,32 @@ import static org.assertj.core.api.Assertions.assertThat;
 @SpringBootTest
 public class JobRepoIntegrationTests {
 
-    @Autowired private JobRepo jobRepo;
+    @Autowired
+    private JobRepo jobRepo;
+
+    private Job lastInsertedJob;
 
     @Before
     public void setUp() {
-        for(int i = 1; i < 5; i++) {
+        for (int i = 1; i < 5; i++) {
             Job job = new Job();
             job.setJobStatus(RUNNING);
             job.setMeasureIds(Collections.singletonList(UUID1));
             job.setLastUpdated(ZonedDateTime.now());
-            jobRepo.saveAndFlush(job);
+            lastInsertedJob = jobRepo.saveAndFlush(job);
         }
     }
 
     @Test
     public void jobRepo_updateJobStatus() {
-        jobRepo.updateJobStatus(1L, RUNNING);
-        assertThat(jobRepo.findById(1L).get().getJobStatus()).isEqualTo(RUNNING);
+        UUID jobId = lastInsertedJob.getId();
+        jobRepo.updateJobStatus(jobId, RUNNING);
+        assertThat(jobRepo.findById(jobId).get().getJobStatus()).isEqualTo(RUNNING);
     }
 
     @Test
     public void jobRepo_findByMeasureIdsOrderByLastUpdatedDesc() {
         Job job = jobRepo.findFirstByMeasureIdsOrderByLastUpdatedDesc(UUID1).get();
-        assertThat(job.getId()).isEqualTo(4);
+        assertThat(job.getId()).isEqualTo(lastInsertedJob.getId());
     }
 }

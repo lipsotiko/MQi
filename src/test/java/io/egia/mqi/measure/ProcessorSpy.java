@@ -8,6 +8,7 @@ import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.UUID;
 
 public class ProcessorSpy implements Processor {
 
@@ -24,7 +25,8 @@ public class ProcessorSpy implements Processor {
                         List<Patient> patients,
                         List<Visit> visits,
                         MeasureMetaData measureMetaData,
-                        ZonedDateTime timeExecuted, Long jobId) {
+                        ZonedDateTime timeExecuted,
+                        UUID jobId) {
 
         processWasCalled = true;
 

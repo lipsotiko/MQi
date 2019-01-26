@@ -7,8 +7,8 @@ import java.util.List;
 
 import static io.egia.mqi.measure.helpers.ParamHelper.getText;
 
-@RuleParams(params={
-        @Param(name="RESULT_CODE", type = "TEXT")
+@RuleParams(params = {
+        @Param(name = "RESULT_CODE", type = "TEXT")
 })
 public class SetResultCode implements Rule {
     public MeasureWorkspace evaluate(PatientData patientData,

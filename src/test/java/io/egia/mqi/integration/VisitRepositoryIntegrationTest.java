@@ -26,9 +26,12 @@ import static org.assertj.core.api.Assertions.assertThat;
 @SpringBootTest
 public class VisitRepositoryIntegrationTest {
 
-    @Autowired private VisitRepo visitRepo;
-    @Autowired private VisitCodeRepo visitCodeRepo;
-    @Autowired private ChunkRepo chunkRepo;
+    @Autowired
+    private VisitRepo visitRepo;
+    @Autowired
+    private VisitCodeRepo visitCodeRepo;
+    @Autowired
+    private ChunkRepo chunkRepo;
 
     @Before
     public void setUp() {

@@ -1,14 +1,18 @@
 import React, { Component } from 'react';
 import DraggableList from 'react-draggable-list';
 import MeasureList from './MeasureList';
+import Footer from './Footer';
 import Step from './Step';
 import { compare, distinct, ramdomInt } from './Utilities';
+import { selectMeasureListItemById, selectMultipleMeasuresListItemById } from './Shared'
 import Button from '@material-ui/core/Button';
+import Table from '@material-ui/core/Table';
 import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
 import TableCell from '@material-ui/core/TableCell';
 import TextField from '@material-ui/core/TextField';
-import SockJsClient from 'react-stomp';
+import Navigaiton from './Navigation';
+import MeasureProgressWsClient from './MeasureProgressWsClient';
 
 class MeasureEditor extends Component {
 
@@ -54,6 +58,19 @@ class MeasureEditor extends Component {
     }
 
     return <>
+      <Navigaiton
+        currentTab={this.props.currentTab}
+        setTab={this.props.setTab}
+        rightButtons={
+          <>
+            <Button color="inherit"
+              onClick={this._addMeasure()}>+ Measure</Button>
+            <Button
+              color="inherit" className='add-step'
+              onClick={async () => await this._addStep(rules)}>+ Step</Button>
+          </>
+        }
+      />
       <form className='content measure-editor'>
         <aside className='left-aside'>
           <MeasureList
@@ -66,17 +83,16 @@ class MeasureEditor extends Component {
         <div className='measure center-content' data-testid='measure'>
           {measure &&
             <>
-              <TableHead>
-                <TableRow>
-                  <TableCell className='step-header-1' align="right">Step ID</TableCell>
-                  <TableCell className='step-header-2' align="right">Rule</TableCell>
-                  <TableCell className='step-header-1' align="right">Success Step ID</TableCell>
-                  <TableCell className='step-header-1' align="right">Failure Step ID</TableCell>
-                  <div className='add-step'>
-                    <Button onClick={async () => { await this._addStep(rules) }}>+ Step</Button>
-                  </div>
-                </TableRow>
-              </TableHead>
+              <Table>
+                <TableHead>
+                  <TableRow>
+                    <TableCell className='step-header-1' align="right">Step ID</TableCell>
+                    <TableCell className='step-header-2' align="right">Rule</TableCell>
+                    <TableCell className='step-header-1' align="right">Success Step ID</TableCell>
+                    <TableCell className='step-header-1' align="right">Failure Step ID</TableCell>
+                  </TableRow>
+                </TableHead>
+              </Table>
             </>}
           <div>
             {hasSteps &&
@@ -111,41 +127,18 @@ class MeasureEditor extends Component {
           </aside>}
         <div className='footer'>
           {measure &&
-            <>
-              <div className='footer-left-section'>
-                <p>{`Last Updated: ${measure.lastUpdated}`}</p>
-                <p>{`Minimum System Version: ${measure.measureLogic.minimumSystemVersion}`}</p>
-              </div>
-              <div className='footer-right-section'>
-                <Button variant="contained" onClick={() => this._saveMeasure()}>
-                  Save
-              </Button>
-                <Button variant="contained" color="secondary" onClick={() => this._deleteMeasures()}>
-                  Delete
-              </Button>
-                <Button variant="contained" color="primary" onClick={() => this._processMeasures()}>
-                  Process
-              </Button>
-              </div>
-            </>}
+            <Footer
+              measure={measure}
+              saveMeasure={async () => await this._saveMeasure()}
+              deleteMeasures={async () => await this._deleteMeasures()}
+              processMeasures={() => this._processMeasures()} />
+          }
         </div>
       </form>
-      <SockJsClient url={process.env.REACT_APP_WS_URL} topics={['/topic/job']}
-        onMessage={(job) => {
-          console.log(job);
-          let measureList = this.state.measureList;
-          measureList.map(measureListItem => {
-            if (job.measureIds.includes(measureListItem.measureId) &&
-              !(job.jobStatus === 'RUNNING' && measureListItem.jobStatus !== 'RUNNING')
-            ) {
-              measureListItem.progress = job.progress;
-              measureListItem.jobStatus = job.jobStatus;
-              measureListItem.jobLastUpdated = job.lastUpdated;
-            }
-            return measureListItem;
-          });
-
-          this.setState({ measureList });
+      <MeasureProgressWsClient
+        measureList={measureList}
+        updateMeasureList={(measureList) => {
+          this.setState({ measureList })
         }} />
     </>
   }
@@ -203,29 +196,18 @@ class MeasureEditor extends Component {
   }
 
   _selectMeasure() {
-    return (measureId, event) => {
-      let measureList = this.state.measureList;
+    let measureList = this.state.measureList;
 
+    let updatedMeasureList = null;
+
+    return (measureId, event) => {
       if (event.shiftKey || event.ctrlKey) {
-        measureList.map(measureListItem => {
-          if (measureListItem.measureId === measureId) {
-            measureListItem.selected = true;
-            return measureListItem;
-          }
-          return measureListItem;
-        })
+        updatedMeasureList = selectMultipleMeasuresListItemById(measureId, measureList);
       } else {
-        measureList.map(measureListItem => measureListItem.selected = false)
-        measureList.map(measureListItem => {
-          if (measureListItem.measureId === measureId) {
-            measureListItem.selected = true;
-            return measureListItem;
-          }
-          return measureListItem;
-        })
+        updatedMeasureList = selectMeasureListItemById(measureId, measureList);
       }
 
-      this.setState({ measureList });
+      this.setState({ measureList: updatedMeasureList });
     }
   }
 
@@ -270,9 +252,9 @@ class MeasureEditor extends Component {
     return measure;
   }
 
-  async _processMeasures() {
+  _processMeasures() {
     let selectedMeasureIds = this._getSelectedMeasures();
-    await this.props.measureRepository._processMeasures(selectedMeasureIds);
+    this.props.measureRepository._processMeasures(selectedMeasureIds);
     let measureList = this.state.measureList.map(m => {
       if (selectedMeasureIds.includes(m.measureId)) {
         m.jobStatus = "RUNNING";

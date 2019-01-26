@@ -9,6 +9,6 @@ import java.util.List;
 
 @Repository
 public interface VisitRepo extends JpaRepository<Visit, Long> {
-    @Query(value="select v from Visit v join Chunk c on v.patientId = c.patientId where c.chunkGroup = :c")
+    @Query(value = "select v from Visit v join Chunk c on v.patientId = c.patientId where c.chunkGroup = :c")
     List<Visit> findByChunkGroup(@Param("c") Integer chunkGroup);
 }

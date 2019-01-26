@@ -9,7 +9,7 @@ import java.util.List;
 
 @Repository
 public interface PatientRepo extends JpaRepository<Patient, Long> {
-    @Query(value="select p from Patient p join Chunk c on p.patientId = c.patientId " +
+    @Query(value = "select p from Patient p join Chunk c on p.patientId = c.patientId " +
             "where c.chunkGroup = :c")
     List<Patient> findByChunkGroup(@Param("c") Integer chunkGroup);
 }

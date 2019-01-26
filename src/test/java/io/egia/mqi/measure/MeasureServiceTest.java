@@ -63,7 +63,7 @@ public class MeasureServiceTest {
                 ruleTraceRepo);
 
         Job job = new Job();
-        job.setId(44L);
+        job.setId(UUID3);
         job.setJobStatus(RUNNING);
 
         p77 = new Patient();

@@ -90,8 +90,7 @@ create unique index ux_chunk_patient on chunk (patient_id);
 
 drop table if exists job;
 create table if not exists job (
-	id bigserial primary key,
-	uuid uuid DEFAULT uuid_generate_v1(),
+	id uuid DEFAULT uuid_generate_v1(),
 	job_status integer,
 	start_time timestamp,
 	end_time timestamp,
@@ -108,7 +107,7 @@ execute procedure fn_update_timestamp();
 drop table if exists job_measure_ids;
 create table if not exists job_measure_ids (
 	id bigserial primary key,
-	job_id bigint,
+	job_id uuid,
 	measure_ids uuid
 );
 

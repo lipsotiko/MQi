@@ -45,10 +45,6 @@ nav {
   margin-bottom: 50px;
 }
 
-.navigation {
-  background-color: #282c34;
-}
-
 .measure-editor {
   z-index: 250px;
 }
@@ -72,18 +68,16 @@ nav {
 
 .measure-list li {
   list-style-type: none;
-  border: #282c34 1px solid;
   padding: 1px 1px 0px 8px;
   margin: 9px 1px;
   display: flex;
   justify-content: space-between;
   align-items: center;
   height: 40px;
-  border-right: lightgray 2px solid;
 }
 
 .measure-list li.selected {
-  border-right: #FF0045 2px solid;
+  border-bottom: #FF0045 2px solid;
 }
 
 .measure-list li:hover {
@@ -202,4 +196,8 @@ nav {
 .right-aside {
   float: right;
   width: 230px;
+}
+
+.right-nav-buttons {
+  padding-top: 5px;
 }

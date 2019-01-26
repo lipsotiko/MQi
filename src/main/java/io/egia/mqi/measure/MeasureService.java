@@ -49,7 +49,7 @@ public class MeasureService {
         this.ruleTraceRepo = ruleTraceRepo;
     }
 
-    public void process(List<Measure> measures, Long jobId) throws MeasureServiceException {
+    public void process(List<Measure> measures, UUID jobId) throws MeasureServiceException {
 
         if (measures.size() == 0) return;
 

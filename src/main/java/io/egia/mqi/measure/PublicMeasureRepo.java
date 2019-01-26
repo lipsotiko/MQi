@@ -5,5 +5,6 @@ import java.util.List;
 
 public interface PublicMeasureRepo<T> {
     List<PublicMeasureListItem> getMeasureList();
+
     T getMeasure(String publicMeasureObjectName) throws IOException;
 }

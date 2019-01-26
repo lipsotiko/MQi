@@ -13,8 +13,10 @@ import static org.mockito.Mockito.verify;
 @RunWith(MockitoJUnitRunner.class)
 public class MqiInitializerTest {
 
-    @Mock private RuleParamUtility ruleParamUtility;
-    @Mock private ContextRefreshedEvent contextRefreshedEvent;
+    @Mock
+    private RuleParamUtility ruleParamUtility;
+    @Mock
+    private ContextRefreshedEvent contextRefreshedEvent;
 
     @Test
     public void save_rule_params_is_called() throws Exception {

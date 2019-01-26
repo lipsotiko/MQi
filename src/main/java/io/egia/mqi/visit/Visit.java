@@ -12,30 +12,30 @@ import java.util.List;
 @Entity
 public class Visit implements PatientRecordInterface {
 
-	@Id
-	@GeneratedValue(strategy=GenerationType.IDENTITY)
-	private Long visitId;
-	private Long patientId;
-	private Date dateOfService;
-	private Date admitDt;
-	private Date dischargeDt;
-	private Integer dischargeStatus;
-	private Integer coveredDays;
-	private String units;
-	private Boolean denied;
-	private String providerId;
-	private Boolean supplemental;
-	private String primaryDxCode;
-	private Integer primaryDxCodeVersion;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long visitId;
+    private Long patientId;
+    private Date dateOfService;
+    private Date admitDt;
+    private Date dischargeDt;
+    private Integer dischargeStatus;
+    private Integer coveredDays;
+    private String units;
+    private Boolean denied;
+    private String providerId;
+    private Boolean supplemental;
+    private String primaryDxCode;
+    private Integer primaryDxCodeVersion;
 
-	@OneToMany(fetch = FetchType.EAGER)
-	@JoinColumns({
-			@JoinColumn(name = "visitId")
-	})
-	private List<VisitCode> visitCodes;
+    @OneToMany(fetch = FetchType.EAGER)
+    @JoinColumns({
+            @JoinColumn(name = "visitId")
+    })
+    private List<VisitCode> visitCodes;
 
-	@Override
-	public void updatePatientData(PatientData patientData) {
-		patientData.addPatientRecord(this);
-	}
+    @Override
+    public void updatePatientData(PatientData patientData) {
+        patientData.addPatientRecord(this);
+    }
 }

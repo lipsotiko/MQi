@@ -23,8 +23,10 @@ import static org.assertj.core.api.Assertions.assertThat;
 @SpringBootTest
 public class CodeSetRepoTest {
 
-    @Autowired private CodeSetGroupRepo codeSetGroupRepo;
-    @Autowired private CodeSetRepo codeSetRepo;
+    @Autowired
+    private CodeSetGroupRepo codeSetGroupRepo;
+    @Autowired
+    private CodeSetRepo codeSetRepo;
 
     @Test
     public void codeSetRepo_findByCodeSetGroupIdIn() {
@@ -36,7 +38,7 @@ public class CodeSetRepoTest {
         codeSetGroupRepo.save(csg2);
         codeSetRepo.save(CodeSet.builder().codeSetGroup(csg2).build());
 
-        Set<UUID> codeSetGroupIds = new HashSet<UUID>(){{
+        Set<UUID> codeSetGroupIds = new HashSet<UUID>() {{
             add(csg1.getId());
             add(csg2.getId());
         }};

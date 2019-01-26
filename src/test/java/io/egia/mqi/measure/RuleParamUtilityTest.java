@@ -23,17 +23,19 @@ import static org.mockito.Mockito.verify;
 public class RuleParamUtilityTest {
 
     private RuleParam[] expected = {
-            new RuleParam("AgeWithinDateRange","FROM_AGE","INTEGER")
-            , new RuleParam("AgeWithinDateRange","TO_AGE","INTEGER")
-            , new RuleParam("AgeWithinDateRange","START_DATE","DATE")
-            , new RuleParam("AgeWithinDateRange","END_DATE","DATE")
-            , new RuleParam("ExitMeasure","","INVISIBLE")
-            , new RuleParam("SetResultCode","RESULT_CODE","TEXT")
-            , new RuleParam("HasCodeSet","CODE_SET","TEXT")
+            new RuleParam("AgeWithinDateRange", "FROM_AGE", "INTEGER")
+            , new RuleParam("AgeWithinDateRange", "TO_AGE", "INTEGER")
+            , new RuleParam("AgeWithinDateRange", "START_DATE", "DATE")
+            , new RuleParam("AgeWithinDateRange", "END_DATE", "DATE")
+            , new RuleParam("ExitMeasure", "", "INVISIBLE")
+            , new RuleParam("SetResultCode", "RESULT_CODE", "TEXT")
+            , new RuleParam("HasCodeSet", "CODE_SET", "TEXT")
     };
 
-    @Mock private RuleParamRepo ruleParamRepo;
-    @Captor private ArgumentCaptor<RuleParam> captor = ArgumentCaptor.forClass(RuleParam.class);
+    @Mock
+    private RuleParamRepo ruleParamRepo;
+    @Captor
+    private ArgumentCaptor<RuleParam> captor = ArgumentCaptor.forClass(RuleParam.class);
     private String packagePrefix = "io.egia.mqi.measure.rules";
 
     private Reflections reflections = new Reflections(packagePrefix
