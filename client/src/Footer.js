@@ -11,7 +11,7 @@ class Footer extends Component {
         <p>{`Minimum System Version: ${measure.measureLogic.minimumSystemVersion}`}</p>
       </div>
       <div className='footer-right-section'>
-        <Button variant="contained" color="inherit" onClick={() => saveMeasure()}>Save</Button>
+        {saveMeasure && <Button variant="contained" color="inherit" onClick={() => saveMeasure()}>Save</Button>}
         <Button variant="contained" color="secondary" onClick={() => deleteMeasures()}>Delete</Button>
         <Button variant="contained" color="primary" onClick={() => processMeasures()}>Process</Button>
       </div>

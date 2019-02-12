@@ -4,7 +4,7 @@ import MeasureList from './MeasureList';
 import Footer from './Footer';
 import Step from './Step';
 import { compare, distinct, ramdomInt } from './Utilities';
-import { selectMeasureListItemById, selectMultipleMeasuresListItemById } from './Shared'
+import { _selectMeasure, _deleteMeasures, _processMeasures } from './Shared'
 import Button from '@material-ui/core/Button';
 import Table from '@material-ui/core/Table';
 import TableHead from '@material-ui/core/TableHead';
@@ -25,10 +25,7 @@ class MeasureEditor extends Component {
     _changeDescription: this._changeDescription.bind(this),
     _stepReorder: this._stepReorder.bind(this),
     _addMeasure: this._addMeasure.bind(this),
-    _deleteMeasures: this._deleteMeasures.bind(this),
     _saveMeasure: this._saveMeasure.bind(this),
-    _selectMeasure: this._selectMeasure.bind(this),
-    _processMeasures: this._processMeasures.bind(this),
   }
 
   async componentDidMount() {
@@ -63,11 +60,11 @@ class MeasureEditor extends Component {
         setTab={this.props.setTab}
         rightButtons={
           <>
+            {measure && <Button
+              color="inherit" className='add-step'
+              onClick={async () => await this._addStep(rules)}>+ Step</Button>}
             <Button color="inherit"
               onClick={this._addMeasure()}>+ Measure</Button>
-            <Button
-              color="inherit" className='add-step'
-              onClick={async () => await this._addStep(rules)}>+ Step</Button>
           </>
         }
       />
@@ -76,7 +73,7 @@ class MeasureEditor extends Component {
           <MeasureList
             measuresList={measureList}
             getMeasure={this._getMeasure()}
-            selectMeasure={this._selectMeasure()}
+            selectMeasure={_selectMeasure(this)}
             selectedMeasureId={measure ? measure.measureId : null}
             addMeasure={this._addMeasure()} />
         </aside>
@@ -130,8 +127,8 @@ class MeasureEditor extends Component {
             <Footer
               measure={measure}
               saveMeasure={async () => await this._saveMeasure()}
-              deleteMeasures={async () => await this._deleteMeasures()}
-              processMeasures={() => this._processMeasures()} />
+              deleteMeasures={async () => await _deleteMeasures(this)}
+              processMeasures={async () => await _processMeasures(this)} />
           }
         </div>
       </form>
@@ -195,22 +192,6 @@ class MeasureEditor extends Component {
     }
   }
 
-  _selectMeasure() {
-    let measureList = this.state.measureList;
-
-    let updatedMeasureList = null;
-
-    return (measureId, event) => {
-      if (event.shiftKey || event.ctrlKey) {
-        updatedMeasureList = selectMultipleMeasuresListItemById(measureId, measureList);
-      } else {
-        updatedMeasureList = selectMeasureListItemById(measureId, measureList);
-      }
-
-      this.setState({ measureList: updatedMeasureList });
-    }
-  }
-
   _getUniqueRuleNames(ruleParams) {
     let ruleNames = ['(select)'];
     ruleParams.forEach(ruleParam => ruleNames.push(ruleParam.ruleName));
@@ -252,27 +233,6 @@ class MeasureEditor extends Component {
     return measure;
   }
 
-  _processMeasures() {
-    let selectedMeasureIds = this._getSelectedMeasures();
-    this.props.measureRepository._processMeasures(selectedMeasureIds);
-    let measureList = this.state.measureList.map(m => {
-      if (selectedMeasureIds.includes(m.measureId)) {
-        m.jobStatus = "RUNNING";
-        m.selected = false;
-        return m;
-      };
-      return m;
-    });
-    this.setState({ measureList, measure: null });
-  }
-
-  async _deleteMeasures() {
-    let selectedMeasureIds = this._getSelectedMeasures();
-    await this.props.measureRepository._deleteMeasures(selectedMeasureIds);
-    let measureList = this.state.measureList.filter(m => !selectedMeasureIds.includes(m.measureId));
-    this.setState({ measureList, measure: null });
-  }
-
   _deleteStep() {
     return (id) => {
       let steps = this.state.measure.measureLogic.steps.filter(s => s.id !== id);
@@ -280,16 +240,6 @@ class MeasureEditor extends Component {
       measure.measureLogic.steps = steps;
       this.setState({ measure });
     }
-  }
-
-  _getSelectedMeasures() {
-    let selectedMeasureIds = [];
-    this.state.measureList.forEach(measureListItem => {
-      if (measureListItem.selected) {
-        selectedMeasureIds.push(measureListItem.measureId);
-      }
-    });
-    return selectedMeasureIds;
   }
 }
 
