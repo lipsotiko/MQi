@@ -1,7 +1,7 @@
 export class ResultsRepository {
 
   async _summary(measureId) {
-    fetch(`/results_summary?measureId=${measureId}`)    
+    return fetch(`/results_summary?measureId=${measureId}`)    
       .then((response) => response.json())
       .catch((e) => console.error(e));
   }

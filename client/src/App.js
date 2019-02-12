@@ -10,7 +10,7 @@ import { ResultsRepository } from './repositories/WebResultsRepository'
 class App extends Component {
 
   state = {
-    currentTabValue: 1,
+    currentTabValue: 0,
   }
 
   render() {
@@ -21,12 +21,15 @@ class App extends Component {
             case 0: return <Reporting
               setTab={this._setTab()}
               currentTab={this.state.currentTabValue}
-              measureRepository={new MeasureRepository()} />;
+              measureRepository={new MeasureRepository()}
+              resultsRepository={new ResultsRepository()} />;
             case 1: return <MeasureEditor
               setTab={this._setTab()}
               currentTab={this.state.currentTabValue}
               measureRepository={new MeasureRepository()} />;
             default: return <Reporting
+              setTab={this._setTab()}
+              currentTab={this.state.currentTabValue}
               measureRepository={new MeasureRepository()}
               resultsRepository={new ResultsRepository()} />;
           }

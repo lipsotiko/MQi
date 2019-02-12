@@ -72,7 +72,7 @@ class MeasureEditor extends Component {
         <aside className='left-aside'>
           <MeasureList
             measuresList={measureList}
-            getMeasure={this._getMeasure()}
+            onClick={this._getMeasure()}
             selectMeasure={_selectMeasure(this)}
             selectedMeasureId={measure ? measure.measureId : null}
             addMeasure={this._addMeasure()} />

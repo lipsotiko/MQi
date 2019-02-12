@@ -12,7 +12,7 @@ class Footer extends Component {
       </div>
       <div className='footer-right-section'>
         {saveMeasure && <Button variant="contained" color="inherit" onClick={() => saveMeasure()}>Save</Button>}
-        <Button variant="contained" color="secondary" onClick={() => deleteMeasures()}>Delete</Button>
+        {deleteMeasures && <Button variant="contained" color="secondary" onClick={() => deleteMeasures()}>Delete</Button>}
         <Button variant="contained" color="primary" onClick={() => processMeasures()}>Process</Button>
       </div>
     </>

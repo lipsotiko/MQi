@@ -25,7 +25,9 @@ public class MeasureController {
     @Value("${mqi.properties.system.version}")
     private String systemVersion;
 
-    MeasureController(MeasureRepo measureRepo, RuleParamRepo ruleParamRepo, GoogleBackedPublicMeasureRepo googleBackedPublicMeasureRepo) {
+    MeasureController(MeasureRepo measureRepo,
+                      RuleParamRepo ruleParamRepo,
+                      GoogleBackedPublicMeasureRepo googleBackedPublicMeasureRepo) {
         this.measureRepo = measureRepo;
         this.ruleParamRepo = ruleParamRepo;
         this.googleBackedPublicMeasureRepo = googleBackedPublicMeasureRepo;

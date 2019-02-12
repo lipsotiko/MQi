@@ -30,7 +30,7 @@ class MeasureList extends Component {
           data-testid={`measure-id-${measureId}`}
           className={selected ? 'selected' : ''}
           onClick={(e) => {
-            this.props.getMeasure(measureId);
+            this.props.onClick(measureId);
             this.props.selectMeasure(measureId, e);
           }}>
           <span>{measureName}</span>
