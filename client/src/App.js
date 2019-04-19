@@ -3,14 +3,14 @@ import './App.css';
 
 import Reporting from './Reporting';
 import MeasureEditor from './MeasureEditor';
-import { MeasureRepository } from './repositories/WebMeasureRepository'
-import { ResultsRepository } from './repositories/WebResultsRepository'
-
 
 class App extends Component {
 
-  state = {
-    currentTabValue: 0,
+  constructor(props) {
+    super(props);
+    this.state = {
+      currentTabValue: 0
+    }
   }
 
   render() {
@@ -21,17 +21,17 @@ class App extends Component {
             case 0: return <Reporting
               setTab={this._setTab()}
               currentTab={this.state.currentTabValue}
-              measureRepository={new MeasureRepository()}
-              resultsRepository={new ResultsRepository()} />;
+              measureRepository={this.props.measureRepository}
+              resultsRepository={this.props.resultsRepository} />;
             case 1: return <MeasureEditor
               setTab={this._setTab()}
               currentTab={this.state.currentTabValue}
-              measureRepository={new MeasureRepository()} />;
+              measureRepository={this.props.measureRepository} />;
             default: return <Reporting
               setTab={this._setTab()}
               currentTab={this.state.currentTabValue}
-              measureRepository={new MeasureRepository()}
-              resultsRepository={new ResultsRepository()} />;
+              measureRepository={this.props.measureRepository}
+              resultsRepository={this.props.resultsRepository} />;
           }
         })()}
       </div>

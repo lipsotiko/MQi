@@ -8,14 +8,17 @@ import TableHead from '@material-ui/core/TableHead';
 import TableBody from '@material-ui/core/TableBody';
 import TableRow from '@material-ui/core/TableRow';
 import TableCell from '@material-ui/core/TableCell';
-import { _selectMeasure, _deleteMeasures, _processMeasures } from './Shared'
+import { _selectMeasure, _processMeasures } from './Shared'
 
 class Reporting extends Component {
 
-  state = {
-    measure: null,
-    measureSummary: null,
-    measureList: [],
+  constructor(props) {
+    super(props);
+    this.state = {
+      measure: null,
+      measureSummary: null,
+      measureList: [],
+    }
   }
 
   async componentDidMount() {
@@ -23,7 +26,8 @@ class Reporting extends Component {
     this.setState({ measureList });
   }
 
-  render = () => {
+
+  render() {
     const { measure, measureSummary, measureList } = this.state;
 
     return (<>

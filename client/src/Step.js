@@ -4,10 +4,12 @@ import DeleteTwoToneIcon from '@material-ui/icons/DeleteTwoTone';
 
 class Step extends Component {
 
-  state = {
-    changeRule: this.changeRule.bind(this),
-    changeId: this.changeId.bind(this),
-    changeParam: this.changeParam.bind(this)
+
+  constructor(props) {
+    super(props)
+    this.changeRule = this.changeRule.bind(this);
+    this.changeId = this.changeId.bind(this);
+    this.changeParam = this.changeParam.bind(this);
   }
 
   render() {

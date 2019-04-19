@@ -3,8 +3,11 @@ import CircularProgress from '@material-ui/core/CircularProgress';
 
 class MeasureList extends Component {
 
-  state = {
-    measureList: this.props.measureList
+  constructor(props) {
+    super(props);
+    this.state = {
+      measureList: this.props.measureList
+    }
   }
 
   render() {

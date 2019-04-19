@@ -15,8 +15,8 @@ class Navigation extends Component {
             <Tabs
               data-testid='navigation'
               value={this.props.currentTab} onChange={(e,v) => this.props.setTab(e,v)}>
-              <Tab data-testid='reporting' label='Reports' />
-              <Tab data-testid='measure-editor' label='Editor' />
+              <Tab className='reporting-tab' label='Reports' />
+              <Tab className='editor-tab' label='Editor' />
             </Tabs>
           </Grid>
           <Grid item>

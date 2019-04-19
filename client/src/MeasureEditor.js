@@ -16,16 +16,19 @@ import MeasureProgressWsClient from './MeasureProgressWsClient';
 
 class MeasureEditor extends Component {
 
-  state = {
-    ruleParams: [],
-    measureList: [],
-    measure: null,
-    _changeStep: this._changeStep.bind(this),
-    _changeName: this._changeName.bind(this),
-    _changeDescription: this._changeDescription.bind(this),
-    _stepReorder: this._stepReorder.bind(this),
-    _addMeasure: this._addMeasure.bind(this),
-    _saveMeasure: this._saveMeasure.bind(this),
+  constructor(props) {
+    super(props);
+    this.state = {
+      ruleParams: [],
+      measureList: [],
+      measure: null,
+    }
+    this._changeStep = this._changeStep.bind(this);
+    this._changeName = this._changeName.bind(this);
+    this._changeDescription = this._changeDescription.bind(this);
+    this._stepReorder = this._stepReorder.bind(this);
+    this._addMeasure = this._addMeasure.bind(this);
+    this._saveMeasure = this._saveMeasure.bind(this);
   }
 
   async componentDidMount() {

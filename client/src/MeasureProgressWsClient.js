@@ -1,10 +1,11 @@
-
 import React, { Component } from 'react';
 import SockJsClient from 'react-stomp';
 
 class MeasureProgressWsClient extends Component {
   render() {
-    return <SockJsClient url={process.env.REACT_APP_WS_URL} topics={['/topic/job']}
+    if(process.env.TEST) return <></>
+
+    return <SockJsClient url={'/ws'} topics={['/topic/job']}
     onMessage={(job) => {
       console.log(job);
       let measureList = this.props.measureList;
