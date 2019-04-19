@@ -16,14 +16,17 @@ These instructions will get you a copy of the project up and running on your loc
     ```
 * Application Server:
     - Install maven: https://maven.apache.org/
-    - To run the application server, from the root of the project directory: ```mvn spring-boot:run -Dspring-boot.run.profiles=local```
-    - To run tests: ``````
+    - Navigate to the project root directory.
+    - To run the application server: ```mvn spring-boot:run -Dspring-boot.run.profiles=local```
+    - To run server unit tests: ```mvn test```
+    - To run server contract tests: ```mvn test -Pcontract-tests```
 * Client:
     - Install Node Package Manager: https://www.npmjs.com/ 
-    - From the client directory: ```npm install```
+    = Navigate to the client directory.
+    - To run the client: ```npm install```
     - To start the client: ```npm start```
-    - To run client side tests: ```npm test```
-    - To run contract tests: ```npm run contracts``` (application server will need to be running)
+    - To run client unit tests: ```npm test```
+    - To run client contract tests: ```npm run contracts``` (application server will need to be running)
 
 ## Deployment
 The application is currently being deployed to Heroku with no use of CI/CD
