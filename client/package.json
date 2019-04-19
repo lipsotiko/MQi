@@ -18,7 +18,7 @@
   },
   "scripts": {
     "start": "react-scripts start",
-    "build": "env-cmd .env.production react-scripts build",
+    "build": "react-scripts build",
     "test": "env-cmd .env karma start",
     "contracts": "karma start karma_contracts.conf.js"
   },
