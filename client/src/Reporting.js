@@ -18,18 +18,20 @@ class Reporting extends Component {
       measure: null,
       measureSummary: null,
       measureList: [],
+      loading: true
     }
   }
 
   async componentDidMount() {
-    const measureList = await this.props.measureRepository._findAllMeasureListItems();
-    this.setState({ measureList });
+    if(this.state.loading === true) {
+      this.setState({ loading: true });
+      const measureList = await this.props.measureRepository._findAllMeasureListItems();
+      this.setState({ measureList, loading: false });
+    }
   }
-
 
   render() {
     const { measure, measureSummary, measureList } = this.state;
-
     return (<>
       <Navigaiton currentTab={this.props.currentTab} setTab={this.props.setTab} />
       <form className='content reporting'>

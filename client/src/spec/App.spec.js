@@ -2,23 +2,19 @@ import React from 'react';
 import App from '../App';
 import { renderIntoDocument, findRenderedDOMComponentWithClass, Simulate } from 'react-dom/test-utils';
 import { expect } from 'chai';
-import { MeasureRepository } from './repositories/FakeMeasureRepository.js'
-import { ResultsRepository } from './repositories/FakeResultsRepository.js'
-
+import { MeasureRepository as FakeMeasureRepository } from './mock_repositories/FakeMeasureRepository'
+import { forIt } from './Helpers'
 
 describe('MQi GUI', () => {
 
-  let component;
   let document;
 
-  beforeEach(() => {
-    component = <App measureRepository = { new MeasureRepository() } resultsRepository = {new ResultsRepository()}/>;
-    document = renderIntoDocument(component);
+  beforeEach(async () => {
+    document = renderIntoDocument(<App measureRepository={new FakeMeasureRepository()} resultsRepository={null} />);
+    await forIt(100);
   });
 
   it('should render without crashing', () => {
-
-    console.log(process.env)
     expect(document).to.exist;
   });
 

@@ -10,48 +10,46 @@ export class MeasureRepository {
     return Promise.resolve(() => { });
   }
 
-  async _findAllRuleParams() {
-    return Promise.resolve(
-      [
-        {
-          ruleParamId: 1,
-          paramName: "PARAM_A",
-          paramType: "INTEGER",
-          paramValue: 1,
-          ruleName: "AgeWithinDateRange"
-        }, {
-          ruleParamId: 2,
-          paramName: "PARAM_B",
-          paramType: "DATE",
-          paramValue: 1,
-          ruleName: "AgeWithinDateRange"
-        }, {
-          ruleParamId: 3,
-          paramName: "PARAM_C",
-          paramType: "TEXT",
-          paramValue: "COOL",
-          ruleName: "AgeWithinDateRange"
-        }
-      ]
-    )
+  _findAllRuleParams() {
+    return [
+      {
+        ruleParamId: 1,
+        paramName: "PARAM_A",
+        paramType: "INTEGER",
+        paramValue: 1,
+        ruleName: "AgeWithinDateRange"
+      }, {
+        ruleParamId: 2,
+        paramName: "PARAM_B",
+        paramType: "DATE",
+        paramValue: 1,
+        ruleName: "AgeWithinDateRange"
+      }, {
+        ruleParamId: 3,
+        paramName: "PARAM_C",
+        paramType: "TEXT",
+        paramValue: "COOL",
+        ruleName: "AgeWithinDateRange"
+      }
+    ]
   }
 
-  async _findAllMeasureListItems() {
-    return Promise.resolve(
-      [
-        {
-          measureId: 1,
-          measureName: "sample measure 1",
-          jobStatus: "DONE",
-          jobLastUpdated: "2018-12-25T15:08:11.831+0000"
-        }, {
-          measureId: 2,
-          measureName: "sample measure 2",
-          jobStatus: null,
-          jobLastUpdated: null
-        }
-      ]
-    )
+  _findAllMeasureListItems() {
+    return [
+      {
+        measureId: 1,
+        measureName: "sample measure 1",
+        jobStatus: "DONE",
+        jobLastUpdated: "2018-12-25T15:08:11.831+0000",
+        measureLastUpdated: "2018-12-25T15:08:11.831+0000"
+      }, {
+        measureId: 2,
+        measureName: "sample measure 2",
+        jobStatus: null,
+        jobLastUpdated: null,
+        measureLastUpdated: null
+      }
+    ]
   }
 
   async _processMeasures(measureIds) {

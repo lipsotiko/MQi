@@ -16,24 +16,19 @@ class App extends Component {
   render() {
     return <div className='container'>
       <div className='content' data-testid='content'>
-        {(() => {
-          switch (this.state.currentTabValue) {
-            case 0: return <Reporting
-              setTab={this._setTab()}
-              currentTab={this.state.currentTabValue}
-              measureRepository={this.props.measureRepository}
-              resultsRepository={this.props.resultsRepository} />;
-            case 1: return <MeasureEditor
-              setTab={this._setTab()}
-              currentTab={this.state.currentTabValue}
-              measureRepository={this.props.measureRepository} />;
-            default: return <Reporting
-              setTab={this._setTab()}
-              currentTab={this.state.currentTabValue}
-              measureRepository={this.props.measureRepository}
-              resultsRepository={this.props.resultsRepository} />;
-          }
-        })()}
+        {
+          this.state.currentTabValue === 0 && <Reporting
+            setTab={this._setTab()}
+            currentTab={this.state.currentTabValue}
+            measureRepository={this.props.measureRepository}
+            resultsRepository={this.props.resultsRepository} />
+        }
+        {
+           this.state.currentTabValue === 1 && <MeasureEditor
+            setTab={this._setTab()}
+            currentTab={this.state.currentTabValue}
+            measureRepository={this.props.measureRepository} />
+        }
       </div>
     </div>
   }

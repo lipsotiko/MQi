@@ -4,8 +4,8 @@ import './index.css';
 import App from './App';
 import * as serviceWorker from './serviceWorker';
 import 'typeface-roboto';
-import { MeasureRepository } from './repositories/WebMeasureRepository'
-import { ResultsRepository } from './repositories/WebResultsRepository'
+import { MeasureRepository } from './repositories/MeasureRepository'
+import { ResultsRepository } from './repositories/ResultsRepository'
 
 ReactDOM.render(<App measureRepository={new MeasureRepository()} resultsRepository={new ResultsRepository()} />,
     document.getElementById('root'));

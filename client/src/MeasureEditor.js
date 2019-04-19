@@ -22,6 +22,7 @@ class MeasureEditor extends Component {
       ruleParams: [],
       measureList: [],
       measure: null,
+      loading: true
     }
     this._changeStep = this._changeStep.bind(this);
     this._changeName = this._changeName.bind(this);
@@ -32,9 +33,11 @@ class MeasureEditor extends Component {
   }
 
   async componentDidMount() {
-    const ruleParams = await this.props.measureRepository._findAllRuleParams();
-    const measureList = await this.props.measureRepository._findAllMeasureListItems();
-    this.setState({ ruleParams, measureList });
+    if(this.state.loading === true) {
+      const ruleParams = await this.props.measureRepository._findAllRuleParams();
+      const measureList = await this.props.measureRepository._findAllMeasureListItems();
+      this.setState({ ruleParams, measureList, loading: false });
+    }
   }
 
   render() {
