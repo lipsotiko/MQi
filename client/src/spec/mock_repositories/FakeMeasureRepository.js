@@ -57,13 +57,8 @@ export class MeasureRepository {
   }
 
   async _saveMeasure(body) {
-    if (body.id) {
-      this.spy(body);
-      return Promise.resolve(body);
-    } else {
-      body.id = ramdomInt;
-      return Promise.resolve(body);
-    }
+    this.spy(body);
+    return Promise.resolve(body);
   }
 
   async _findById(id) {

@@ -33,7 +33,7 @@ class MeasureEditor extends Component {
   }
 
   async componentDidMount() {
-    if(this.state.loading === true) {
+    if (this.state.loading === true) {
       const ruleParams = await this.props.measureRepository._findAllRuleParams();
       const measureList = await this.props.measureRepository._findAllMeasureListItems();
       this.setState({ ruleParams, measureList, loading: false });
@@ -69,7 +69,7 @@ class MeasureEditor extends Component {
             {measure && <Button
               color="inherit" className='add-step'
               onClick={async () => await this._addStep(rules)}>+ Step</Button>}
-            <Button color="inherit"
+            <Button color="inherit" className='add-measure'
               onClick={this._addMeasure()}>+ Measure</Button>
           </>
         }
@@ -81,7 +81,7 @@ class MeasureEditor extends Component {
             onClick={this._getMeasure()}
             selectMeasure={_selectMeasure(this)}
             selectedMeasureId={measure ? measure.measureId : null}
-            addMeasure={this._addMeasure()} />
+          />
         </aside>
         <div className='measure center-content' data-testid='measure'>
           {measure &&

@@ -4,8 +4,11 @@ import './index.css';
 import App from './App';
 import * as serviceWorker from './serviceWorker';
 import 'typeface-roboto';
-import { MeasureRepository } from './repositories/MeasureRepository'
+//import { MeasureRepository } from './repositories/MeasureRepository'
 import { ResultsRepository } from './repositories/ResultsRepository'
+
+//fake repos **uncomment to mimic test environment when running locally with `npm start`
+import { MeasureRepository } from './spec/mock_repositories/FakeMeasureRepository'
 
 ReactDOM.render(<App measureRepository={new MeasureRepository()} resultsRepository={new ResultsRepository()} />,
     document.getElementById('root'));

@@ -13,6 +13,7 @@ class Navigation extends Component {
           container>
           <Grid item>
             <Tabs
+              className='navigation'
               data-testid='navigation'
               value={this.props.currentTab} onChange={(e,v) => this.props.setTab(e,v)}>
               <Tab className='reporting-tab' label='Reports' />
