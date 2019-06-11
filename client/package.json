@@ -20,6 +20,7 @@
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "karma start",
+    "test-local": "karma start --single-run=false",
     "contracts": "karma start karma_contracts.conf.js"
   },
   "eslintConfig": {

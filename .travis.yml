@@ -1,0 +1,15 @@
+jobs:
+  include:
+    - stage: test
+      language: node_js
+      node_js: 11.2
+      install:
+        - cd client
+        - npm i -g npm@6.4.1
+        - npm ci
+      script:
+        - npm test
+    - stage: test
+      language: java
+      script:
+        - mvn test
