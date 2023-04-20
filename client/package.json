@@ -11,7 +11,7 @@
     "react": "^16.8.6",
     "react-dom": "^16.8.6",
     "react-draggable-list": "^3.7.0",
-    "react-scripts": "2.1.8",
+    "react-scripts": "5.0.1",
     "react-stomp": "^4.0.0",
     "save-dev": "^2.0.0",
     "typeface-roboto": "^0.0.54"
